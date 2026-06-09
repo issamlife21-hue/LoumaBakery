@@ -1,0 +1,42 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Face } from '../lib/brand';
+
+const c = (await getEntry('copy', 'notFound'))!.data;
+---
+
+<BaseLayout title="Not found" description={c.lede}>
+  <section class="nf">
+    <div class="container nf-inner">
+      <Face class="nf-mark" width={92} height={85} aria-hidden="true" />
+      <p class="eyebrow">{c.eyebrow}</p>
+      <h1 class="nf-title">{c.title}</h1>
+      {c.lede && <p class="nf-lede">{c.lede}</p>}
+      {c.cta && <a class="btn btn-primary nf-cta" href={c.cta.href}>{c.cta.label}</a>}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf {
+    min-height: calc(100svh - var(--nav-h));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding-block: var(--space-9);
+  }
+  .nf-inner { max-width: 560px; display: flex; flex-direction: column; align-items: center; }
+  .nf-mark { color: var(--red); margin-bottom: var(--space-5); }
+  .nf-title {
+    margin-top: var(--space-3);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 300;
+    font-size: var(--t-h1);
+    color: var(--ink);
+  }
+  .nf-lede { margin-top: var(--space-4); color: var(--body); }
+  .nf-cta { margin-top: var(--space-6); }
+</style>
