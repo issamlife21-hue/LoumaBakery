@@ -105,12 +105,13 @@ const explore = [
     flex: 1;
     min-height: 48px;
     padding: 0 0.9rem;
-    border: 1px solid color-mix(in srgb, var(--surface-0) 28%, transparent);
+    border: 1px solid color-mix(in srgb, var(--surface-0) 30%, transparent);
     border-radius: var(--radius-md);
-    background: color-mix(in srgb, var(--surface-0) 8%, transparent);
+    /* opaque dark fill so the light value text reads (and contrast tools see it) */
+    background: color-mix(in srgb, var(--surface-0) 10%, var(--ink));
     color: var(--surface-0);
   }
-  .foot-news-row input::placeholder { color: color-mix(in srgb, var(--surface-0) 45%, transparent); }
+  .foot-news-row input::placeholder { color: color-mix(in srgb, var(--surface-0) 62%, var(--ink)); }
   @media (max-width: 520px) {
     .foot-news-row { flex-direction: column; }
   }
