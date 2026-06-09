@@ -2,9 +2,12 @@
  * Single source of truth for site-wide metadata, contact details, hours,
  * and external links. Never hardcode any of this in markup — read from here.
  *
- * Every external link below is a PLACEHOLDER until the real account/URL
- * arrives. They are clearly marked; swap the value, touch nothing else.
+ * The editor-facing fields (phone, email, address, hours, and the
+ * Order/Donate/Instagram links) live in src/data/settings.json so the CMS
+ * ("Site settings") can edit them. Technical/derived values stay here.
  */
+import settings from '../data/settings.json';
+
 export const siteConfig = {
   /** Production URL. Currently the Netlify subdomain; swap when the real domain lands. */
   url: 'https://loumabakeryy.netlify.app',
@@ -13,37 +16,23 @@ export const siteConfig = {
   /** Short brand line for <title> suffix and meta description fallback. */
   tagline: 'A neighborhood bakery on Wilshire',
 
-  // --- Contact (PLACEHOLDER values until real ones arrive) ---
-  phone: '+1 (310) 000-0000', // PLACEHOLDER phone
-  email: 'hello@loumabakery.com', // PLACEHOLDER email
-
-  address: {
-    street: '3223 Wilshire Blvd',
-    city: 'Santa Monica',
-    state: 'CA',
-    zip: '90403',
-  },
-
-  /** Opening hours. Strings so they render as-is; edit freely. */
-  hours: [
-    { days: 'Tuesday – Friday', open: '7:00 AM', close: '2:30 PM' },
-    { days: 'Saturday – Sunday', open: '7:00 AM', close: '2:30 PM' },
-    { days: 'Monday', open: 'Closed', close: '' },
-  ],
-
-  /** Opening day. Used by the countdown. */
-  openingDateISO: '2026-07-01T08:00:00-07:00',
-
-  // --- External links (ALL PLACEHOLDERS — replace when accounts exist) ---
+  // --- Editor-managed (from settings.json via the CMS) ---
+  phone: settings.phone,
+  email: settings.email,
+  address: settings.address,
+  hours: settings.hours,
   links: {
-    uberEats: 'https://www.ubereats.com/', // PLACEHOLDER — swap before launch (real Uber Eats store URL)
-    paypalDonate: 'https://www.paypal.com/donate', // PLACEHOLDER — swap before launch (real PayPal donate link)
-    instagram: 'https://www.instagram.com/', // PLACEHOLDER — swap before launch (@loumabakery handle URL)
+    uberEats: settings.links.uberEats,
+    paypalDonate: settings.links.paypalDonate,
+    instagram: settings.links.instagram,
     /** Order/contact form endpoint. Netlify Forms by default; swap to a Formspree URL if used. */
     formspreeOrNetlify: '', // PLACEHOLDER — swap before launch (empty = use Netlify Forms)
     /** Hero background video URL. Empty = poster/placeholder only; wire when footage lands. */
     heroVideo: '', // PLACEHOLDER — swap before launch (hero background video MP4/WebM)
   },
+
+  /** Opening day. Used by the countdown. */
+  openingDateISO: '2026-07-01T08:00:00-07:00',
 
   /** Form confirmation / error copy, in the brand voice. Single source. */
   forms: {

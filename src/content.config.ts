@@ -9,7 +9,9 @@ import { file } from 'astro/loaders';
  */
 
 const menu = defineCollection({
-  loader: file('src/data/menu.json'),
+  // menu.json is wrapped as { "categories": [...] } so the CMS can edit it
+  // (Decap can't edit a root-level array). Unwrap to the category list here.
+  loader: file('src/data/menu.json', { parser: (text) => JSON.parse(text).categories }),
   schema: z.object({
     title: z.string(),
     order: z.number().default(0),

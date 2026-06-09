@@ -9,11 +9,11 @@ const c = (await getEntry('copy', 'menu'))!.data;
 const menu = (await getCollection('menu')).sort((a, b) => a.data.order - b.data.order);
 
 // Optimized hover-thumbnail URL per item (for the photo-cursor effect).
-const photos = import.meta.glob('../assets/img/*.jpg', { eager: true, import: 'default' }) as Record<string, ImageMetadata>;
+const photos = import.meta.glob('../assets/img/*.{jpg,jpeg,png,webp}', { eager: true, import: 'default' }) as Record<string, ImageMetadata>;
 const thumbs: Record<string, string> = {};
 for (const cat of menu) {
   for (const item of cat.data.items) {
-    const meta = item.image ? photos[`../assets/img/${item.image}`] : undefined;
+    const meta = item.image ? photos[`../assets/img/${item.image.split('/').pop()}`] : undefined;
     if (meta) thumbs[item.name] = (await getImage({ src: meta, width: 320, format: 'webp' })).src;
   }
 }

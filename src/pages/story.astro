@@ -5,12 +5,17 @@ import { features as f } from '../config/features';
 import type { ImageMetadata } from 'astro';
 import { Face } from '../lib/brand';
 import Img from '../components/Img.astro';
-import founderPhoto from '../assets/img/founder.jpg';
+import images from '../data/images.json';
 import portraitImg from '../assets/placeholders/portrait.jpg';
 import squareImg from '../assets/placeholders/square.jpg';
 
-const photos = import.meta.glob('../assets/img/*.jpg', { eager: true, import: 'default' }) as Record<string, ImageMetadata>;
-const pick = (name?: string): ImageMetadata | undefined => (name ? photos[`../assets/img/${name}`] : undefined);
+const photos = import.meta.glob('../assets/img/*.{jpg,jpeg,png,webp}', { eager: true, import: 'default' }) as Record<string, ImageMetadata>;
+const pick = (name?: string): ImageMetadata | undefined => {
+  if (!name) return undefined;
+  return photos[`../assets/img/${name.split('/').pop()}`];
+};
+const imageMap = images as Record<string, string>;
+const founderPhoto = pick(images.founder) ?? portraitImg;
 
 const c = (await getEntry('copy', 'story'))!.data;
 const chapters = (await getCollection('storyChapters')).sort((a, b) => a.data.order - b.data.order);
@@ -39,7 +44,7 @@ const founder = c.founder;
     {chapters.map((ch, i) => (
       <section class={`chapter ${i % 2 ? 'chapter--flip' : ''}`} data-anim={f.reveal ? 'reveal' : undefined}>
         <div class="container chapter-grid">
-          <Img src={pick(ch.data.image) ?? portraitImg} alt={ch.data.title} class="chapter-img" tilt={f.imageTilt} sizes="(max-width: 820px) 100vw, 50vw" />
+          <Img src={pick(imageMap[`story${ch.data.order}`]) ?? portraitImg} alt={ch.data.title} class="chapter-img" tilt={f.imageTilt} sizes="(max-width: 820px) 100vw, 50vw" />
           <div class="chapter-text">
             {ch.data.eyebrow && <span class="big-numeral" aria-hidden="true">{ch.data.eyebrow}</span>}
             <h2>{ch.data.title}</h2>

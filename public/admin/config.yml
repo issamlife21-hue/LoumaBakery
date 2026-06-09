@@ -1,0 +1,303 @@
+# =============================================================================
+#  Louma Bakery — content editor (Decap CMS)
+#  Editors log in with email + password (no GitHub account) via DecapBridge.
+#  Everything saved here is committed to the repo and goes live on the next
+#  Netlify build (usually a minute or two).
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+#  >>> REPLACE THIS ENTIRE `backend:` BLOCK with the one DecapBridge generates
+#      for your site (DecapBridge dashboard → your site → "config.yml").
+#      Only two values change: the DecapBridge SITE ID (in identity_url) and,
+#      if different, the gateway_url. Keep `branch: main`.
+# -----------------------------------------------------------------------------
+backend:
+  name: git-gateway
+  repo: issamlife21-hue/LoumaBakery        # owner/repo — already correct
+  branch: main
+  identity_url: https://auth.decapbridge.com/sites/PLACEHOLDER_DECAPBRIDGE_SITE_ID
+  gateway_url: https://gateways.decapbridge.com
+  commit_messages:
+    create: 'Edit: add {{collection}} "{{slug}}"'
+    update: 'Edit: update {{collection}} "{{slug}}"'
+    delete: 'Edit: remove {{collection}} "{{slug}}"'
+    uploadMedia: 'Edit: upload photo {{path}}'
+    deleteMedia: 'Edit: remove photo {{path}}'
+
+# Branding shown on the DecapBridge login screen / CMS.
+site_url: https://loumabakeryy.netlify.app
+display_url: https://loumabakeryy.netlify.app
+logo_url: https://loumabakeryy.netlify.app/favicon.svg
+
+# Save & publish immediately (no draft/review step) — simplest for one manager.
+publish_mode: simple
+
+# Uploaded photos are committed here, where the site optimizes them at build.
+media_folder: "src/assets/img"
+public_folder: "/src/assets/img"
+
+collections:
+  # =========================================================== MENU =========
+  - name: menu
+    label: "Menu"
+    description: "Your menu, by category. Each item has a name, price, description, tags, and a photo."
+    delete: false
+    editor: { preview: false }
+    files:
+      - name: menu
+        label: "Menu items"
+        file: "src/data/menu.json"
+        description: "Add, edit, reorder, or remove menu items."
+        fields:
+          - name: categories
+            label: "Categories"
+            label_singular: "Category"
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { name: id, label: "Internal ID", widget: string, hint: "A short code the site uses. Leave it as it is." }
+              - { name: title, label: "Category name", widget: string, hint: "e.g. Breads, Pastries, Sweets, Drinks" }
+              - { name: order, label: "Show order", widget: number, value_type: int, default: 1, hint: "1 shows first, then 2, 3…" }
+              - name: items
+                label: "Items"
+                label_singular: "Item"
+                widget: list
+                summary: "{{fields.name}} — {{fields.price}}"
+                fields:
+                  - { name: name, label: "Name", widget: string, hint: "e.g. Butter Croissant" }
+                  - { name: price, label: "Price", widget: string, hint: "Type it exactly, e.g. $4.50" }
+                  - { name: description, label: "Description", widget: text, required: false, hint: "One short, tasty line." }
+                  - { name: tags, label: "Tags", widget: list, required: false, hint: "Optional labels like vegan or vegetarian. Type one and press Enter." }
+                  - { name: image, label: "Photo", widget: image, required: false, choose_url: false, hint: "Upload a photo of this item (or pick one already uploaded)." }
+
+  # ========================================================= IMAGES =========
+  - name: images
+    label: "Images"
+    description: "The main photos used around the site. Click one to upload a replacement."
+    delete: false
+    editor: { preview: false }
+    files:
+      - name: photos
+        label: "Site photos"
+        file: "src/data/images.json"
+        fields:
+          - { name: hero, label: "Home — hero photo", widget: image, choose_url: false, hint: "The big photo at the top of the home page. A wide/landscape shot works best." }
+          - { name: founder, label: "Story — founder portrait", widget: image, choose_url: false, hint: "Portrait photo on the Our Story page." }
+          - { name: story1, label: "Story — photo 1", widget: image, choose_url: false, hint: "First story photo (also the big “01” block on the home page)." }
+          - { name: story2, label: "Story — photo 2", widget: image, choose_url: false }
+          - { name: story3, label: "Story — photo 3", widget: image, choose_url: false }
+          - { name: ig1, label: "Instagram — photo 1", widget: image, choose_url: false }
+          - { name: ig2, label: "Instagram — photo 2", widget: image, choose_url: false }
+          - { name: ig3, label: "Instagram — photo 3", widget: image, choose_url: false }
+          - { name: ig4, label: "Instagram — photo 4", widget: image, choose_url: false }
+          - { name: ig5, label: "Instagram — photo 5", widget: image, choose_url: false }
+          - { name: ig6, label: "Instagram — photo 6", widget: image, choose_url: false }
+
+  # ================================================== SITE SETTINGS =========
+  - name: settings
+    label: "Site settings"
+    description: "Hours, address, contact details, and your Order / Donate / Instagram links."
+    delete: false
+    editor: { preview: false }
+    files:
+      - name: settings
+        label: "Settings"
+        file: "src/data/settings.json"
+        fields:
+          - { name: phone, label: "Phone number", widget: string, hint: "Shown in the footer and on Visit. e.g. +1 (310) 555-1234" }
+          - { name: email, label: "Email address", widget: string, hint: "Where customers reach you." }
+          - name: address
+            label: "Address"
+            widget: object
+            fields:
+              - { name: street, label: "Street", widget: string }
+              - { name: city, label: "City", widget: string }
+              - { name: state, label: "State", widget: string }
+              - { name: zip, label: "ZIP code", widget: string }
+          - name: hours
+            label: "Opening hours"
+            widget: list
+            summary: "{{fields.days}}: {{fields.open}}{{fields.close}}"
+            hint: "One row per group of days. For a closed day, put “Closed” in Opens and leave Closes empty."
+            fields:
+              - { name: days, label: "Days", widget: string, hint: "e.g. Tuesday – Friday" }
+              - { name: open, label: "Opens", widget: string, hint: "e.g. 7:00 AM  (or “Closed”)" }
+              - { name: close, label: "Closes", widget: string, required: false, hint: "e.g. 2:30 PM  (leave empty if closed)" }
+          - name: links
+            label: "Links"
+            widget: object
+            fields:
+              - { name: uberEats, label: "Uber Eats order link", widget: string, hint: "Paste your Uber Eats store link here." }
+              - { name: paypalDonate, label: "PayPal donate link", widget: string, hint: "Paste your PayPal donation link here." }
+              - { name: instagram, label: "Instagram link", widget: string, hint: "Paste your Instagram profile link here." }
+
+  # ====================================================== PAGE TEXT =========
+  - name: copy
+    label: "Page text"
+    description: "The words on each page. Tip: edit the wording, but leave any “internal” fields as they are."
+    delete: false
+    editor: { preview: false }
+    files:
+      - name: copy
+        label: "All pages"
+        file: "src/data/copy.json"
+        fields:
+          # ---- Home ----
+          - name: home
+            label: "Home page"
+            widget: object
+            collapsed: true
+            fields:
+              - { name: eyebrow, label: "Eyebrow (small label)", widget: string }
+              - { name: title, label: "Headline", widget: string }
+              - { name: lede, label: "Intro line", widget: text }
+              - { name: craftLine, label: "“Craft” line", widget: string }
+              - { name: body, label: "Paragraphs", widget: list, field: { name: text, label: "Paragraph", widget: text } }
+              - { name: countdownLabel, label: "Countdown label", widget: string }
+              - { name: missionLine, label: "Mission line", widget: string }
+              - { name: menuTitle, label: "Menu section title", widget: string }
+              - { name: ovenTitle, label: "“From the oven” title", widget: string }
+              - { name: findTitle, label: "“Find us” title", widget: string }
+              - { name: newsletterTitle, label: "Newsletter title", widget: string }
+              - { name: newsletterBody, label: "Newsletter line", widget: string }
+              - name: cta
+                label: "Order button"
+                widget: object
+                fields:
+                  - { name: label, label: "Button text", widget: string }
+                  - { name: href, label: "Link (internal — leave as #)", widget: string, required: false }
+          # ---- Menu page ----
+          - name: menu
+            label: "Menu page"
+            widget: object
+            collapsed: true
+            fields:
+              - { name: eyebrow, label: "Eyebrow", widget: string }
+              - { name: title, label: "Headline", widget: string }
+              - { name: lede, label: "Intro line", widget: text }
+              - { name: body, label: "Paragraphs", widget: list, required: false, field: { name: text, label: "Paragraph", widget: text } }
+              - { name: allergenNote, label: "Allergen note", widget: text }
+          # ---- Story page ----
+          - name: story
+            label: "Our Story page"
+            widget: object
+            collapsed: true
+            fields:
+              - { name: eyebrow, label: "Eyebrow", widget: string }
+              - { name: title, label: "Headline", widget: string }
+              - { name: lede, label: "Intro line", widget: text }
+              - { name: body, label: "Paragraphs", widget: list, field: { name: text, label: "Paragraph", widget: text } }
+              - name: founder
+                label: "Founder"
+                widget: object
+                fields:
+                  - { name: name, label: "Name", widget: string }
+                  - { name: role, label: "Role", widget: string }
+                  - { name: body, label: "Paragraphs", widget: list, field: { name: text, label: "Paragraph", widget: text } }
+          # ---- Mission page ----
+          - name: mission
+            label: "Mission page"
+            widget: object
+            collapsed: true
+            fields:
+              - { name: eyebrow, label: "Eyebrow", widget: string }
+              - { name: title, label: "Headline", widget: string }
+              - { name: lede, label: "Intro line", widget: text }
+              - { name: body, label: "Paragraphs", widget: list, field: { name: text, label: "Paragraph", widget: text } }
+              - name: values
+                label: "Values"
+                widget: list
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: title, label: "Title", widget: string }
+                  - { name: body, label: "Text", widget: text }
+              - name: stats
+                label: "Numbers"
+                widget: list
+                summary: "{{fields.value}} {{fields.label}}"
+                fields:
+                  - { name: value, label: "Number", widget: number, value_type: int }
+                  - { name: label, label: "Caption", widget: string }
+                  - { name: prefix, label: "Before the number", widget: string, required: false }
+                  - { name: suffix, label: "After the number", widget: string, required: false, hint: "e.g. %" }
+              - { name: donateTitle, label: "Donate title", widget: string }
+              - { name: donateBody, label: "Donate text", widget: text }
+              - name: cta
+                label: "Donate button"
+                widget: object
+                fields:
+                  - { name: label, label: "Button text", widget: string }
+                  - { name: href, label: "Link (internal — leave as #)", widget: string, required: false }
+          # ---- Catering page ----
+          - name: catering
+            label: "Catering page"
+            widget: object
+            collapsed: true
+            fields:
+              - { name: eyebrow, label: "Eyebrow", widget: string }
+              - { name: title, label: "Headline", widget: string }
+              - { name: lede, label: "Intro line", widget: text }
+              - { name: body, label: "Paragraphs", widget: list, field: { name: text, label: "Paragraph", widget: text } }
+              - name: steps
+                label: "Process steps"
+                widget: list
+                summary: "{{fields.n}} {{fields.title}}"
+                fields:
+                  - { name: n, label: "Number label", widget: string, hint: "e.g. 01" }
+                  - { name: title, label: "Step title", widget: string }
+                  - { name: body, label: "Step text", widget: text }
+              - name: tiers
+                label: "Options / tiers"
+                widget: list
+                summary: "{{fields.name}}"
+                fields:
+                  - { name: name, label: "Name", widget: string }
+                  - { name: price, label: "Price", widget: string }
+                  - { name: items, label: "Bullet points", widget: list, hint: "Type one and press Enter." }
+                  - { name: note, label: "Small badge", widget: string, required: false }
+          # ---- Careers page ----
+          - name: careers
+            label: "Careers page"
+            widget: object
+            collapsed: true
+            fields:
+              - { name: eyebrow, label: "Eyebrow", widget: string }
+              - { name: title, label: "Headline", widget: string }
+              - { name: lede, label: "Intro line", widget: text }
+              - { name: body, label: "Paragraphs", widget: list, field: { name: text, label: "Paragraph", widget: text } }
+              - name: roles
+                label: "Open roles"
+                widget: list
+                summary: "{{fields.title}}"
+                fields:
+                  - { name: title, label: "Role title", widget: string }
+                  - { name: type, label: "Type", widget: string, required: false, hint: "e.g. Full-time" }
+                  - { name: body, label: "Description", widget: text }
+          # ---- Visit page ----
+          - name: visit
+            label: "Visit page"
+            widget: object
+            collapsed: true
+            fields:
+              - { name: eyebrow, label: "Eyebrow", widget: string }
+              - { name: title, label: "Headline", widget: string }
+              - { name: lede, label: "Intro line", widget: text }
+              - { name: body, label: "Paragraphs", widget: list, field: { name: text, label: "Paragraph", widget: text } }
+              - { name: openingTag, label: "Opening badge", widget: string }
+              - { name: mapEmbed, label: "Map embed link (internal)", widget: string, hint: "The Google Map. Leave as is unless the address changes." }
+          # ---- 404 page ----
+          - name: notFound
+            label: "“Page not found” page"
+            widget: object
+            collapsed: true
+            fields:
+              - { name: eyebrow, label: "Eyebrow", widget: string }
+              - { name: title, label: "Headline", widget: string }
+              - { name: lede, label: "Intro line", widget: text }
+              - { name: body, label: "Paragraphs", widget: list, required: false, field: { name: text, label: "Paragraph", widget: text } }
+              - name: cta
+                label: "Button"
+                widget: object
+                fields:
+                  - { name: label, label: "Button text", widget: string }
+                  - { name: href, label: "Link", widget: string }
