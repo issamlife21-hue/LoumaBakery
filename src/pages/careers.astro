@@ -1,0 +1,98 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { features as f } from '../config/features';
+
+const c = (await getEntry('copy', 'careers'))!.data;
+const roles = c.roles ?? [];
+---
+
+<BaseLayout title="Careers" description={c.lede}>
+  <header class="page-head">
+    <div class="container">
+      <p class="eyebrow">{c.eyebrow}</p>
+      <h1>{c.title}</h1>
+      {c.lede && <p class="lede">{c.lede}</p>}
+    </div>
+  </header>
+
+  {/* Intro */}
+  <section class="careers-intro" data-anim={f.reveal ? 'reveal' : undefined}>
+    <div class="container narrow">
+      {c.body.map((p) => <p class="intro-p">{p}</p>)}
+    </div>
+  </section>
+
+  {/* Roles */}
+  {roles.length > 0 && (
+    <section class="roles" data-anim={f.reveal ? 'reveal' : undefined}>
+      <div class="container">
+        <div class="sec-head"><p class="eyebrow">Open roles</p><h2>Where you'd fit</h2></div>
+        <ul class="roles-list" role="list">
+          {roles.map((r, i) => (
+            <li class={`role ${i === 0 ? 'role--feature' : ''}`} data-fx-lift={f.hoverLift ? '' : undefined}>
+              <div class="role-head">
+                <h3 class="role-title">{r.title}</h3>
+                {r.type && <span class="role-type mono">{r.type}</span>}
+              </div>
+              <p class="role-body">{r.body}</p>
+              <a class="role-apply" href="#apply">Apply →</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+
+  {/* Application form */}
+  <section class="apply" id="apply" data-anim={f.reveal ? 'reveal' : undefined}>
+    <div class="container narrow">
+      <div class="sec-head"><p class="eyebrow">Apply</p><h2>Tell us about you</h2></div>
+      <form name="careers" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="form-grid">
+        <input type="hidden" name="form-name" value="careers" />
+        <p class="visually-hidden"><label>Don’t fill this out: <input name="bot-field" /></label></p>
+        <div class="field"><label for="job-name">Name</label><input id="job-name" name="name" type="text" required autocomplete="name" /></div>
+        <div class="field"><label for="job-email">Email</label><input id="job-email" name="email" type="email" required autocomplete="email" /></div>
+        <div class="field"><label for="job-phone">Phone</label><input id="job-phone" name="phone" type="tel" autocomplete="tel" /></div>
+        <div class="field">
+          <label for="job-role">Role</label>
+          <select id="job-role" name="role" required>
+            <option value="" disabled selected>Choose a role</option>
+            {roles.map((r) => <option value={r.title}>{r.title}</option>)}
+          </select>
+        </div>
+        <div class="field field--full"><label for="job-about">About you</label><textarea id="job-about" name="about" required></textarea></div>
+        <div class="field--full"><button type="submit" class="btn btn-primary">Send application</button></div>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .narrow { max-width: 760px; }
+  .careers-intro { padding-block: var(--space-8); }
+  .intro-p { font-size: clamp(18px, 1.6vw, 21px); color: var(--body); }
+  .intro-p + .intro-p { margin-top: var(--space-4); }
+
+  .roles { padding-block: var(--space-7) var(--space-9); }
+  .roles-list { display: flex; flex-direction: column; gap: var(--space-4); }
+  .role {
+    padding: var(--space-6);
+    background: var(--surface-1);
+    border-radius: var(--radius-lg);
+    border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+    transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+  }
+  .role--feature {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--coral) 22%, var(--surface-1)), var(--surface-1));
+    border-color: color-mix(in srgb, var(--coral) 45%, transparent);
+  }
+  .role-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-4); flex-wrap: wrap; }
+  .role-title { font-size: clamp(22px, 2.4vw, 30px); }
+  .role-type { color: var(--clay); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
+  .role-body { margin: var(--space-3) 0 var(--space-4); color: var(--body); max-width: 64ch; }
+  .role-apply { font-family: var(--font-mono); font-size: 14px; color: var(--burgundy); text-decoration: none; }
+  .role-apply:hover { color: var(--red); }
+
+  .apply { padding-block: var(--space-8) var(--space-9); scroll-margin-top: calc(var(--nav-h) + 24px); }
+</style>
