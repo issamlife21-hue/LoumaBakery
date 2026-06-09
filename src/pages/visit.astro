@@ -1,0 +1,130 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '../config/site';
+import { features as f } from '../config/features';
+
+const c = (await getEntry('copy', 'visit'))!.data;
+const { address, hours } = siteConfig;
+---
+
+<BaseLayout title="Visit" description={c.lede}>
+  <header class="page-head">
+    <div class="container">
+      <p class="eyebrow">{c.eyebrow}</p>
+      <h1>{c.title}</h1>
+      {c.openingTag && <p class="opening-tag mono">{c.openingTag}</p>}
+      {c.lede && <p class="lede">{c.lede}</p>}
+    </div>
+  </header>
+
+  <section class="visit" data-anim={f.reveal ? 'reveal' : undefined}>
+    <div class="container visit-grid">
+      <div class="visit-info">
+        <div class="info-block">
+          <h2 class="info-h smallcaps">Hours</h2>
+          <ul class="hours" role="list">
+            {hours.map((h) => (
+              <li>
+                <span class="mono">{h.days}</span>
+                <span class="mono hours-time">{h.close ? `${h.open}–${h.close}` : h.open}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="info-block">
+          <h2 class="info-h smallcaps">Address</h2>
+          <address class="addr">
+            <p>{address.street}<br />{address.city}, {address.state} {address.zip}</p>
+            <p class="addr-contact">
+              <a href={`tel:${siteConfig.phone.replace(/[^+\d]/g, '')}`}>{siteConfig.phone}</a><br />
+              <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+            </p>
+          </address>
+        </div>
+
+        {c.body.length > 0 && (
+          <div class="info-block">
+            <h2 class="info-h smallcaps">Getting here</h2>
+            {c.body.map((p) => <p class="directions">{p}</p>)}
+          </div>
+        )}
+      </div>
+
+      <div class="visit-map">
+        {c.mapEmbed ? (
+          <iframe
+            class="map-frame"
+            src={c.mapEmbed}
+            title={`Map to ${siteConfig.name}`}
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+            allowfullscreen
+          ></iframe>
+        ) : (
+          <div class="ph ph-a map-frame" aria-hidden="true"></div>
+        )}
+        <a
+          class="map-link mono"
+          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${address.street}, ${address.city}, ${address.state} ${address.zip}`)}`}
+          target="_blank"
+          rel="noopener"
+        >
+          Open in Google Maps ↗
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .opening-tag {
+    display: inline-block;
+    margin-top: var(--space-3);
+    padding: 0.3rem 0.8rem;
+    background: var(--coral);
+    color: var(--ink);
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+
+  .visit { padding-block: var(--space-8) var(--space-9); }
+  .visit-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: var(--space-7); align-items: start; }
+
+  .info-block + .info-block { margin-top: var(--space-7); }
+  .info-h { font-size: 16px; color: var(--clay); margin-bottom: var(--space-3); }
+  .hours { display: flex; flex-direction: column; gap: var(--space-2); max-width: 360px; }
+  .hours li { display: flex; justify-content: space-between; gap: var(--space-3); }
+  .hours-time { color: var(--muted); }
+  .addr { font-style: normal; line-height: 1.8; }
+  .addr-contact { margin-top: var(--space-3); }
+  .addr-contact a { color: var(--burgundy); }
+  .directions { color: var(--body); max-width: 52ch; }
+  .directions + .directions { margin-top: var(--space-3); }
+
+  .visit-map { position: sticky; top: calc(var(--nav-h) + var(--space-4)); }
+  .map-frame {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border: 0;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    /* fallback tint behind the embed (visible only if it fails to load) */
+    background: linear-gradient(135deg, var(--surface-2), var(--surface-3));
+  }
+  .map-link {
+    display: inline-block;
+    margin-top: var(--space-3);
+    font-size: 13px;
+    color: var(--burgundy);
+  }
+  .map-link:hover { color: var(--red); }
+
+  @media (max-width: 820px) {
+    .visit-grid { grid-template-columns: 1fr; }
+    .visit-map { position: static; }
+  }
+</style>
