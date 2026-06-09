@@ -398,7 +398,12 @@ const builders: Record<string, () => void> = {
       raf = requestAnimationFrame(() => { thumb.style.transform = `translate(${e.clientX + 18}px, ${e.clientY - 40}px)`; });
     };
     rows.forEach((row) => {
-      const enter = () => { thumb.classList.add('is-on'); };
+      const img = (row as HTMLElement).dataset.img;
+      const enter = () => {
+        thumb.style.backgroundImage = img ? `url("${img}")` : '';
+        thumb.classList.toggle('has-img', !!img);
+        thumb.classList.add('is-on');
+      };
       const leave = () => { thumb.classList.remove('is-on'); };
       row.addEventListener('pointerenter', enter);
       row.addEventListener('pointerleave', leave);

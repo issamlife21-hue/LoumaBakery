@@ -4,9 +4,31 @@
     "title": "Breads",
     "order": 1,
     "items": [
-      { "name": "Country Sourdough", "price": "$9", "description": "Long-fermented, dark crust, open crumb. Out of the oven by eight.", "tags": ["vegan"], "image": "" },
-      { "name": "Sesame Semolina", "price": "$8", "description": "Golden, tender, crusted in toasted sesame.", "tags": ["vegan"], "image": "" },
-      { "name": "Milk Bread Loaf", "price": "$7", "description": "Soft, faintly sweet, made for toast.", "tags": [], "image": "" }
+      {
+        "name": "Country Sourdough",
+        "price": "$9",
+        "description": "Long-fermented, dark crust, open crumb. Out of the oven by eight.",
+        "tags": [
+          "vegan"
+        ],
+        "image": "country-sourdough.jpg"
+      },
+      {
+        "name": "Sesame Semolina",
+        "price": "$8",
+        "description": "Golden, tender, crusted in toasted sesame.",
+        "tags": [
+          "vegan"
+        ],
+        "image": "sesame-semolina.jpg"
+      },
+      {
+        "name": "Milk Bread Loaf",
+        "price": "$7",
+        "description": "Soft, faintly sweet, made for toast.",
+        "tags": [],
+        "image": "milk-bread.jpg"
+      }
     ]
   },
   {
@@ -14,9 +36,27 @@
     "title": "Pastries",
     "order": 2,
     "items": [
-      { "name": "Butter Croissant", "price": "$4.50", "description": "Laminated over three days. Shatters when you bite it.", "tags": [], "image": "" },
-      { "name": "Pain au Chocolat", "price": "$5", "description": "Two batons of dark chocolate in flaky layers.", "tags": [], "image": "" },
-      { "name": "Morning Bun", "price": "$5", "description": "Orange, cinnamon, caramelized sugar.", "tags": [], "image": "" }
+      {
+        "name": "Butter Croissant",
+        "price": "$4.50",
+        "description": "Laminated over three days. Shatters when you bite it.",
+        "tags": [],
+        "image": "butter-croissant.jpg"
+      },
+      {
+        "name": "Pain au Chocolat",
+        "price": "$5",
+        "description": "Two batons of dark chocolate in flaky layers.",
+        "tags": [],
+        "image": "pain-au-chocolat.jpg"
+      },
+      {
+        "name": "Morning Bun",
+        "price": "$5",
+        "description": "Orange, cinnamon, caramelized sugar.",
+        "tags": [],
+        "image": "morning-bun.jpg"
+      }
     ]
   },
   {
@@ -24,8 +64,24 @@
     "title": "Sweets",
     "order": 3,
     "items": [
-      { "name": "Olive Oil Cake", "price": "$6", "description": "Citrus, a little salt, a lot of olive oil.", "tags": ["vegetarian"], "image": "" },
-      { "name": "Seasonal Galette", "price": "$6", "description": "Whatever the market gave us this week.", "tags": ["vegetarian"], "image": "" }
+      {
+        "name": "Olive Oil Cake",
+        "price": "$6",
+        "description": "Citrus, a little salt, a lot of olive oil.",
+        "tags": [
+          "vegetarian"
+        ],
+        "image": "olive-oil-cake.jpg"
+      },
+      {
+        "name": "Seasonal Galette",
+        "price": "$6",
+        "description": "Whatever the market gave us this week.",
+        "tags": [
+          "vegetarian"
+        ],
+        "image": "seasonal-galette.jpg"
+      }
     ]
   },
   {
@@ -33,8 +89,24 @@
     "title": "Drinks",
     "order": 4,
     "items": [
-      { "name": "Drip Coffee", "price": "$3.50", "description": "Local roaster, rotating.", "tags": ["vegan"], "image": "" },
-      { "name": "Cardamom Latte", "price": "$5.50", "description": "Espresso, steamed milk, fresh-ground cardamom.", "tags": ["vegetarian"], "image": "" }
+      {
+        "name": "Drip Coffee",
+        "price": "$3.50",
+        "description": "Local roaster, rotating.",
+        "tags": [
+          "vegan"
+        ],
+        "image": "drip-coffee.jpg"
+      },
+      {
+        "name": "Cardamom Latte",
+        "price": "$5.50",
+        "description": "Espresso, steamed milk, fresh-ground cardamom.",
+        "tags": [
+          "vegetarian"
+        ],
+        "image": "cardamom-latte.jpg"
+      }
     ]
   }
 ]

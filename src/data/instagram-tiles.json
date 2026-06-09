@@ -1,8 +1,38 @@
 [
-  { "id": "ig1", "image": "", "alt": "Placeholder — bakery photo", "href": "" },
-  { "id": "ig2", "image": "", "alt": "Placeholder — bakery photo", "href": "" },
-  { "id": "ig3", "image": "", "alt": "Placeholder — bakery photo", "href": "" },
-  { "id": "ig4", "image": "", "alt": "Placeholder — bakery photo", "href": "" },
-  { "id": "ig5", "image": "", "alt": "Placeholder — bakery photo", "href": "" },
-  { "id": "ig6", "image": "", "alt": "Placeholder — bakery photo", "href": "" }
+  {
+    "id": "ig1",
+    "image": "ig-1.jpg",
+    "alt": "Placeholder — bakery photo",
+    "href": ""
+  },
+  {
+    "id": "ig2",
+    "image": "ig-2.jpg",
+    "alt": "Placeholder — bakery photo",
+    "href": ""
+  },
+  {
+    "id": "ig3",
+    "image": "ig-3.jpg",
+    "alt": "Placeholder — bakery photo",
+    "href": ""
+  },
+  {
+    "id": "ig4",
+    "image": "ig-4.jpg",
+    "alt": "Placeholder — bakery photo",
+    "href": ""
+  },
+  {
+    "id": "ig5",
+    "image": "ig-5.jpg",
+    "alt": "Placeholder — bakery photo",
+    "href": ""
+  },
+  {
+    "id": "ig6",
+    "image": "ig-6.jpg",
+    "alt": "Placeholder — bakery photo",
+    "href": ""
+  }
 ]

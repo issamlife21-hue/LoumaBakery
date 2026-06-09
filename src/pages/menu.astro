@@ -1,10 +1,22 @@
 ---
 import { getEntry, getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { features as f } from '../config/features';
 
 const c = (await getEntry('copy', 'menu'))!.data;
 const menu = (await getCollection('menu')).sort((a, b) => a.data.order - b.data.order);
+
+// Optimized hover-thumbnail URL per item (for the photo-cursor effect).
+const photos = import.meta.glob('../assets/img/*.jpg', { eager: true, import: 'default' }) as Record<string, ImageMetadata>;
+const thumbs: Record<string, string> = {};
+for (const cat of menu) {
+  for (const item of cat.data.items) {
+    const meta = item.image ? photos[`../assets/img/${item.image}`] : undefined;
+    if (meta) thumbs[item.name] = (await getImage({ src: meta, width: 320, format: 'webp' })).src;
+  }
+}
 ---
 
 <BaseLayout title="Menu" description={c.lede}>
@@ -33,7 +45,7 @@ const menu = (await getCollection('menu')).sort((a, b) => a.data.order - b.data.
         <h2 class="menu-cat-title smallcaps" id={`h-${cat.id}`}>{cat.data.title}</h2>
         <ul class="menu-rows" role="list">
           {cat.data.items.map((item) => (
-            <li class="menu-row" data-fx-photocursor={f.photoCursor ? '' : undefined} data-img={item.image || undefined}>
+            <li class="menu-row" data-fx-photocursor={f.photoCursor ? '' : undefined} data-img={thumbs[item.name] || undefined}>
               <div class="row-main">
                 <div class="row-head">
                   <h3 class="row-name">{item.name}</h3>
