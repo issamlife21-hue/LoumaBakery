@@ -99,22 +99,7 @@ const explore = [
     font-size: clamp(20px, 2.4vw, 28px);
     color: var(--surface-0);
   }
-  .foot-news-form { flex: 1; min-width: 280px; max-width: 460px; }
-  .foot-news-row { display: flex; gap: var(--space-2); }
-  .foot-news-row input {
-    flex: 1;
-    min-height: 48px;
-    padding: 0 0.9rem;
-    border: 1px solid color-mix(in srgb, var(--surface-0) 30%, transparent);
-    border-radius: var(--radius-md);
-    /* opaque dark fill so the light value text reads (plain hex for a11y tools) */
-    background: #382c22;
-    color: var(--surface-0);
-  }
-  .foot-news-row input::placeholder { color: #b3a695; }
-  @media (max-width: 520px) {
-    .foot-news-row { flex-direction: column; }
-  }
+  /* Newsletter form/input styling lives in NewsletterForm.astro (scoped to where it renders). */
 
   .foot-cols {
     display: grid;

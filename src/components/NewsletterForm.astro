@@ -32,3 +32,35 @@ const formClass = variant === 'footer' ? 'foot-news-form' : 'news-form';
     <button type="submit" class="btn btn-coral">Notify me</button>
   </div>
 </form>
+
+<style>
+  /* Styles live here (not the parent) because the input is rendered by this
+     component — Astro's scoped styles don't reach a child's elements. Both
+     variants sit on dark panels, so the dark fill works for both. */
+  .news-form { max-width: 460px; }
+  .foot-news-form { flex: 1; min-width: 280px; max-width: 460px; }
+
+  .news-row,
+  .foot-news-row {
+    display: flex;
+    gap: var(--space-2);
+  }
+  .news-row input,
+  .foot-news-row input {
+    flex: 1;
+    min-height: 48px;
+    padding: 0 0.9rem;
+    border: 1px solid color-mix(in srgb, var(--surface-0) 30%, transparent);
+    border-radius: var(--radius-md);
+    background: #382c22; /* opaque dark fill — light value text reads */
+    color: var(--surface-0);
+  }
+  .news-row input::placeholder,
+  .foot-news-row input::placeholder {
+    color: #b3a695;
+  }
+  @media (max-width: 520px) {
+    .news-row,
+    .foot-news-row { flex-direction: column; }
+  }
+</style>
