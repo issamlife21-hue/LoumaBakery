@@ -1,0 +1,150 @@
+---
+import { getEntry, getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { features as f } from '../config/features';
+
+const c = (await getEntry('copy', 'menu'))!.data;
+const menu = (await getCollection('menu')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<BaseLayout title="Menu" description={c.lede}>
+  <header class="page-head">
+    <div class="container">
+      <p class="eyebrow">{c.eyebrow}</p>
+      <h1>{c.title}</h1>
+      {c.lede && <p class="lede">{c.lede}</p>}
+    </div>
+  </header>
+
+  {/* Sticky category pill nav (progressive: plain anchors; scroll-spy is JS-enhanced) */}
+  <nav class="pillnav" aria-label="Menu categories">
+    <ul class="pillnav-track container" role="list">
+      {menu.map((cat) => (
+        <li>
+          <a class="pill" href={`#menu-${cat.id}`} data-spy={`menu-${cat.id}`}>{cat.data.title}</a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+
+  <div class="container menu-body">
+    {menu.map((cat) => (
+      <section class="menu-cat" id={`menu-${cat.id}`} aria-labelledby={`h-${cat.id}`} data-anim={f.reveal ? 'reveal' : undefined}>
+        <h2 class="menu-cat-title smallcaps" id={`h-${cat.id}`}>{cat.data.title}</h2>
+        <ul class="menu-rows" role="list">
+          {cat.data.items.map((item) => (
+            <li class="menu-row" data-fx-photocursor={f.photoCursor ? '' : undefined} data-img={item.image || undefined}>
+              <div class="row-main">
+                <div class="row-head">
+                  <h3 class="row-name">{item.name}</h3>
+                  <span class="row-dots" aria-hidden="true"></span>
+                  <span class="row-price mono">{item.price}</span>
+                </div>
+                {item.description && <p class="row-desc">{item.description}</p>}
+                {item.tags.length > 0 && (
+                  <ul class="product-tags" role="list">
+                    {item.tags.map((t) => <li class="tag mono">{t}</li>)}
+                  </ul>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))}
+
+    {c.allergenNote && (
+      <aside class="allergen" role="note">
+        <p class="eyebrow">Allergens</p>
+        <p>{c.allergenNote}</p>
+      </aside>
+    )}
+  </div>
+</BaseLayout>
+
+<style>
+  .pillnav {
+    position: sticky;
+    top: var(--nav-h);
+    z-index: 500;
+    background: color-mix(in srgb, var(--surface-0) 88%, transparent);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border-block: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+  .pillnav-track {
+    display: flex;
+    gap: var(--space-2);
+    overflow-x: auto;
+    padding-block: var(--space-3);
+    scrollbar-width: none;
+  }
+  .pillnav-track::-webkit-scrollbar { display: none; }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0 1rem;
+    border-radius: var(--radius-pill);
+    background: var(--surface-2);
+    color: var(--body);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
+  }
+  .pill:hover { background: var(--surface-3); }
+  .pill[aria-current='true'] { background: var(--burgundy); color: var(--butter); }
+
+  .menu-body { padding-block: var(--space-7) var(--space-9); }
+  .menu-cat { padding-top: var(--space-6); scroll-margin-top: calc(var(--nav-h) + 64px); }
+  .menu-cat-title { font-size: clamp(24px, 3vw, 34px); color: var(--clay); margin-bottom: var(--space-5); }
+
+  .menu-rows { display: flex; flex-direction: column; }
+  .menu-row {
+    padding-block: var(--space-4);
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  }
+  .row-head { display: flex; align-items: baseline; gap: var(--space-3); }
+  .row-name { font-family: var(--font-display); font-weight: 500; font-size: 22px; color: var(--ink); }
+  .row-dots { flex: 1; border-bottom: 1px dotted color-mix(in srgb, var(--ink) 28%, transparent); transform: translateY(-4px); }
+  .row-price { color: var(--burgundy); font-size: 16px; }
+  .row-desc { margin-top: var(--space-2); color: var(--muted); max-width: 60ch; }
+  .product-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+  .tag { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.5rem; border: 1px solid color-mix(in srgb, var(--clay) 40%, transparent); border-radius: var(--radius-pill); color: var(--clay); }
+
+  .allergen {
+    margin-top: var(--space-8);
+    padding: var(--space-5);
+    background: var(--surface-2);
+    border-radius: var(--radius-lg);
+    max-width: 70ch;
+  }
+  .allergen p:last-child { margin-top: var(--space-2); color: var(--body); }
+</style>
+
+<script>
+  // Scroll-spy: highlight the pill for the section in view. Progressive —
+  // anchors already work; this only adds aria-current. Throttled by IO.
+  const pills = Array.from(document.querySelectorAll<HTMLAnchorElement>('.pill[data-spy]'));
+  const byId = new Map(pills.map((p) => [p.dataset.spy!, p]));
+  const sections = pills.map((p) => document.getElementById(p.dataset.spy!)).filter(Boolean) as HTMLElement[];
+
+  if ('IntersectionObserver' in window && sections.length) {
+    const setActive = (id: string) => {
+      pills.forEach((p) => p.removeAttribute('aria-current'));
+      byId.get(id)?.setAttribute('aria-current', 'true');
+    };
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (visible) setActive(visible.target.id);
+      },
+      { rootMargin: '-45% 0px -50% 0px', threshold: 0 },
+    );
+    sections.forEach((s) => io.observe(s));
+  }
+</script>
