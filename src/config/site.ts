@@ -4,7 +4,7 @@
  */
 export const site = {
   /** Production URL. Currently the Netlify subdomain; swap when the real domain lands. */
-  url: 'https://louma-bakery-v2.netlify.app',
+  url: 'https://loumabakeryy.netlify.app',
   name: 'Louma Bakery',
   /** Short brand line for <title> suffix and meta. */
   tagline: 'A neighborhood bakery on Wilshire',
