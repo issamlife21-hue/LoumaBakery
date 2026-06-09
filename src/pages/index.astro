@@ -1,17 +1,135 @@
 ---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { siteConfig } from '../config/site';
 
+// Minimal placeholder home — proves the layout + content model wiring.
+// Full home build comes in a later phase.
+const home = await getEntry('copy', 'home');
+const c = home?.data;
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<BaseLayout transparentNav>
+  <section class="placeholder-hero">
+    <div class="container hero-inner">
+      {c?.eyebrow && <p class="eyebrow hero-eyebrow">{c.eyebrow}</p>}
+      <h1 class="hero-type">{c?.title ?? siteConfig.name}</h1>
+      {c?.lede && <p class="hero-lede">{c.lede}</p>}
+      <a class="hero-cta" href={siteConfig.links.uberEats} target="_blank" rel="noopener">
+        Order on Uber Eats
+      </a>
+    </div>
+  </section>
+
+  <!-- Newsletter form lives in the footer slot (Netlify Forms). -->
+  <form
+    slot="newsletter"
+    name="newsletter"
+    method="POST"
+    data-netlify="true"
+    class="news-form"
+  >
+    <input type="hidden" name="form-name" value="newsletter" />
+    <label class="smallcaps" for="news-email">Get word when we open</label>
+    <div class="news-row">
+      <input id="news-email" type="email" name="email" required placeholder="you@email.com" />
+      <button type="submit">Notify me</button>
+    </div>
+  </form>
+</BaseLayout>
+
+<style>
+  /* Dark placeholder hero — stands in for the real photo hero, and gives the
+     transparent nav's cream text genuine contrast. */
+  .placeholder-hero {
+    min-height: 84vh;
+    display: flex;
+    align-items: center;
+    color: var(--surface-0);
+    background:
+      radial-gradient(110% 80% at 75% 8%, color-mix(in srgb, var(--clay) 55%, transparent), transparent 60%),
+      linear-gradient(165deg, #3a2118 0%, var(--ink) 70%);
+  }
+  .placeholder-hero .hero-type {
+    color: var(--surface-0);
+  }
+  .hero-inner {
+    padding-block: var(--space-9);
+  }
+  .hero-eyebrow {
+    margin-bottom: var(--space-4);
+    color: color-mix(in srgb, var(--surface-0) 72%, transparent);
+  }
+  .hero-lede {
+    margin-top: var(--space-5);
+    font-size: clamp(18px, 1.6vw, 22px);
+    color: color-mix(in srgb, var(--surface-0) 86%, transparent);
+    max-width: 46ch;
+  }
+  .hero-cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 52px;
+    margin-top: var(--space-6);
+    padding: 0 1.6rem;
+    background: var(--burgundy);
+    color: var(--butter);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    border-radius: var(--radius-pill);
+    transition: background var(--dur-fast) var(--ease-out);
+  }
+  .hero-cta:hover {
+    background: var(--red);
+    color: var(--surface-0);
+  }
+
+  /* Newsletter (footer slot) */
+  .news-form {
+    max-width: 460px;
+  }
+  .news-form label {
+    display: block;
+    color: var(--surface-0);
+    margin-bottom: var(--space-3);
+    font-size: 15px;
+  }
+  .news-row {
+    display: flex;
+    gap: var(--space-2);
+  }
+  .news-row input {
+    flex: 1;
+    min-height: 46px;
+    padding: 0 0.9rem;
+    border: 1px solid color-mix(in srgb, var(--surface-0) 30%, transparent);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--surface-0) 8%, transparent);
+    color: var(--surface-0);
+  }
+  .news-row input::placeholder {
+    color: color-mix(in srgb, var(--surface-0) 45%, transparent);
+  }
+  .news-row button {
+    min-height: 46px;
+    padding: 0 1.2rem;
+    border: 0;
+    border-radius: var(--radius-md);
+    background: var(--coral);
+    color: var(--ink);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .news-row button:hover {
+    background: var(--butter);
+  }
+
+  @media (max-width: 480px) {
+    .news-row {
+      flex-direction: column;
+    }
+  }
+</style>

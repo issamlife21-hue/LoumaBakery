@@ -1,13 +1,51 @@
 /**
- * Single source of truth for the production URL and global site metadata.
- * Everything else derives from these — never hardcode the domain in markup.
+ * Single source of truth for site-wide metadata, contact details, hours,
+ * and external links. Never hardcode any of this in markup — read from here.
+ *
+ * Every external link below is a PLACEHOLDER until the real account/URL
+ * arrives. They are clearly marked; swap the value, touch nothing else.
  */
-export const site = {
+export const siteConfig = {
   /** Production URL. Currently the Netlify subdomain; swap when the real domain lands. */
   url: 'https://loumabakeryy.netlify.app',
+
   name: 'Louma Bakery',
-  /** Short brand line for <title> suffix and meta. */
+  /** Short brand line for <title> suffix and meta description fallback. */
   tagline: 'A neighborhood bakery on Wilshire',
+
+  // --- Contact (PLACEHOLDER values until real ones arrive) ---
+  phone: '+1 (310) 000-0000', // PLACEHOLDER phone
+  email: 'hello@loumabakery.com', // PLACEHOLDER email
+
+  address: {
+    street: '0000 Wilshire Blvd', // PLACEHOLDER street
+    city: 'Santa Monica',
+    state: 'CA',
+    zip: '90401', // PLACEHOLDER zip
+  },
+
+  /** Opening hours. Strings so they render as-is; edit freely. */
+  hours: [
+    { days: 'Tuesday – Friday', open: '7:00 AM', close: '4:00 PM' },
+    { days: 'Saturday – Sunday', open: '8:00 AM', close: '3:00 PM' },
+    { days: 'Monday', open: 'Closed', close: '' },
+  ],
+
+  /** Opening day. Used by the countdown. */
+  openingDateISO: '2026-07-01T08:00:00-07:00',
+
+  // --- External links (ALL PLACEHOLDERS — replace when accounts exist) ---
+  links: {
+    uberEats: 'https://www.ubereats.com/', // PLACEHOLDER — real Uber Eats store URL
+    paypalDonate: 'https://www.paypal.com/donate', // PLACEHOLDER — real PayPal donate link
+    instagram: 'https://www.instagram.com/', // PLACEHOLDER — @loumabakery handle URL
+    /** Order/contact form endpoint. Netlify Forms by default; swap to a Formspree URL if used. */
+    formspreeOrNetlify: '', // PLACEHOLDER — empty = use Netlify Forms (form posts to self)
+  },
 } as const;
 
-export const SITE_URL = site.url;
+/** Convenience: the production URL. */
+export const SITE_URL = siteConfig.url;
+
+/** Back-compat alias for Phase 1 code that imported `site`. */
+export const site = siteConfig;

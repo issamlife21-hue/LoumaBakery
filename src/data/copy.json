@@ -1,0 +1,70 @@
+{
+  "home": {
+    "eyebrow": "Wilshire · Santa Monica",
+    "title": "Out of the oven by eight",
+    "lede": "A neighborhood bakery opening July 2026 — bread, pastry, and a team that bakes it with care.",
+    "body": [
+      "Louma is named for Milla's sister. It's a small place with a big idea: that a bakery run well can be a place where everyone belongs."
+    ],
+    "cta": { "label": "Order on Uber Eats", "href": "#" }
+  },
+  "menu": {
+    "eyebrow": "What we bake",
+    "title": "The menu",
+    "lede": "Baked through the morning, sold until it's gone. Prices and items are placeholders until opening.",
+    "body": []
+  },
+  "story": {
+    "eyebrow": "Our story",
+    "title": "Named for Louma",
+    "lede": "How a sister's name became a bakery on Wilshire.",
+    "body": [
+      "Milla Ghandour started Louma with one belief: good bread and good work belong to everyone.",
+      "Many of the people who make Louma run have intellectual or developmental differences. The bakery exists, in part, to show that done right, that's a strength — not an exception."
+    ]
+  },
+  "mission": {
+    "eyebrow": "Why we're here",
+    "title": "The work, and who does it",
+    "lede": "Inclusive employment isn't a program here. It's how the bakery is built.",
+    "body": [
+      "We hire, train, and pay fairly. We design the work so people can do it well and grow.",
+      "If you'd like to support the mission, you can give — every dollar goes to training and wages."
+    ],
+    "cta": { "label": "Support the mission", "href": "#" }
+  },
+  "catering": {
+    "eyebrow": "For your table",
+    "title": "Catering & wholesale",
+    "lede": "Bread and pastry for offices, events, and shops nearby.",
+    "body": [
+      "Tell us the date, the headcount, and what you're after. We'll send back what we can do."
+    ],
+    "cta": { "label": "Start a catering order", "href": "#" }
+  },
+  "careers": {
+    "eyebrow": "Join us",
+    "title": "Work at Louma",
+    "lede": "We're hiring bakers, counter staff, and trainers ahead of opening.",
+    "body": [
+      "No bakery experience required for every role — a willingness to learn and show up does.",
+      "Tell us a little about yourself and we'll be in touch."
+    ],
+    "cta": { "label": "Apply", "href": "#" }
+  },
+  "visit": {
+    "eyebrow": "Come by",
+    "title": "Visit",
+    "lede": "On Wilshire in Santa Monica. Opening July 2026.",
+    "body": [
+      "Parking on the street and in the lot behind the building. The door's the one with the face on it."
+    ]
+  },
+  "notFound": {
+    "eyebrow": "404",
+    "title": "That page is out of the oven",
+    "lede": "We couldn't find it. Let's get you back to something warm.",
+    "body": [],
+    "cta": { "label": "Back home", "href": "/" }
+  }
+}

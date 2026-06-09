@@ -1,0 +1,5 @@
+[
+  { "id": "t1", "quote": "The kind of place a neighborhood is lucky to get.", "name": "Placeholder Name", "role": "Neighbor" },
+  { "id": "t2", "quote": "Best croissant on Wilshire, and it's not close.", "name": "Placeholder Name", "role": "Regular" },
+  { "id": "t3", "quote": "You can taste that someone cared. Every loaf.", "name": "Placeholder Name", "role": "Early taster" }
+]

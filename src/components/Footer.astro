@@ -1,0 +1,174 @@
+---
+import { siteConfig } from '../config/site';
+import { Face, Wordmark } from '../lib/brand';
+
+const { address, hours, links } = siteConfig;
+const year = 2026; // build-time placeholder; swap to dynamic when SSR/date matters
+
+const explore = [
+  { label: 'Menu', href: '/menu' },
+  { label: 'Our Story', href: '/story' },
+  { label: 'Mission', href: '/mission' },
+  { label: 'Catering', href: '/catering' },
+  { label: 'Careers', href: '/careers' },
+  { label: 'Visit', href: '/visit' },
+];
+---
+
+<footer class="site-foot on-dark">
+  <div class="container foot-inner">
+    <!-- Newsletter region (page supplies the form via slot) -->
+    <div class="foot-newsletter">
+      <slot name="newsletter" />
+    </div>
+
+    <div class="foot-cols">
+      <!-- Brand -->
+      <div class="foot-col foot-brand">
+        <Face class="foot-face" width={56} height={52} aria-hidden="true" />
+        <Wordmark class="foot-wordmark" width={180} height={116} aria-label={siteConfig.name} />
+        <p class="foot-tag">{siteConfig.tagline}.</p>
+      </div>
+
+      <!-- Visit -->
+      <div class="foot-col">
+        <h2 class="foot-h">Visit</h2>
+        <address class="foot-address">
+          <p>{address.street}<br />{address.city}, {address.state} {address.zip}</p>
+          <ul class="foot-hours" role="list">
+            {
+              hours.map((h) => (
+                <li>
+                  <span class="mono">{h.days}</span>
+                  <span class="mono foot-hours-time">{h.close ? `${h.open}–${h.close}` : h.open}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="foot-contact">
+            <a href={`tel:${siteConfig.phone.replace(/[^+\d]/g, '')}`}>{siteConfig.phone}</a><br />
+            <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+          </p>
+        </address>
+      </div>
+
+      <!-- Explore -->
+      <div class="foot-col">
+        <h2 class="foot-h">Explore</h2>
+        <ul class="foot-links" role="list">
+          {explore.map((l) => (<li><a href={l.href}>{l.label}</a></li>))}
+          <li><a href={links.instagram} target="_blank" rel="noopener">Instagram</a></li>
+          <li><a href={links.paypalDonate} target="_blank" rel="noopener">Support the mission</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot-base">
+      <p class="mono">© {year} {siteConfig.name}. Opening July 2026.</p>
+      <p class="mono">Wilshire · Santa Monica</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-foot {
+    background: var(--ink);
+    color: color-mix(in srgb, var(--surface-0) 78%, transparent);
+    padding-block: var(--space-8) var(--space-6);
+    margin-top: var(--space-9);
+  }
+
+  .foot-newsletter:empty {
+    display: none;
+  }
+  .foot-newsletter:not(:empty) {
+    padding-bottom: var(--space-7);
+    margin-bottom: var(--space-7);
+    border-bottom: 1px solid color-mix(in srgb, var(--surface-0) 14%, transparent);
+  }
+
+  .foot-cols {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr;
+    gap: var(--space-7);
+  }
+
+  .foot-brand .foot-face {
+    color: var(--coral);
+  }
+  .foot-brand .foot-wordmark {
+    color: var(--butter);
+    margin-top: var(--space-2);
+    height: auto;
+  }
+  .foot-tag {
+    margin-top: var(--space-3);
+    color: color-mix(in srgb, var(--surface-0) 64%, transparent);
+    font-style: italic;
+    font-family: var(--font-display);
+    font-size: 18px;
+  }
+
+  .foot-h {
+    font-family: var(--font-sc);
+    font-size: 14px;
+    letter-spacing: var(--track-sc);
+    text-transform: uppercase;
+    color: var(--surface-0);
+    margin-bottom: var(--space-4);
+  }
+
+  .foot-address {
+    font-style: normal;
+    line-height: 1.7;
+  }
+  .foot-hours {
+    margin: var(--space-3) 0;
+    padding: 0;
+    font-size: 13px;
+  }
+  .foot-hours li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: 2px 0;
+  }
+  .foot-hours-time {
+    color: color-mix(in srgb, var(--surface-0) 62%, transparent);
+  }
+
+  .foot-links {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .site-foot a {
+    color: color-mix(in srgb, var(--surface-0) 82%, transparent);
+    text-decoration: none;
+  }
+  .site-foot a:hover {
+    color: var(--coral);
+  }
+
+  .foot-base {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    margin-top: var(--space-8);
+    padding-top: var(--space-5);
+    border-top: 1px solid color-mix(in srgb, var(--surface-0) 14%, transparent);
+    font-size: 12px;
+    color: color-mix(in srgb, var(--surface-0) 55%, transparent);
+  }
+
+  @media (max-width: 760px) {
+    .foot-cols {
+      grid-template-columns: 1fr;
+      gap: var(--space-6);
+    }
+  }
+</style>

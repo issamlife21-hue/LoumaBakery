@@ -1,0 +1,7 @@
+[
+  { "id": "i1", "name": "Flour", "note": "Organic, stone-milled, from a California mill.", "image": "" },
+  { "id": "i2", "name": "Butter", "note": "European-style, 84% fat, for the lamination.", "image": "" },
+  { "id": "i3", "name": "Salt", "note": "Flaky sea salt, finished by hand.", "image": "" },
+  { "id": "i4", "name": "Levain", "note": "A sourdough starter kept alive since day one.", "image": "" },
+  { "id": "i5", "name": "Time", "note": "Slow ferments. Nothing rushed.", "image": "" }
+]

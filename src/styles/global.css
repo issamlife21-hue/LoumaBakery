@@ -60,6 +60,12 @@ button {
   cursor: pointer;
 }
 
+/* Lists marked role="list" opt out of bullets/indent (nav, footer, etc.). */
+:where(ul, ol)[role="list"] {
+  list-style: none;
+  padding: 0;
+}
+
 /* ---------------------------------------------------------- Typography */
 h1,
 h2,
