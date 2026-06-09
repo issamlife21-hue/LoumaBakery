@@ -215,3 +215,110 @@ a:hover {
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
+
+/* ============================================ Shared UI primitives ====
+   Reused across all pages so layout/components stay single-sourced.
+   ===================================================================== */
+
+/* --- Buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 0 1.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background var(--dur-fast) var(--ease-out),
+    color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+}
+.btn-primary { background: var(--burgundy); color: var(--butter); }
+.btn-primary:hover { background: var(--red); color: var(--surface-0); }
+.btn-coral { background: var(--coral); color: var(--ink); }
+.btn-coral:hover { background: var(--butter); }
+.btn-ghost { background: transparent; border-color: currentColor; color: var(--burgundy); }
+.btn-ghost:hover { background: var(--burgundy); color: var(--butter); border-color: var(--burgundy); }
+
+/* --- Placeholder image blocks (swap for real <img> later) --- */
+.ph {
+  --c1: var(--surface-2);
+  --c2: var(--surface-3);
+  background: linear-gradient(135deg, var(--c1), var(--c2));
+  position: relative;
+  overflow: hidden;
+}
+.ph::after {
+  content: "placeholder";
+  position: absolute;
+  inset-block-end: 8px;
+  inset-inline-end: 10px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--ink) 32%, transparent);
+}
+.ph-a { --c1: var(--clay); --c2: var(--burgundy); }
+.ph-b { --c1: var(--amber-warm); --c2: var(--clay); }
+.ph-c { --c1: var(--surface-3); --c2: var(--amber-warm); }
+
+/* --- Section + page headers --- */
+.sec-head { margin-bottom: var(--space-6); }
+.sec-head > h2 { margin-top: var(--space-2); }
+
+.page-head {
+  padding-block: var(--space-8) var(--space-7);
+  background: var(--surface-1);
+}
+.page-head .container { max-width: 880px; }
+.page-head h1 { margin-top: var(--space-3); }
+.page-head .lede {
+  margin-top: var(--space-4);
+  font-size: clamp(18px, 1.6vw, 22px);
+  color: var(--body);
+  max-width: 52ch;
+}
+
+/* --- Forms --- */
+.field { display: flex; flex-direction: column; gap: var(--space-2); }
+.field > label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+  border-radius: var(--radius-md);
+  background: var(--surface-0);
+  color: var(--ink);
+  font-size: 16px;
+}
+.field textarea { min-height: 130px; resize: vertical; }
+.field input:focus-visible,
+.field select:focus-visible,
+.field textarea:focus-visible {
+  outline: 2.5px solid var(--burgundy);
+  outline-offset: 2px;
+  border-color: var(--burgundy);
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+.form-grid .field--full { grid-column: 1 / -1; }
+@media (max-width: 600px) {
+  .form-grid { grid-template-columns: 1fr; }
+}

@@ -40,6 +40,8 @@ export const features = {
   filmStrip: true,
   /** Countdown to openingDateISO. */
   countdown: true,
+  /** Count-up animation on stat numbers. */
+  countUp: true,
   /** Looping marquee strip. */
   marquee: true,
   /** Typewriter effect on select eyebrows/lines. */

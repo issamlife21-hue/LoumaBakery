@@ -45,6 +45,24 @@ const copy = defineCollection({
       findTitle: z.string().optional(),
       newsletterTitle: z.string().optional(),
       newsletterBody: z.string().optional(),
+      // Inner-page structured copy (optional; each page reads what it needs).
+      allergenNote: z.string().optional(),
+      openingTag: z.string().optional(),
+      mapEmbed: z.string().optional(),
+      donateTitle: z.string().optional(),
+      donateBody: z.string().optional(),
+      founder: z
+        .object({ name: z.string(), role: z.string(), body: z.array(z.string()).default([]) })
+        .optional(),
+      values: z.array(z.object({ title: z.string(), body: z.string() })).optional(),
+      stats: z
+        .array(z.object({ value: z.number(), label: z.string(), prefix: z.string().optional(), suffix: z.string().optional() }))
+        .optional(),
+      steps: z.array(z.object({ n: z.string().optional(), title: z.string(), body: z.string() })).optional(),
+      tiers: z
+        .array(z.object({ name: z.string(), price: z.string(), items: z.array(z.string()).default([]), note: z.string().optional() }))
+        .optional(),
+      roles: z.array(z.object({ title: z.string(), type: z.string().optional(), body: z.string() })).optional(),
     })
     .loose(),
 });

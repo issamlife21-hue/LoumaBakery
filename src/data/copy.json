@@ -21,7 +21,8 @@
     "eyebrow": "What we bake",
     "title": "The menu",
     "lede": "Baked through the morning, sold until it's gone. Prices and items are placeholders until opening.",
-    "body": []
+    "body": [],
+    "allergenNote": "Our kitchen handles wheat, dairy, eggs, nuts, and sesame. We can't guarantee any item is free of allergens. Ask us and we'll tell you what's in it."
   },
   "story": {
     "eyebrow": "Our story",
@@ -30,7 +31,15 @@
     "body": [
       "Milla Ghandour started Louma with one belief: good bread and good work belong to everyone.",
       "Many of the people who make Louma run have intellectual or developmental differences. The bakery exists, in part, to show that done right, that's a strength — not an exception."
-    ]
+    ],
+    "founder": {
+      "name": "Milla Ghandour",
+      "role": "Founder",
+      "body": [
+        "Milla grew up baking with her sister Louma. The bakery carries her name and, with it, a promise about who it's for.",
+        "She spent years in professional kitchens before building one she'd want to work in — high standards, fair pay, and a door open to people most places overlook."
+      ]
+    }
   },
   "mission": {
     "eyebrow": "Why we're here",
@@ -40,7 +49,19 @@
       "We hire, train, and pay fairly. We design the work so people can do it well and grow.",
       "If you'd like to support the mission, you can give — every dollar goes to training and wages."
     ],
-    "cta": { "label": "Support the mission", "href": "#" }
+    "values": [
+      { "title": "Real jobs", "body": "Paid, skilled work with room to grow — not busywork, not a photo op." },
+      { "title": "Designed to fit", "body": "We shape roles and training around how people actually learn and work best." },
+      { "title": "High standards", "body": "Inclusion and excellence aren't a trade-off. The bread proves it every morning." }
+    ],
+    "stats": [
+      { "value": 50, "label": "of the team with IDD", "suffix": "%" },
+      { "value": 100, "label": "of tips shared", "suffix": "%" },
+      { "value": 1, "label": "neighborhood, all in", "prefix": "" }
+    ],
+    "donateTitle": "Support the mission",
+    "donateBody": "Every dollar goes straight to training and wages. No overhead, no middleman.",
+    "cta": { "label": "Donate via PayPal", "href": "#" }
   },
   "catering": {
     "eyebrow": "For your table",
@@ -49,7 +70,16 @@
     "body": [
       "Tell us the date, the headcount, and what you're after. We'll send back what we can do."
     ],
-    "cta": { "label": "Start a catering order", "href": "#" }
+    "steps": [
+      { "n": "01", "title": "Tell us", "body": "Send the date, headcount, and a rough idea. The form below is enough to start." },
+      { "n": "02", "title": "We propose", "body": "We reply within two business days with options and a quote." },
+      { "n": "03", "title": "We bake", "body": "Pickup on Wilshire or delivery nearby, fresh that morning." }
+    ],
+    "tiers": [
+      { "name": "The Box", "price": "from $40", "items": ["Assorted pastries", "Serves 6–8", "Pickup only"], "note": "Best for small meetings" },
+      { "name": "The Spread", "price": "from $120", "items": ["Breads, pastries, spreads", "Serves 15–20", "Pickup or local delivery"], "note": "Our most popular" },
+      { "name": "Wholesale", "price": "Let's talk", "items": ["Standing weekly order", "For cafés & shops", "Net terms available"], "note": "Recurring partners" }
+    ]
   },
   "careers": {
     "eyebrow": "Join us",
@@ -59,20 +89,28 @@
       "No bakery experience required for every role — a willingness to learn and show up does.",
       "Tell us a little about yourself and we'll be in touch."
     ],
-    "cta": { "label": "Apply", "href": "#" }
+    "roles": [
+      { "title": "Training Track", "type": "Paid · entry", "body": "Our flagship role. A paid, supported path into baking and counter work, built for people with intellectual or developmental differences. No experience needed." },
+      { "title": "Baker", "type": "Full-time", "body": "Mix, shape, and bake breads and pastries through the morning. Experience helps; attitude matters more." },
+      { "title": "Counter & Service", "type": "Part / full-time", "body": "Greet the neighborhood, run the register, keep the case full and the room warm." },
+      { "title": "Job Coach / Trainer", "type": "Full-time", "body": "Support and grow the Training Track team on the floor. Background in IDD support preferred." }
+    ]
   },
   "visit": {
     "eyebrow": "Come by",
     "title": "Visit",
     "lede": "On Wilshire in Santa Monica. Opening July 2026.",
     "body": [
-      "Parking on the street and in the lot behind the building. The door's the one with the face on it."
-    ]
+      "Parking on the street and in the lot behind the building. The door's the one with the face on it.",
+      "A short walk from the Metro E Line; bike racks out front."
+    ],
+    "openingTag": "Opening July 2026",
+    "mapEmbed": "https://www.google.com/maps?q=Wilshire+Blvd,+Santa+Monica,+CA+90401&output=embed"
   },
   "notFound": {
     "eyebrow": "404",
-    "title": "That page is out of the oven",
-    "lede": "We couldn't find it. Let's get you back to something warm.",
+    "title": "Lost your way?",
+    "lede": "We couldn't find that page. Let's get you back to something warm.",
     "body": [],
     "cta": { "label": "Back home", "href": "/" }
   }
