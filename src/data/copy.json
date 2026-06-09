@@ -1,11 +1,20 @@
 {
   "home": {
-    "eyebrow": "Wilshire · Santa Monica",
+    "eyebrow": "Wilshire · Opening July 2026",
     "title": "Out of the oven by eight",
     "lede": "A neighborhood bakery opening July 2026 — bread, pastry, and a team that bakes it with care.",
+    "craftLine": "European craft. Levantine soul.",
     "body": [
+      "Long ferments and laminated layers, the way they're done in Paris. Cardamom, orange blossom, and sesame, the way they're done at home.",
       "Louma is named for Milla's sister. It's a small place with a big idea: that a bakery run well can be a place where everyone belongs."
     ],
+    "countdownLabel": "Opening in",
+    "missionLine": "Built so everyone at the counter belongs.",
+    "menuTitle": "What we bake",
+    "ovenTitle": "From the oven",
+    "findTitle": "Find us",
+    "newsletterTitle": "Get word when we open",
+    "newsletterBody": "One note when the doors open. Nothing else.",
     "cta": { "label": "Order on Uber Eats", "href": "#" }
   },
   "menu": {

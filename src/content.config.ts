@@ -36,6 +36,15 @@ const copy = defineCollection({
       lede: z.string().optional(),
       body: z.array(z.string()).default([]),
       cta: z.object({ label: z.string(), href: z.string() }).optional(),
+      // Home-specific section copy (optional; other pages ignore).
+      countdownLabel: z.string().optional(),
+      craftLine: z.string().optional(),
+      missionLine: z.string().optional(),
+      menuTitle: z.string().optional(),
+      ovenTitle: z.string().optional(),
+      findTitle: z.string().optional(),
+      newsletterTitle: z.string().optional(),
+      newsletterBody: z.string().optional(),
     })
     .loose(),
 });

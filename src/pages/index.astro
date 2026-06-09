@@ -1,135 +1,549 @@
 ---
-import { getEntry } from 'astro:content';
+import { getEntry, getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { siteConfig } from '../config/site';
+import { features as f } from '../config/features';
+import { Baguette } from '../lib/brand';
 
-// Minimal placeholder home — proves the layout + content model wiring.
-// Full home build comes in a later phase.
-const home = await getEntry('copy', 'home');
-const c = home?.data;
+// --- All content pulled from collections / config. No hardcoded copy. ---
+const home = (await getEntry('copy', 'home'))!.data;
+
+const menu = (await getCollection('menu')).sort((a, b) => a.data.order - b.data.order);
+const marquee = (await getCollection('marquee')).sort((a, b) => a.data.order - b.data.order);
+const chapters = (await getCollection('storyChapters')).sort((a, b) => a.data.order - b.data.order);
+const testimonials = await getCollection('testimonials');
+const igTiles = await getCollection('instagramTiles');
+
+const lead = testimonials[0]?.data;
+const altBlocks = chapters.slice(0, 3);
+// Flatten menu items for the "from the oven" film strip.
+const ovenItems = menu.flatMap((cat) => cat.data.items);
+
+// --- Countdown: build-time snapshot; the live tick is wired by the
+//     `countdown` flag (data-countdown / data-target hooks) in a later phase. ---
+const opening = new Date(siteConfig.openingDateISO);
+let rem = Math.max(0, opening.getTime() - new Date().getTime());
+const DAY = 86_400_000, HR = 3_600_000, MIN = 60_000;
+const cDays = Math.floor(rem / DAY); rem -= cDays * DAY;
+const cHours = Math.floor(rem / HR); rem -= cHours * HR;
+const cMins = Math.floor(rem / MIN); rem -= cMins * MIN;
+const cSecs = Math.floor(rem / 1000);
+const pad = (n: number) => String(n).padStart(2, '0');
+const countdown = [
+  { label: 'Days', value: pad(cDays) },
+  { label: 'Hours', value: pad(cHours) },
+  { label: 'Minutes', value: pad(cMins) },
+  { label: 'Seconds', value: pad(cSecs) },
+];
 ---
 
 <BaseLayout transparentNav>
-  <section class="placeholder-hero">
-    <div class="container hero-inner">
-      {c?.eyebrow && <p class="eyebrow hero-eyebrow">{c.eyebrow}</p>}
-      <h1 class="hero-type">{c?.title ?? siteConfig.name}</h1>
-      {c?.lede && <p class="hero-lede">{c.lede}</p>}
-      <a class="hero-cta" href={siteConfig.links.uberEats} target="_blank" rel="noopener">
-        Order on Uber Eats
-      </a>
+  {/* ============================================ 1 · HERO ========= */}
+  <section class="hero" data-fx-kenburns={f.kenBurns ? '' : undefined}>
+    <div class="hero-bg ph ph-hero" aria-hidden="true" data-anim={f.kenBurns ? 'ken-burns' : undefined}></div>
+    <div class="hero-overlay" aria-hidden="true"></div>
+    <div class="container hero-grid">
+      <div class="hero-panel" data-anim={f.headlineRise ? 'headline-rise' : undefined}>
+        <p class="eyebrow hero-eyebrow">{home.eyebrow}</p>
+        <h1 class="hero-headline" data-anim={f.weightBreath ? 'weight-breath' : undefined}>{home.title}</h1>
+        {home.lede && <p class="hero-lede">{home.lede}</p>}
+        <a class="btn btn-primary hero-cta" href={siteConfig.links.uberEats} target="_blank" rel="noopener" data-fx-magnetic={f.magneticButtons ? '' : undefined}>
+          {home.cta?.label ?? 'Order'}
+        </a>
+      </div>
     </div>
   </section>
 
-  <!-- Newsletter form lives in the footer slot (Netlify Forms). -->
-  <form
-    slot="newsletter"
-    name="newsletter"
-    method="POST"
-    data-netlify="true"
-    class="news-form"
-  >
-    <input type="hidden" name="form-name" value="newsletter" />
-    <label class="smallcaps" for="news-email">Get word when we open</label>
-    <div class="news-row">
-      <input id="news-email" type="email" name="email" required placeholder="you@email.com" />
-      <button type="submit">Notify me</button>
+  {/* ====================================== 2 · COUNTDOWN ========= */}
+  <section class="countdown" aria-label="Countdown to opening" data-anim={f.countdown ? 'countdown' : undefined} data-target={siteConfig.openingDateISO}>
+    <div class="container countdown-inner">
+      <p class="eyebrow">{home.countdownLabel}</p>
+      <ul class="countdown-units" role="list">
+        {countdown.map((u) => (
+          <li class="cd-unit">
+            <span class="cd-value mono" data-unit={u.label.toLowerCase()}>{u.value}</span>
+            <span class="cd-label mono">{u.label}</span>
+          </li>
+        ))}
+      </ul>
     </div>
-  </form>
+  </section>
+
+  {/* ====================================== 3 · EDITORIAL ========= */}
+  <section class="editorial" data-anim={f.reveal ? 'reveal' : undefined}>
+    <div class="editorial-inner">
+      <h2 class="editorial-line">{home.craftLine}</h2>
+      {home.body.map((p) => <p class="editorial-body">{p}</p>)}
+    </div>
+  </section>
+
+  {/* ============================ 4 · BAGUETTE DIVIDER + MISSION === */}
+  <section class="divider" aria-hidden={home.missionLine ? undefined : 'true'}>
+    <Baguette class="divider-sketch" width={260} height={93} aria-hidden="true" data-anim={f.scrollDraw ? 'scroll-draw' : undefined} />
+    {home.missionLine && <p class="divider-line">{home.missionLine}</p>}
+  </section>
+
+  {/* ======================================= 5 · MARQUEE ========= */}
+  <section class="marquee" aria-label="Louma in a few words" data-anim={f.marquee ? 'marquee' : undefined}>
+    <div class="marquee-track">
+      {marquee.map((m) => (
+        <span class="marquee-item">
+          <span>{m.data.text}</span>
+          <span class="marquee-dot" aria-hidden="true">·</span>
+        </span>
+      ))}
+    </div>
+  </section>
+
+  {/* ==================================== 6 · ALT-BLOCKS ========= */}
+  {altBlocks[0] && (
+    <section class="block block--fullbleed" data-anim={f.parallax ? 'parallax' : undefined}>
+      <div class="block-bg ph ph-a" aria-hidden="true" data-anim={f.kenBurns ? 'ken-burns' : undefined}></div>
+      <div class="block-overlay" aria-hidden="true"></div>
+      <div class="container block-fb-text on-dark">
+        {altBlocks[0].data.eyebrow && <p class="eyebrow">{altBlocks[0].data.eyebrow}</p>}
+        <h2>{altBlocks[0].data.title}</h2>
+        <p>{altBlocks[0].data.body}</p>
+      </div>
+    </section>
+  )}
+
+  {altBlocks[1] && (
+    <section class="block block--numeral" data-anim={f.reveal ? 'reveal' : undefined}>
+      <div class="container block-numeral-grid">
+        <div class="block-numeral-text">
+          <span class="big-numeral" aria-hidden="true">{altBlocks[1].data.eyebrow ?? '02'}</span>
+          <h2>{altBlocks[1].data.title}</h2>
+          <p>{altBlocks[1].data.body}</p>
+        </div>
+        <div class="ph ph-b block-numeral-img" aria-hidden="true" data-fx-tilt={f.imageTilt ? '' : undefined}></div>
+      </div>
+    </section>
+  )}
+
+  {altBlocks[2] && (
+    <section class="block block--duo" data-anim={f.reveal ? 'reveal' : undefined}>
+      <div class="container block-duo-grid">
+        <div class="block-duo-imgs">
+          <div class="ph ph-c duo-img duo-img--1" aria-hidden="true" data-fx-tilt={f.imageTilt ? '' : undefined}></div>
+          <div class="ph ph-a duo-img duo-img--2" aria-hidden="true" data-fx-tilt={f.imageTilt ? '' : undefined}></div>
+        </div>
+        <div class="block-duo-text">
+          {altBlocks[2].data.eyebrow && <p class="eyebrow">{altBlocks[2].data.eyebrow}</p>}
+          <h2>{altBlocks[2].data.title}</h2>
+          <p>{altBlocks[2].data.body}</p>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {/* =================================== 7 · PRODUCT GRID ========= */}
+  <section class="menu-sec" data-anim={f.reveal ? 'reveal' : undefined}>
+    <div class="container">
+      <header class="sec-head">
+        <p class="eyebrow">The menu</p>
+        <h2>{home.menuTitle}</h2>
+      </header>
+      {menu.map((cat) => (
+        <div class="menu-cat">
+          <h3 class="menu-cat-title smallcaps">{cat.data.title}</h3>
+          <ul class="product-grid" role="list">
+            {cat.data.items.map((item) => (
+              <li class="product-card" data-fx-tilt={f.cardTilt ? '' : undefined} data-fx-lift={f.hoverLift ? '' : undefined}>
+                <div class="ph ph-card product-img" aria-hidden="true"></div>
+                <div class="product-meta">
+                  <div class="product-row">
+                    <h4 class="product-name">{item.name}</h4>
+                    <span class="product-price mono">{item.price}</span>
+                  </div>
+                  {item.description && <p class="product-desc">{item.description}</p>}
+                  {item.tags.length > 0 && (
+                    <ul class="product-tags" role="list">
+                      {item.tags.map((t) => <li class="tag mono">{t}</li>)}
+                    </ul>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  {/* ==================================== 8 · TESTIMONIAL ========= */}
+  {lead && (
+    <section class="testimonial" data-anim={f.reveal ? 'reveal' : undefined}>
+      <figure class="container testimonial-inner">
+        <blockquote class="testimonial-quote">“{lead.quote}”</blockquote>
+        <figcaption class="testimonial-by mono">
+          {lead.name}{lead.role && <span class="testimonial-role"> · {lead.role}</span>}
+        </figcaption>
+      </figure>
+    </section>
+  )}
+
+  {/* ===================================== 9 · FILM STRIP ========= */}
+  <section class="filmstrip" data-anim={f.filmStrip ? 'film-strip' : undefined}>
+    <div class="container sec-head">
+      <p class="eyebrow">In the case</p>
+      <h2>{home.ovenTitle}</h2>
+    </div>
+    <ul class="filmstrip-track" role="list">
+      {ovenItems.map((item) => (
+        <li class="film-frame">
+          <div class="ph ph-film" aria-hidden="true"></div>
+          <p class="film-cap mono">{item.name}</p>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  {/* ================================= 10 · INSTAGRAM GRID ======== */}
+  <section class="ig" data-anim={f.instagramGrid ? 'instagram-grid' : undefined}>
+    <div class="container sec-head">
+      <p class="eyebrow">@loumabakery</p>
+      <h2>Lately</h2>
+    </div>
+    <ul class="ig-grid container" role="list">
+      {igTiles.map((tile) => (
+        <li class="ig-tile">
+          {tile.data.href ? (
+            <a href={tile.data.href} target="_blank" rel="noopener" aria-label={tile.data.alt}>
+              <span class="ph ph-ig" role="img" aria-label={tile.data.alt}></span>
+            </a>
+          ) : (
+            <span class="ph ph-ig" role="img" aria-label={tile.data.alt}></span>
+          )}
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  {/* ============================ 11 · FIND US + NEWSLETTER ======= */}
+  <section class="findus" data-anim={f.reveal ? 'reveal' : undefined}>
+    <div class="container findus-grid">
+      <div class="findus-info">
+        <p class="eyebrow">Visit</p>
+        <h2>{home.findTitle}</h2>
+        <address class="findus-address">
+          <p>{siteConfig.address.street}<br />{siteConfig.address.city}, {siteConfig.address.state} {siteConfig.address.zip}</p>
+          <ul class="findus-hours" role="list">
+            {siteConfig.hours.map((h) => (
+              <li>
+                <span class="mono">{h.days}</span>
+                <span class="mono findus-hours-time">{h.close ? `${h.open}–${h.close}` : h.open}</span>
+              </li>
+            ))}
+          </ul>
+          <p class="findus-contact">
+            <a href={`tel:${siteConfig.phone.replace(/[^+\d]/g, '')}`}>{siteConfig.phone}</a><br />
+            <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+          </p>
+        </address>
+      </div>
+
+      <div class="findus-news on-dark">
+        <h2 class="news-title">{home.newsletterTitle}</h2>
+        {home.newsletterBody && <p class="news-body">{home.newsletterBody}</p>}
+        <form name="newsletter" method="POST" data-netlify="true" class="news-form">
+          <input type="hidden" name="form-name" value="newsletter" />
+          <label class="visually-hidden" for="news-email">Email address</label>
+          <div class="news-row">
+            <input id="news-email" type="email" name="email" required placeholder="you@email.com" autocomplete="email" />
+            <button type="submit" class="btn btn-coral">Notify me</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+  {/* 12 · Footer comes from BaseLayout. */}
 </BaseLayout>
 
 <style>
-  /* Dark placeholder hero — stands in for the real photo hero, and gives the
-     transparent nav's cream text genuine contrast. */
-  .placeholder-hero {
-    min-height: 84vh;
-    display: flex;
-    align-items: center;
-    color: var(--surface-0);
-    background:
-      radial-gradient(110% 80% at 75% 8%, color-mix(in srgb, var(--clay) 55%, transparent), transparent 60%),
-      linear-gradient(165deg, #3a2118 0%, var(--ink) 70%);
+  /* ---- Shared placeholder image + buttons ---- */
+  .ph {
+    --c1: var(--surface-2);
+    --c2: var(--surface-3);
+    background: linear-gradient(135deg, var(--c1), var(--c2));
+    position: relative;
+    overflow: hidden;
   }
-  .placeholder-hero .hero-type {
-    color: var(--surface-0);
+  .ph::after {
+    content: 'placeholder';
+    position: absolute;
+    inset-block-end: 8px;
+    inset-inline-end: 10px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: color-mix(in srgb, var(--ink) 32%, transparent);
   }
-  .hero-inner {
-    padding-block: var(--space-9);
-  }
-  .hero-eyebrow {
-    margin-bottom: var(--space-4);
-    color: color-mix(in srgb, var(--surface-0) 72%, transparent);
-  }
-  .hero-lede {
-    margin-top: var(--space-5);
-    font-size: clamp(18px, 1.6vw, 22px);
-    color: color-mix(in srgb, var(--surface-0) 86%, transparent);
-    max-width: 46ch;
-  }
-  .hero-cta {
+  .ph-a { --c1: var(--clay); --c2: var(--burgundy); }
+  .ph-b { --c1: var(--amber-warm); --c2: var(--clay); }
+  .ph-c { --c1: var(--surface-3); --c2: var(--amber-warm); }
+  .ph-card, .ph-film, .ph-ig { --c1: var(--surface-2); --c2: var(--surface-3); }
+
+  .btn {
     display: inline-flex;
     align-items: center;
-    min-height: 52px;
-    margin-top: var(--space-6);
-    padding: 0 1.6rem;
-    background: var(--burgundy);
-    color: var(--butter);
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 1.5rem;
+    border: 0;
+    border-radius: var(--radius-pill);
     font-family: var(--font-mono);
     font-size: 14px;
     letter-spacing: 0.02em;
     text-decoration: none;
-    border-radius: var(--radius-pill);
-    transition: background var(--dur-fast) var(--ease-out);
+    cursor: pointer;
+    transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
   }
-  .hero-cta:hover {
-    background: var(--red);
+  .btn-primary { background: var(--burgundy); color: var(--butter); }
+  .btn-primary:hover { background: var(--red); color: var(--surface-0); }
+  .btn-coral { background: var(--coral); color: var(--ink); }
+  .btn-coral:hover { background: var(--butter); }
+
+  .sec-head { margin-bottom: var(--space-6); }
+  .sec-head h2 { margin-top: var(--space-2); }
+
+  /* ===================================== 1 · HERO ===== */
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+  .hero-bg { position: absolute; inset: 0; z-index: 0; }
+  .hero-bg::after { content: ''; } /* drop the 'placeholder' label on full-bleed */
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    /* directional dark overlay — heavier at lower-left, under the panel */
+    background: linear-gradient(105deg, color-mix(in srgb, var(--ink) 78%, transparent) 0%, color-mix(in srgb, var(--ink) 30%, transparent) 55%, transparent 80%);
+  }
+  .hero-grid { position: relative; z-index: 2; width: 100%; }
+  .hero-panel {
+    max-width: 620px;
+    margin-inline-start: clamp(0px, 2vw, 40px);
+    padding: clamp(1.75rem, 4vw, 3rem);
+    background: color-mix(in srgb, var(--surface-0) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--surface-0) 22%, transparent);
+    -webkit-backdrop-filter: blur(10px) saturate(120%);
+    backdrop-filter: blur(10px) saturate(120%);
+    border-radius: var(--radius-lg);
     color: var(--surface-0);
+  }
+  .hero-eyebrow { color: color-mix(in srgb, var(--surface-0) 78%, transparent); }
+  .hero-headline {
+    margin-top: var(--space-4);
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-style: italic;
+    font-size: var(--t-hero);
+    line-height: var(--lh-tight);
+    color: var(--surface-0);
+    text-wrap: balance;
+  }
+  .hero-lede {
+    margin-top: var(--space-4);
+    color: color-mix(in srgb, var(--surface-0) 88%, transparent);
+    font-size: clamp(17px, 1.4vw, 20px);
+    max-width: 42ch;
+  }
+  .hero-cta { margin-top: var(--space-6); }
+
+  /* ================================ 2 · COUNTDOWN ===== */
+  .countdown {
+    background: var(--ink);
+    color: var(--surface-0);
+    padding-block: var(--space-6);
+  }
+  .countdown-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+  }
+  .countdown .eyebrow { color: color-mix(in srgb, var(--surface-0) 64%, transparent); }
+  .countdown-units { display: flex; gap: clamp(1rem, 4vw, 3rem); }
+  .cd-unit { display: flex; flex-direction: column; align-items: center; }
+  .cd-value { font-size: clamp(28px, 4vw, 44px); color: var(--coral); line-height: 1; }
+  .cd-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: color-mix(in srgb, var(--surface-0) 60%, transparent); margin-top: var(--space-2); }
+
+  /* ================================ 3 · EDITORIAL ===== */
+  .editorial { padding-block: var(--space-9); }
+  .editorial-inner { max-width: 720px; margin-inline: auto; padding-inline: var(--gutter); text-align: center; }
+  .editorial-line {
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: var(--t-h2);
+    color: var(--ink);
+    margin-bottom: var(--space-5);
+  }
+  .editorial-body { margin-inline: auto; color: var(--body); }
+  .editorial-body + .editorial-body { margin-top: var(--space-4); }
+
+  /* ================================ 4 · DIVIDER ===== */
+  .divider { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); padding-block: var(--space-7); }
+  .divider-sketch { color: var(--red); }
+  .divider-line {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(20px, 2.2vw, 28px);
+    color: var(--burgundy);
+    text-align: center;
+    max-width: 30ch;
   }
 
-  /* Newsletter (footer slot) */
-  .news-form {
-    max-width: 460px;
+  /* ================================ 5 · MARQUEE ===== */
+  .marquee {
+    background: var(--burgundy);
+    color: var(--butter);
+    padding-block: var(--space-4);
+    overflow: hidden;
   }
-  .news-form label {
-    display: block;
-    color: var(--surface-0);
-    margin-bottom: var(--space-3);
-    font-size: 15px;
-  }
-  .news-row {
+  .marquee-track {
     display: flex;
-    gap: var(--space-2);
+    gap: 0;
+    white-space: nowrap;
+    /* static now; the `marquee` flag animates the scroll later */
   }
+  .marquee-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-5);
+    padding-inline: var(--space-3);
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(18px, 2vw, 26px);
+  }
+  .marquee-dot { color: var(--coral); }
+
+  /* ================================ 6 · ALT-BLOCKS ===== */
+  .block h2 { margin-bottom: var(--space-3); }
+
+  .block--fullbleed { position: relative; min-height: 70vh; display: flex; align-items: flex-end; overflow: hidden; }
+  .block-bg { position: absolute; inset: 0; z-index: 0; }
+  .block-overlay { position: absolute; inset: 0; z-index: 1; background: linear-gradient(0deg, color-mix(in srgb, var(--ink) 72%, transparent), transparent 70%); }
+  .block-fb-text { position: relative; z-index: 2; padding-block: var(--space-8); max-width: 620px; }
+  .block-fb-text h2, .block-fb-text p { color: var(--surface-0); }
+
+  .block--numeral { padding-block: var(--space-9); }
+  .block-numeral-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: var(--space-7); align-items: center; }
+  .big-numeral { font-family: var(--font-display); font-size: clamp(60px, 9vw, 120px); line-height: 0.9; color: color-mix(in srgb, var(--clay) 40%, transparent); display: block; margin-bottom: var(--space-3); }
+  .block-numeral-img { aspect-ratio: 4 / 5; border-radius: var(--radius-lg); }
+
+  .block--duo { padding-block: var(--space-9); }
+  .block-duo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-7); align-items: center; }
+  .block-duo-imgs { position: relative; min-height: 420px; }
+  .duo-img { position: absolute; border-radius: var(--radius-lg); aspect-ratio: 3 / 4; width: 62%; }
+  .duo-img--1 { top: 0; left: 0; z-index: 1; }
+  .duo-img--2 { bottom: 0; right: 0; z-index: 2; box-shadow: var(--shadow-lg); }
+
+  /* ================================ 7 · MENU ===== */
+  .menu-sec { padding-block: var(--space-9); background: var(--surface-1); }
+  .menu-cat { margin-top: var(--space-7); }
+  .menu-cat-title { font-size: 22px; color: var(--clay); margin-bottom: var(--space-4); }
+  .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-5); }
+  .product-card {
+    background: var(--surface-0);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
+  }
+  .product-img { aspect-ratio: 4 / 3; }
+  .product-meta { padding: var(--space-4); }
+  .product-row { display: flex; justify-content: space-between; gap: var(--space-3); align-items: baseline; }
+  .product-name { font-size: 20px; }
+  .product-price { color: var(--burgundy); }
+  .product-desc { margin-top: var(--space-2); font-size: 14px; color: var(--muted); }
+  .product-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+  .tag { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.5rem; border: 1px solid color-mix(in srgb, var(--clay) 40%, transparent); border-radius: var(--radius-pill); color: var(--clay); }
+
+  /* ================================ 8 · TESTIMONIAL ===== */
+  .testimonial { padding-block: var(--space-9); text-align: center; }
+  .testimonial-inner { max-width: 800px; }
+  .testimonial-quote { font-family: var(--font-display); font-style: italic; font-weight: 300; font-size: clamp(26px, 3.4vw, 44px); line-height: 1.25; color: var(--ink); }
+  .testimonial-by { margin-top: var(--space-5); color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-size: 12px; }
+  .testimonial-role { color: var(--clay); }
+
+  /* ================================ 9 · FILM STRIP ===== */
+  .filmstrip { padding-block: var(--space-8); }
+  .filmstrip-track {
+    display: flex;
+    gap: var(--space-4);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-inline: var(--gutter);
+    padding-bottom: var(--space-3);
+    -webkit-overflow-scrolling: touch;
+  }
+  .film-frame { flex: 0 0 auto; width: min(72vw, 300px); scroll-snap-align: start; }
+  .film-frame .ph-film { aspect-ratio: 3 / 4; border-radius: var(--radius-md); }
+  .film-cap { margin-top: var(--space-2); font-size: 13px; color: var(--muted); }
+
+  /* ================================ 10 · INSTAGRAM ===== */
+  .ig { padding-block: var(--space-8) var(--space-9); }
+  .ig-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
+  .ig-tile .ph-ig { display: block; aspect-ratio: 1; border-radius: var(--radius-sm); }
+  .ig-tile a { display: block; }
+
+  /* ================================ 11 · FIND US ===== */
+  .findus { padding-block: var(--space-9); background: var(--surface-1); }
+  .findus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-7); align-items: stretch; }
+  .findus-info h2 { margin: var(--space-2) 0 var(--space-5); }
+  .findus-address { font-style: normal; line-height: 1.8; }
+  .findus-hours { margin: var(--space-4) 0; font-size: 14px; max-width: 360px; }
+  .findus-hours li { display: flex; justify-content: space-between; gap: var(--space-3); padding: 2px 0; }
+  .findus-hours-time { color: var(--muted); }
+  .findus-contact a { color: var(--burgundy); }
+
+  .findus-news {
+    background: var(--ink);
+    color: var(--surface-0);
+    border-radius: var(--radius-lg);
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .news-title { color: var(--surface-0); }
+  .news-body { margin: var(--space-3) 0 var(--space-5); color: color-mix(in srgb, var(--surface-0) 76%, transparent); }
+  .news-row { display: flex; gap: var(--space-2); }
   .news-row input {
     flex: 1;
-    min-height: 46px;
+    min-height: 48px;
     padding: 0 0.9rem;
     border: 1px solid color-mix(in srgb, var(--surface-0) 30%, transparent);
     border-radius: var(--radius-md);
     background: color-mix(in srgb, var(--surface-0) 8%, transparent);
     color: var(--surface-0);
   }
-  .news-row input::placeholder {
-    color: color-mix(in srgb, var(--surface-0) 45%, transparent);
+  .news-row input::placeholder { color: color-mix(in srgb, var(--surface-0) 45%, transparent); }
+
+  /* ===================================== Responsive ===== */
+  @media (max-width: 860px) {
+    .block-numeral-grid,
+    .block-duo-grid,
+    .findus-grid { grid-template-columns: 1fr; }
+    .block--numeral .block-numeral-img { order: -1; }
+    .block-duo-imgs { min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+    .duo-img { position: static; width: 100%; }
+    .ig-grid { grid-template-columns: repeat(2, 1fr); }
   }
-  .news-row button {
-    min-height: 46px;
-    padding: 0 1.2rem;
-    border: 0;
-    border-radius: var(--radius-md);
-    background: var(--coral);
-    color: var(--ink);
-    font-family: var(--font-mono);
-    font-size: 13px;
-    cursor: pointer;
-  }
-  .news-row button:hover {
-    background: var(--butter);
+  @media (max-width: 520px) {
+    .news-row { flex-direction: column; }
+    .countdown-inner { justify-content: center; text-align: center; }
   }
 
-  @media (max-width: 480px) {
-    .news-row {
-      flex-direction: column;
-    }
+  /* Reduced motion: nothing here animates yet, but keep snap calm. */
+  @media (prefers-reduced-motion: reduce) {
+    .filmstrip-track { scroll-snap-type: none; }
   }
 </style>
