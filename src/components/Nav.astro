@@ -75,6 +75,22 @@ const isActive = (href: string) => path === href;
   </aside>
 </nav>
 
+{/* No-JS fallback: the mobile toggle needs JS, so without it surface the links
+    inline and hide the dead toggle — mobile visitors keep their navigation. */}
+<noscript>
+  <style>
+    @media (max-width: 860px) {
+      .nav-toggle { display: none !important; }
+      .nav-links {
+        display: flex !important;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+        justify-content: flex-end;
+      }
+    }
+  </style>
+</noscript>
+
 <style>
   .nav-inner {
     display: flex;

@@ -53,11 +53,14 @@ const flagOn = (name: string): boolean => {
   if (ov && name in ov) return !!ov[name];
   return !!(features as Record<string, boolean>)[name];
 };
+// Scroll-linked effects that are too heavy to run smoothly on phones.
+const MOBILE_OFF = new Set(['parallax', 'storyRail', 'kenBurns']);
 // Can this effect run in this environment at all?
 const available = (name: string): boolean => {
   if (reduced()) return false;
   if (POINTER_FX.has(name) && coarse()) return false;
   if (name === 'flourDustCursor' && mobile()) return false;
+  if (MOBILE_OFF.has(name) && mobile()) return false;
   return true;
 };
 const enabled = (name: string) => flagOn(name) && available(name);
@@ -74,14 +77,17 @@ const builders: Record<string, () => void> = {
   preloader() {
     const el = document.getElementById('preloader');
     if (!el) return;
+    let timer = 0;
     const done = () => {
-      animate(el, { opacity: [1, 0] }, { duration: 0.5, ease: 'easeInOut' }).finished.then(() => {
-        el.style.display = 'none';
-      });
+      timer = window.setTimeout(() => {
+        animate(el, { opacity: [1, 0] }, { duration: 0.5, ease: 'easeInOut' }).finished.then(() => {
+          el.style.display = 'none';
+        });
+      }, 350);
     };
-    if (document.readyState === 'complete') setTimeout(done, 350);
-    else window.addEventListener('load', () => setTimeout(done, 350), { once: true });
-    add('preloader', () => { el.style.display = 'none'; });
+    if (document.readyState === 'complete') done();
+    else window.addEventListener('load', done, { once: true });
+    add('preloader', () => { clearTimeout(timer); window.removeEventListener('load', done); el.style.display = 'none'; });
   },
 
   // --- Hero Ken-Burns drift ---
@@ -321,16 +327,18 @@ const builders: Record<string, () => void> = {
       const target = Number(el.getAttribute('data-countup') || '0');
       const pre = el.getAttribute('data-prefix') ?? '';
       const suf = el.getAttribute('data-suffix') ?? '';
+      let ctrl: { stop: () => void } | null = null;
+      let ran = false;
       const fn = inView(el, () => {
-        const ctrl = animate(0, target, {
+        if (ran) return; // count once, even if it re-enters the viewport
+        ran = true;
+        ctrl = animate(0, target, {
           duration: 1.4,
           ease: 'easeOut',
           onUpdate: (v) => { el.textContent = `${pre}${Math.round(v)}${suf}`; },
         });
-        add('countUp', () => ctrl.stop());
-        return () => {};
       }, { amount: 0.5 });
-      add('countUp', () => { fn(); el.textContent = `${pre}${target}${suf}`; });
+      add('countUp', () => { ctrl?.stop(); fn(); el.textContent = `${pre}${target}${suf}`; });
     });
   },
 
@@ -524,11 +532,15 @@ window.LoumaFX = {
   toast,
 };
 
-// Run on every (view-transition) navigation; astro:page-load also fires on first load.
-document.addEventListener('astro:page-load', initAll);
-document.addEventListener('astro:before-swap', stopAll);
-// Fallback if view transitions are disabled (no astro:page-load):
-if (!('startViewTransition' in document) || !document.querySelector('[data-astro-transition-scope]')) {
-  if (document.readyState !== 'loading') initAll();
-  else document.addEventListener('DOMContentLoaded', initAll, { once: true });
+// When view transitions are on (pageTransition flag → ClientRouter present),
+// astro:page-load fires on the FIRST load and on every navigation. When off,
+// there is no such event, so fall back to a one-time DOM-ready init. Picking
+// exactly one path avoids the double-init that re-runs every effect on load.
+if (features.pageTransition) {
+  document.addEventListener('astro:page-load', initAll);
+  document.addEventListener('astro:before-swap', stopAll);
+} else if (document.readyState !== 'loading') {
+  initAll();
+} else {
+  document.addEventListener('DOMContentLoaded', initAll, { once: true });
 }

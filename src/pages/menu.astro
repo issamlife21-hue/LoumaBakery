@@ -54,7 +54,7 @@ const menu = (await getCollection('menu')).sort((a, b) => a.data.order - b.data.
     ))}
 
     {c.allergenNote && (
-      <aside class="allergen" role="note">
+      <aside class="allergen" aria-label="Allergens">
         <p class="eyebrow">Allergens</p>
         <p>{c.allergenNote}</p>
       </aside>

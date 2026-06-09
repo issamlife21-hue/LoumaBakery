@@ -1,0 +1,47 @@
+---
+import { Picture } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+/**
+ * Responsive image wrapper. Emits AVIF + WebP via <picture>, with width/height
+ * baked from the source (no layout shift). Below-the-fold by default (lazy);
+ * pass `priority` for the LCP hero (eager + high fetch priority).
+ *
+ * The layout class goes on the <picture> (which carries the aspect-ratio box);
+ * the <img> always covers it.
+ */
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  sizes?: string;
+  widths?: number[];
+  priority?: boolean;
+  class?: string;
+  /** Motion hook placed on the <picture> (e.g. 'ken-burns'). */
+  anim?: string;
+  /** Place the 3D-tilt pointer hook on the <picture>. */
+  tilt?: boolean;
+}
+const { src, alt, sizes = '100vw', widths, priority = false, class: className, anim, tilt } = Astro.props;
+
+const candidate = widths ?? [400, 800, 1200, 1600];
+const useWidths = Array.from(new Set(candidate.filter((w) => w <= src.width).concat(src.width))).sort(
+  (a, b) => a - b,
+);
+const pictureAttributes: Record<string, unknown> = { class: `limg ${className ?? ''}`.trim() };
+if (anim) pictureAttributes['data-anim'] = anim;
+if (tilt) pictureAttributes['data-fx-tilt'] = '';
+---
+
+<Picture
+  src={src}
+  formats={['avif', 'webp']}
+  alt={alt}
+  widths={useWidths}
+  sizes={sizes}
+  loading={priority ? 'eager' : 'lazy'}
+  decoding={priority ? 'auto' : 'async'}
+  fetchpriority={priority ? 'high' : 'auto'}
+  class="img-cover"
+  pictureAttributes={pictureAttributes}
+/>

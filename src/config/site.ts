@@ -44,6 +44,14 @@ export const siteConfig = {
     /** Hero background video URL. Empty = poster/placeholder only; wire when footage lands. */
     heroVideo: '', // PLACEHOLDER — swap before launch (hero background video MP4/WebM)
   },
+
+  /** Form confirmation / error copy, in the brand voice. Single source. */
+  forms: {
+    newsletterSuccess: "You're on the list. We'll write when the ovens are warm.",
+    cateringSuccess: "Got it — we'll be in touch within two business days.",
+    careersSuccess: "Thanks for reaching out — we'll be in touch soon.",
+    error: "That didn't send. Try again, or email hello@loumabakery.com.",
+  },
 } as const;
 
 /** Convenience: the production URL. */

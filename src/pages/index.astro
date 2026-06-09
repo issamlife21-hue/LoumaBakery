@@ -4,6 +4,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { siteConfig } from '../config/site';
 import { features as f } from '../config/features';
 import { Baguette } from '../lib/brand';
+import Img from '../components/Img.astro';
+import NewsletterForm from '../components/NewsletterForm.astro';
+import heroImg from '../assets/placeholders/hero.jpg';
+import featureImg from '../assets/placeholders/feature.jpg';
+import landscapeImg from '../assets/placeholders/landscape.jpg';
+import portraitImg from '../assets/placeholders/portrait.jpg';
+import squareImg from '../assets/placeholders/square.jpg';
 
 // --- All content pulled from collections / config. No hardcoded copy. ---
 const home = (await getEntry('copy', 'home'))!.data;
@@ -40,19 +47,14 @@ const countdown = [
 <BaseLayout transparentNav schema="bakery">
   {/* ============================================ 1 · HERO ========= */}
   <section class="hero" data-fx-kenburns={f.kenBurns ? '' : undefined}>
-    <div class="hero-bg ph ph-hero" aria-hidden="true" data-anim={f.kenBurns ? 'ken-burns' : undefined}></div>
-    {/* Hero video slot — wired but empty until footage lands. Set
-        siteConfig.links.heroVideo to a URL and add a <source>; while empty it
-        stays hidden and the placeholder shows. */}
-    <video
-      class="hero-video"
-      data-hero-video={siteConfig.links.heroVideo}
-      autoplay
-      muted
-      loop
-      playsinline
-      aria-hidden="true"
-    ></video>
+    <Img src={heroImg} alt="" class="hero-bg" anim={f.kenBurns ? 'ken-burns' : undefined} priority sizes="100vw" />
+    {/* Hero video slot — wired but empty until footage lands. Only rendered
+        once siteConfig.links.heroVideo is set (avoids a sourceless <video>). */}
+    {siteConfig.links.heroVideo && (
+      <video class="hero-video" data-hero-video={siteConfig.links.heroVideo} autoplay muted loop playsinline aria-hidden="true">
+        <source src={siteConfig.links.heroVideo} />
+      </video>
+    )}
     <div class="hero-overlay" aria-hidden="true"></div>
     <div class="container hero-grid">
       <div class="hero-panel" data-anim={f.headlineRise ? 'headline-rise' : undefined}>
@@ -110,7 +112,7 @@ const countdown = [
   {/* ==================================== 6 · ALT-BLOCKS ========= */}
   {altBlocks[0] && (
     <section class="block block--fullbleed" data-anim={f.parallax ? 'parallax' : undefined}>
-      <div class="block-bg ph ph-a" aria-hidden="true" data-anim={f.kenBurns ? 'ken-burns' : undefined}></div>
+      <Img src={featureImg} alt="" class="block-bg" anim={f.kenBurns ? 'ken-burns' : undefined} sizes="100vw" />
       <div class="block-overlay" aria-hidden="true"></div>
       <div class="container block-fb-text on-dark">
         {altBlocks[0].data.eyebrow && <p class="eyebrow">{altBlocks[0].data.eyebrow}</p>}
@@ -128,7 +130,7 @@ const countdown = [
           <h2>{altBlocks[1].data.title}</h2>
           <p>{altBlocks[1].data.body}</p>
         </div>
-        <div class="ph ph-b block-numeral-img" aria-hidden="true" data-fx-tilt={f.imageTilt ? '' : undefined}></div>
+        <Img src={portraitImg} alt={altBlocks[1].data.title} class="block-numeral-img" tilt={f.imageTilt} sizes="(max-width: 860px) 100vw, 45vw" />
       </div>
     </section>
   )}
@@ -137,8 +139,8 @@ const countdown = [
     <section class="block block--duo" data-anim={f.reveal ? 'reveal' : undefined}>
       <div class="container block-duo-grid">
         <div class="block-duo-imgs">
-          <div class="ph ph-c duo-img duo-img--1" aria-hidden="true" data-fx-tilt={f.imageTilt ? '' : undefined}></div>
-          <div class="ph ph-a duo-img duo-img--2" aria-hidden="true" data-fx-tilt={f.imageTilt ? '' : undefined}></div>
+          <Img src={portraitImg} alt={altBlocks[2].data.title} class="duo-img duo-img--1" tilt={f.imageTilt} sizes="(max-width: 860px) 50vw, 30vw" />
+          <Img src={squareImg} alt="" class="duo-img duo-img--2" tilt={f.imageTilt} sizes="(max-width: 860px) 50vw, 30vw" />
         </div>
         <div class="block-duo-text">
           {altBlocks[2].data.eyebrow && <p class="eyebrow">{altBlocks[2].data.eyebrow}</p>}
@@ -162,7 +164,7 @@ const countdown = [
           <ul class="product-grid" role="list">
             {cat.data.items.map((item) => (
               <li class="product-card" data-fx-tilt={f.cardTilt ? '' : undefined} data-fx-lift={f.hoverLift ? '' : undefined}>
-                <div class="ph ph-card product-img" aria-hidden="true"></div>
+                <Img src={landscapeImg} alt={item.name} class="product-img" sizes="(max-width: 520px) 90vw, 280px" />
                 <div class="product-meta">
                   <div class="product-row">
                     <h4 class="product-name">{item.name}</h4>
@@ -204,7 +206,7 @@ const countdown = [
     <ul class="filmstrip-track" role="list">
       {ovenItems.map((item) => (
         <li class="film-frame">
-          <div class="ph ph-film" aria-hidden="true"></div>
+          <Img src={portraitImg} alt={item.name} class="ph-film" sizes="300px" />
           <p class="film-cap mono">{item.name}</p>
         </li>
       ))}
@@ -221,11 +223,11 @@ const countdown = [
       {igTiles.map((tile) => (
         <li class="ig-tile">
           {tile.data.href ? (
-            <a href={tile.data.href} target="_blank" rel="noopener" aria-label={tile.data.alt}>
-              <span class="ph ph-ig" role="img" aria-label={tile.data.alt}></span>
+            <a href={tile.data.href} target="_blank" rel="noopener">
+              <Img src={squareImg} alt={tile.data.alt} class="ph-ig" sizes="(max-width: 860px) 50vw, 33vw" />
             </a>
           ) : (
-            <span class="ph ph-ig" role="img" aria-label={tile.data.alt}></span>
+            <Img src={squareImg} alt={tile.data.alt} class="ph-ig" sizes="(max-width: 860px) 50vw, 33vw" />
           )}
         </li>
       ))}
@@ -258,23 +260,7 @@ const countdown = [
       <div class="findus-news on-dark">
         <h2 class="news-title">{home.newsletterTitle}</h2>
         {home.newsletterBody && <p class="news-body">{home.newsletterBody}</p>}
-        <form
-          name="newsletter"
-          method="POST"
-          data-netlify="true"
-          netlify-honeypot="bot-field"
-          class="news-form"
-          data-success="You're on the list. We'll write when the ovens are warm."
-          data-error="That didn't send. Try again, or email hello@loumabakery.com."
-        >
-          <input type="hidden" name="form-name" value="newsletter" />
-          <p class="visually-hidden"><label>Don’t fill this out: <input name="bot-field" /></label></p>
-          <label class="visually-hidden" for="news-email">Email address</label>
-          <div class="news-row">
-            <input id="news-email" type="email" name="email" required placeholder="you@email.com" autocomplete="email" />
-            <button type="submit" class="btn btn-coral">Notify me</button>
-          </div>
-        </form>
+        <NewsletterForm variant="page" />
       </div>
     </div>
   </section>
@@ -282,52 +268,7 @@ const countdown = [
 </BaseLayout>
 
 <style>
-  /* ---- Shared placeholder image + buttons ---- */
-  .ph {
-    --c1: var(--surface-2);
-    --c2: var(--surface-3);
-    background: linear-gradient(135deg, var(--c1), var(--c2));
-    position: relative;
-    overflow: hidden;
-  }
-  .ph::after {
-    content: 'placeholder';
-    position: absolute;
-    inset-block-end: 8px;
-    inset-inline-end: 10px;
-    font-family: var(--font-mono);
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: color-mix(in srgb, var(--ink) 32%, transparent);
-  }
-  .ph-a { --c1: var(--clay); --c2: var(--burgundy); }
-  .ph-b { --c1: var(--amber-warm); --c2: var(--clay); }
-  .ph-c { --c1: var(--surface-3); --c2: var(--amber-warm); }
-  .ph-card, .ph-film, .ph-ig { --c1: var(--surface-2); --c2: var(--surface-3); }
-
-  .btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 48px;
-    padding: 0 1.5rem;
-    border: 0;
-    border-radius: var(--radius-pill);
-    font-family: var(--font-mono);
-    font-size: 14px;
-    letter-spacing: 0.02em;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
-  }
-  .btn-primary { background: var(--burgundy); color: var(--butter); }
-  .btn-primary:hover { background: var(--red); color: var(--surface-0); }
-  .btn-coral { background: var(--coral); color: var(--ink); }
-  .btn-coral:hover { background: var(--butter); }
-
-  .sec-head { margin-bottom: var(--space-6); }
-  .sec-head h2 { margin-top: var(--space-2); }
+  /* Buttons, .sec-head, and the .ph/.limg primitives now live in global.css. */
 
   /* ===================================== 1 · HERO ===== */
   .hero {
@@ -338,7 +279,6 @@ const countdown = [
     overflow: hidden;
   }
   .hero-bg { position: absolute; inset: 0; z-index: 0; }
-  .hero-bg::after { content: ''; } /* drop the 'placeholder' label on full-bleed */
   /* Hero video covers the placeholder only once a real source is wired in. */
   .hero-video { display: none; }
   .hero-video:not([data-hero-video=""]) {

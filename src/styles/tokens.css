@@ -14,7 +14,7 @@
   /* --- Text --- */
   --ink: #2A1F18;          /* headings */
   --body: #4A3D34;         /* body copy */
-  --muted: #7A6E62;        /* captions, meta */
+  --muted: #665A4D;        /* captions, meta — WCAG AA (>=4.5:1) on surface-0..3 */
 
   /* --- Surfaces (cream stack, light → deep) --- */
   --surface-0: #FAF5EA;

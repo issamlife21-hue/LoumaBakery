@@ -2,6 +2,7 @@
 import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { features as f } from '../config/features';
+import { siteConfig } from '../config/site';
 
 const c = (await getEntry('copy', 'catering'))!.data;
 const steps = c.steps ?? [];
@@ -65,8 +66,8 @@ const tiers = c.tiers ?? [];
         data-netlify="true"
         netlify-honeypot="bot-field"
         class="form-grid"
-        data-success="Got it — we'll be in touch within two business days."
-        data-error="That didn't send. Try again, or email hello@loumabakery.com."
+        data-success={siteConfig.forms.cateringSuccess}
+        data-error={siteConfig.forms.error}
       >
         <input type="hidden" name="form-name" value="catering" />
         <p class="visually-hidden"><label>Don’t fill this out: <input name="bot-field" /></label></p>

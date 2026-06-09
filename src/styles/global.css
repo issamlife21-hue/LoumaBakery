@@ -267,6 +267,11 @@ a:hover {
 .ph-b { --c1: var(--amber-warm); --c2: var(--clay); }
 .ph-c { --c1: var(--surface-3); --c2: var(--amber-warm); }
 
+/* Responsive image wrapper (<Img> → <Picture>). The .limg picture carries the
+   layout box (aspect-ratio/radius from the slot class); the img always covers. */
+.limg { display: block; overflow: hidden; }
+img.img-cover { display: block; width: 100%; height: 100%; object-fit: cover; }
+
 /* --- Section + page headers --- */
 .sec-head { margin-bottom: var(--space-6); }
 .sec-head > h2 { margin-top: var(--space-2); }
