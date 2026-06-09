@@ -44,7 +44,7 @@ const countdown = [
     <div class="hero-overlay" aria-hidden="true"></div>
     <div class="container hero-grid">
       <div class="hero-panel" data-anim={f.headlineRise ? 'headline-rise' : undefined}>
-        <p class="eyebrow hero-eyebrow">{home.eyebrow}</p>
+        <p class="eyebrow hero-eyebrow" data-anim={f.typewriter ? 'typewriter' : undefined}>{home.eyebrow}</p>
         <h1 class="hero-headline" data-anim={f.weightBreath ? 'weight-breath' : undefined}>{home.title}</h1>
         {home.lede && <p class="hero-lede">{home.lede}</p>}
         <a class="btn btn-primary hero-cta" href={siteConfig.links.uberEats} target="_blank" rel="noopener" data-fx-magnetic={f.magneticButtons ? '' : undefined}>

@@ -322,3 +322,96 @@ a:hover {
 @media (max-width: 600px) {
   .form-grid { grid-template-columns: 1fr; }
 }
+
+/* ===================================================== Motion scaffolding
+   Hidden initial states apply ONLY when the matching html class is present
+   (set pre-paint from the live flags, and never under reduced-motion).
+   ===================================================================== */
+
+/* Pre-paint hidden states (revealed by JS) */
+.fx-reveal [data-anim="reveal"] { opacity: 0; }
+.fx-hero .hero-panel { opacity: 0; }
+.fx-headline .hero-headline { opacity: 0; }
+
+/* Headline word-rise scaffolding (spans injected by JS) */
+.hero-headline .word-mask { display: inline-block; overflow: hidden; vertical-align: top; }
+.hero-headline .word { display: inline-block; will-change: transform; }
+
+/* Preloader */
+#preloader { display: none; }
+.fx-preloader #preloader {
+  display: flex;
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink);
+}
+.preloader-mark {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(40px, 8vw, 80px);
+  color: var(--butter);
+  letter-spacing: 0.01em;
+}
+
+/* Flour-dust cursor canvas */
+.flour-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  pointer-events: none;
+}
+
+/* Menu photo cursor */
+.photo-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 120px;
+  height: 90px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--surface-3), var(--amber-warm));
+  box-shadow: var(--shadow-md);
+  pointer-events: none;
+  opacity: 0;
+  z-index: 9997;
+  transition: opacity 180ms var(--ease-out);
+}
+.photo-cursor.is-on { opacity: 1; }
+
+/* Toast */
+#toast-region {
+  position: fixed;
+  inset-block-end: var(--space-5);
+  inset-inline-end: var(--space-5);
+  z-index: 10002;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  pointer-events: none;
+}
+.toast {
+  pointer-events: auto;
+  padding: 0.8rem 1.1rem;
+  background: var(--ink);
+  color: var(--surface-0);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  max-width: 320px;
+}
+.toast--good { background: var(--burgundy); color: var(--butter); }
+
+/* Ingredient slider cursor affordance */
+.ing-track.is-dragging { cursor: grabbing; user-select: none; }
+
+/* View-transition crossfade (gated) */
+@media (prefers-reduced-motion: no-preference) {
+  .fx-pagetransition::view-transition-old(root),
+  .fx-pagetransition::view-transition-new(root) {
+    animation-duration: 0.28s;
+  }
+}

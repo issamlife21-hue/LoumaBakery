@@ -1,0 +1,260 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Baguette } from '../lib/brand';
+
+// Internal effects review. Not linked from anywhere; noindex. Each effect has a
+// live on/off toggle that flips its flag for THIS view (window.__FX), so a
+// reviewer can isolate effects one at a time.
+
+const effects: { name: string; desc: string; kind: string; scroll?: boolean; pointer?: boolean }[] = [
+  { name: 'preloader', desc: 'Brand splash that fades out on first load.', kind: 'preloader' },
+  { name: 'kenBurns', desc: 'Slow scale + drift on hero / feature imagery.', kind: 'img' },
+  { name: 'heroRise', desc: 'Hero glass panel rises and fades in on load.', kind: 'panel' },
+  { name: 'headlineRise', desc: 'Hero headline rises word by word.', kind: 'headline' },
+  { name: 'weightBreath', desc: 'Headline gently “breathes” in weight/opacity.', kind: 'breath' },
+  { name: 'parallax', desc: 'Background layers drift against scroll for depth.', kind: 'parallax', scroll: true },
+  { name: 'cardTilt', desc: '3D tilt on cards toward the cursor.', kind: 'tilt', pointer: true },
+  { name: 'imageTilt', desc: '3D tilt on images toward the cursor.', kind: 'tilt', pointer: true },
+  { name: 'magneticButtons', desc: 'Buttons pull slightly toward the cursor.', kind: 'magnetic', pointer: true },
+  { name: 'flourDustCursor', desc: 'Flour-dust particle trail (desktop only).', kind: 'cursor', pointer: true },
+  { name: 'scrollDraw', desc: 'Sketches draw on scroll; the face fades in.', kind: 'draw', scroll: true },
+  { name: 'reveal', desc: 'Sections fade and rise into view on scroll.', kind: 'reveal', scroll: true },
+  { name: 'typewriter', desc: 'Eyebrow text types itself out.', kind: 'type' },
+  { name: 'marquee', desc: 'Looping word ticker.', kind: 'marquee' },
+  { name: 'countUp', desc: 'Stat numbers count up when seen.', kind: 'count', scroll: true },
+  { name: 'pageTransition', desc: 'Crossfade between page navigations.', kind: 'page' },
+  { name: 'toast', desc: 'Transient corner notifications.', kind: 'toast' },
+  { name: 'photoCursor', desc: 'Menu rows float a thumbnail by the cursor.', kind: 'photo', pointer: true },
+  { name: 'ingredientSlider', desc: 'Drag the ingredient row to scroll it.', kind: 'slider', pointer: true },
+  { name: 'storyRail', desc: 'Story chapters slide along a scroll-linked rail.', kind: 'rail', scroll: true },
+];
+const names = effects.map((e) => e.name);
+---
+
+{/* Set every effect OFF for this view so demos start isolated. Runs during
+    parse, before motion init. (Hidden-state classes are cleared in the module
+    script below, after motion init, so it survives the head script's ordering.) */}
+<script is:inline define:vars={{ names }}>
+  (function () {
+    window.__FX = {};
+    names.forEach(function (n) { window.__FX[n] = false; });
+  })();
+</script>
+
+<BaseLayout title="Effects review" noindex>
+  <section class="review">
+    <div class="container">
+      <p class="eyebrow">Internal</p>
+      <h1>Effects review</h1>
+      <p class="review-note" role="note">
+        <strong>This page is internal.</strong> It isn’t linked from the site and is excluded from search.
+        Every effect below is <em>off</em> by default — flip a toggle to see that one in isolation. Toggles
+        change only this view; they don’t edit <code>features.ts</code>. Some effects are scroll- or
+        pointer-driven (noted), and all are disabled under reduced-motion.
+      </p>
+
+      <ul class="fx-grid" role="list">
+        {effects.map((e) => (
+          <li class="fx-tile" data-tile={e.name}>
+            <div class="fx-tile-head">
+              <div>
+                <h2 class="fx-name mono">{e.name}</h2>
+                <p class="fx-desc">{e.desc}</p>
+                <p class="fx-flags mono">
+                  {e.scroll && <span class="chip">scroll</span>}
+                  {e.pointer && <span class="chip">pointer</span>}
+                </p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-fx-toggle={e.name} />
+                <span class="switch-ui" aria-hidden="true"></span>
+                <span class="switch-label mono">Off</span>
+              </label>
+            </div>
+
+            <div class="fx-demo">
+              {e.kind === 'preloader' && <p class="demo-hint">Toggle on to replay the splash overlay.</p>}
+              {e.kind === 'img' && <div class="ph ph-a demo-img" aria-hidden="true" data-anim="ken-burns"></div>}
+              {e.kind === 'panel' && (
+                <div class="hero-panel demo-panel">
+                  <p class="eyebrow">Wilshire · Opening July 2026</p>
+                  <p class="demo-panel-title">Out of the oven by eight</p>
+                </div>
+              )}
+              {e.kind === 'headline' && <p class="hero-headline demo-headline">Out of the oven by eight</p>}
+              {e.kind === 'breath' && <p class="demo-headline" data-anim="weight-breath">Louma</p>}
+              {e.kind === 'parallax' && (
+                <div class="demo-parallax" data-anim="parallax">
+                  <div class="ph ph-b block-bg" aria-hidden="true"></div>
+                  <span class="demo-parallax-label">scroll the page</span>
+                </div>
+              )}
+              {e.kind === 'tilt' && <div class="ph ph-c demo-tile-card" aria-hidden="true" data-fx-tilt></div>}
+              {e.kind === 'magnetic' && <a class="btn btn-primary" href="#" data-fx-magnetic onclick="return false">Order</a>}
+              {e.kind === 'cursor' && <p class="demo-hint">Toggle on, then move the cursor anywhere.</p>}
+              {e.kind === 'draw' && <Baguette class="demo-sketch" width={200} height={71} aria-hidden="true" data-anim="scroll-draw" />}
+              {e.kind === 'reveal' && <div class="demo-reveal" data-anim="reveal">Hello from the bakery.</div>}
+              {e.kind === 'type' && <p class="eyebrow demo-type" data-anim="typewriter">Out of the oven by eight</p>}
+              {e.kind === 'marquee' && (
+                <div class="demo-marquee" data-anim="marquee">
+                  <div class="marquee-track">
+                    <span class="marquee-item">Out of the oven by eight <span class="marquee-dot">·</span></span>
+                    <span class="marquee-item">Baked on Wilshire <span class="marquee-dot">·</span></span>
+                  </div>
+                </div>
+              )}
+              {e.kind === 'count' && (
+                <div class="demo-count">
+                  <span class="stat-value mono" data-countup="100" data-suffix="%">100%</span>
+                </div>
+              )}
+              {e.kind === 'page' && <a class="btn btn-ghost" href="/">Go home (watch the crossfade)</a>}
+              {e.kind === 'toast' && <button type="button" class="btn btn-ghost" data-demo-toast>Fire a toast</button>}
+              {e.kind === 'photo' && (
+                <div class="demo-photo" data-fx-photocursor>
+                  <span class="row-name">Butter Croissant</span>
+                  <span class="row-price mono">$4.50</span>
+                </div>
+              )}
+              {e.kind === 'slider' && (
+                <ul class="ing-track demo-slider" role="list" data-anim="ingredient-slider">
+                  {['Flour', 'Butter', 'Salt', 'Levain', 'Time'].map((n) => (
+                    <li class="ing-card"><div class="ph ph-c ing-img" aria-hidden="true"></div><h3 class="ing-name">{n}</h3></li>
+                  ))}
+                </ul>
+              )}
+              {e.kind === 'rail' && (
+                <div class="demo-rail" data-anim="story-rail">
+                  <div class="chapter">
+                    <div class="chapter-img ph ph-a" aria-hidden="true"></div>
+                    <div class="chapter-text"><span>scroll the page</span></div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      <p class="review-foot mono">Louma — internal effects review</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .review { padding-block: var(--space-8) var(--space-9); }
+  .review h1 { margin: var(--space-2) 0 var(--space-4); }
+  .review-note {
+    max-width: 70ch;
+    padding: var(--space-4) var(--space-5);
+    background: var(--surface-2);
+    border-left: 3px solid var(--red);
+    border-radius: var(--radius-md);
+    color: var(--body);
+    font-size: 15px;
+  }
+  .review-note code { font-family: var(--font-mono); font-size: 0.85em; background: var(--surface-3); padding: 0.1em 0.35em; border-radius: 3px; }
+
+  .fx-grid {
+    margin-top: var(--space-7);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: var(--space-5);
+  }
+  .fx-tile {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-1);
+    border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
+  .fx-tile.is-unavailable { opacity: 0.55; }
+  .fx-tile-head { display: flex; justify-content: space-between; gap: var(--space-3); padding: var(--space-4) var(--space-5); }
+  .fx-name { font-size: 15px; color: var(--ink); }
+  .fx-desc { margin-top: 2px; font-size: 13px; color: var(--muted); max-width: 36ch; }
+  .fx-flags { margin-top: var(--space-2); display: flex; gap: var(--space-2); }
+  .chip { font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.15rem 0.45rem; border-radius: var(--radius-pill); background: var(--surface-3); color: var(--clay); }
+
+  /* Switch */
+  .switch { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; flex-shrink: 0; }
+  .switch input { position: absolute; opacity: 0; width: 0; height: 0; }
+  .switch-ui { width: 44px; height: 26px; border-radius: var(--radius-pill); background: var(--surface-3); position: relative; transition: background var(--dur-fast) var(--ease-out); }
+  .switch-ui::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--surface-0); box-shadow: var(--shadow-sm); transition: transform var(--dur-fast) var(--ease-out); }
+  .switch input:checked + .switch-ui { background: var(--burgundy); }
+  .switch input:checked + .switch-ui::after { transform: translateX(18px); }
+  .switch input:focus-visible + .switch-ui { outline: 2.5px solid var(--burgundy); outline-offset: 2px; }
+  .switch input:disabled + .switch-ui { opacity: 0.5; cursor: not-allowed; }
+  .switch-label { font-size: 11px; color: var(--muted); }
+
+  /* Demo area */
+  .fx-demo { padding: var(--space-5); border-top: 1px dashed color-mix(in srgb, var(--ink) 12%, transparent); min-height: 140px; display: flex; align-items: center; justify-content: center; background: var(--surface-0); }
+  .demo-hint { font-size: 13px; color: var(--muted); text-align: center; }
+  .demo-img { width: 100%; aspect-ratio: 16 / 9; border-radius: var(--radius-md); }
+  .demo-panel { background: var(--ink); color: var(--surface-0); padding: var(--space-5); border-radius: var(--radius-md); width: 100%; }
+  .demo-panel .eyebrow { color: color-mix(in srgb, var(--surface-0) 70%, transparent); }
+  .demo-panel-title { font-family: var(--font-display); font-style: italic; font-size: 26px; margin-top: var(--space-2); }
+  .demo-headline { font-family: var(--font-display); font-style: italic; font-size: clamp(28px, 6vw, 40px); color: var(--ink); text-align: center; }
+  .demo-parallax { position: relative; width: 100%; height: 120px; border-radius: var(--radius-md); overflow: hidden; }
+  .demo-parallax .block-bg { position: absolute; inset: -20% 0; }
+  .demo-parallax-label, .chapter-text span { position: relative; z-index: 1; color: var(--surface-0); font-family: var(--font-mono); font-size: 12px; }
+  .demo-tile-card { width: 160px; height: 160px; border-radius: var(--radius-lg); transform-style: preserve-3d; }
+  .demo-sketch { color: var(--red); }
+  .demo-reveal { font-family: var(--font-display); font-size: 24px; color: var(--burgundy); }
+  .demo-type { min-height: 1.4em; }
+  .demo-marquee { width: 100%; overflow: hidden; background: var(--burgundy); color: var(--butter); padding-block: var(--space-3); border-radius: var(--radius-md); }
+  .demo-marquee .marquee-track { display: flex; white-space: nowrap; width: max-content; }
+  .demo-marquee .marquee-item { display: inline-flex; gap: var(--space-4); padding-inline: var(--space-3); font-family: var(--font-display); font-style: italic; font-size: 18px; }
+  .demo-marquee .marquee-dot { color: var(--coral); }
+  .demo-count .stat-value { font-size: 56px; color: var(--burgundy); }
+  .demo-photo { display: flex; justify-content: space-between; gap: var(--space-3); width: 100%; padding: var(--space-4); border-radius: var(--radius-md); background: var(--surface-1); }
+  .demo-photo .row-name { font-family: var(--font-display); font-size: 20px; }
+  .demo-photo .row-price { color: var(--burgundy); }
+  .demo-slider { width: 100%; display: flex; gap: var(--space-3); overflow-x: auto; cursor: grab; }
+  .demo-slider .ing-card { flex: 0 0 auto; width: 110px; }
+  .demo-slider .ing-img { aspect-ratio: 1; border-radius: var(--radius-md); }
+  .demo-slider .ing-name { margin-top: var(--space-2); font-size: 16px; }
+  .demo-rail { position: relative; width: 100%; }
+  .demo-rail .chapter { display: flex; gap: var(--space-3); align-items: center; }
+  .demo-rail .chapter-img { width: 90px; aspect-ratio: 1; border-radius: var(--radius-md); }
+  .demo-rail .chapter-text { background: var(--ink); padding: var(--space-3); border-radius: var(--radius-md); }
+
+  .review-foot { margin-top: var(--space-8); color: var(--muted); font-size: 12px; }
+</style>
+
+<script>
+  // Wire toggles to the live effect engine (window.LoumaFX). Runs after motion
+  // init via astro:page-load (which also fires on first load).
+  function wireReview() {
+    const fx = window.LoumaFX;
+    if (!fx) return;
+    // Clear pre-paint hidden states so demos are visible by default (off = shown,
+    // on = re-animates). Done here so it runs after the head class script.
+    ['fx-reveal', 'fx-hero', 'fx-headline', 'fx-preloader'].forEach((c) =>
+      document.documentElement.classList.remove(c),
+    );
+    document.querySelectorAll<HTMLInputElement>('[data-fx-toggle]').forEach((cb) => {
+      const name = cb.getAttribute('data-fx-toggle')!;
+      const labelEl = cb.parentElement?.querySelector<HTMLElement>('.switch-label');
+      if (!fx.isAvailable(name)) {
+        cb.disabled = true;
+        cb.closest('.fx-tile')?.classList.add('is-unavailable');
+        if (labelEl) labelEl.textContent = 'N/A';
+        return;
+      }
+      cb.addEventListener('change', () => {
+        if (name === 'preloader' && cb.checked) {
+          const p = document.getElementById('preloader');
+          if (p) p.style.display = 'flex';
+        }
+        fx.setEnabled(name, cb.checked);
+        if (labelEl) labelEl.textContent = cb.checked ? 'On' : 'Off';
+        fx.toast(`${name} ${cb.checked ? 'on' : 'off'}`, { tone: cb.checked ? 'good' : 'default' });
+      });
+    });
+
+    const toastBtn = document.querySelector<HTMLButtonElement>('[data-demo-toast]');
+    toastBtn?.addEventListener('click', () => fx.toast('Fresh out of the oven 🥖', { tone: 'good' }));
+  }
+  document.addEventListener('astro:page-load', wireReview);
+</script>

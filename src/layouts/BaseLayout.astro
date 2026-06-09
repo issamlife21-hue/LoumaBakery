@@ -15,6 +15,8 @@ interface Props {
   ogType?: 'website' | 'article';
   /** Make the nav transparent over a hero (page provides its own hero bg). */
   transparentNav?: boolean;
+  /** Keep the page out of search indexes (internal pages). */
+  noindex?: boolean;
 }
 
 const {
@@ -23,6 +25,7 @@ const {
   image = '/og-default.jpg', // PLACEHOLDER OG image until real art lands
   ogType = 'website',
   transparentNav = false,
+  noindex = false,
 } = Astro.props;
 
 const pageTitle = title ? `${title} · ${siteConfig.name}` : `${siteConfig.name} — ${siteConfig.tagline}`;
@@ -61,6 +64,7 @@ const jsonLd = {
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="theme-color" content="#2A1F18" />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <!-- Favicons (face mark) -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -92,6 +96,26 @@ const jsonLd = {
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
 
     {features.pageTransition && <ClientRouter />}
+
+    {/* Pre-paint motion classes: set on <html> before first paint so reveal/
+        hero start hidden only when motion will actually run (no FOUC, no
+        stuck-hidden content under reduced-motion or when a flag is off). */}
+    <script is:inline define:vars={{ flags: features }}>
+      (function () {
+        var h = document.documentElement;
+        h.classList.add('js');
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          h.classList.add('reduced-motion');
+          return;
+        }
+        h.classList.add('motion');
+        if (!window.matchMedia('(pointer: coarse)').matches) h.classList.add('fine-pointer');
+        if (flags.reveal) h.classList.add('fx-reveal');
+        if (flags.heroRise) h.classList.add('fx-hero');
+        if (flags.headlineRise) h.classList.add('fx-headline');
+        if (flags.preloader) h.classList.add('fx-preloader');
+      })();
+    </script>
 
     <!-- Critical nav/hero CSS, inlined to protect first paint. -->
     <style is:inline>
@@ -139,6 +163,11 @@ const jsonLd = {
   </head>
 
   <body data-hero={transparentNav ? 'true' : 'false'}>
+    {/* Preloader — shown only when html.fx-preloader; JS fades it out. */}
+    <div id="preloader" aria-hidden="true">
+      <span class="preloader-mark">Louma</span>
+    </div>
+
     <a class="skip-link" href="#main">Skip to content</a>
     <Nav transparent={transparentNav} />
     <main id="main">
@@ -147,5 +176,9 @@ const jsonLd = {
     <Footer>
       <slot name="newsletter" slot="newsletter" />
     </Footer>
+
+    <script>
+      import '../scripts/motion.ts';
+    </script>
   </body>
 </html>
