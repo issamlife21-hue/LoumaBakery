@@ -1,0 +1,54 @@
+---
+import faceRaw from '../assets/brand/face.svg?raw';
+
+/**
+ * The face mark that draws itself on hover. Resting state is the original
+ * FILLED path (matches the current look); on hover the JS effect (faceDraw,
+ * gated by flag + prefers-reduced-motion) fades the fill out and pen-draws the
+ * outline subpaths in with a slight stagger. Static when motion is off.
+ */
+interface Props {
+  width?: number;
+  height?: number;
+  class?: string;
+  /** Accessible label; omit/empty for a decorative mark. */
+  label?: string;
+  /** Mark color (currentColor drives fill + stroke). Set here, not via the
+      parent — Astro scoped styles don't reach this child component. */
+  color?: string;
+}
+const { width, height, class: className, label, color = 'var(--red)' } = Astro.props;
+
+const viewBox = (faceRaw.match(/viewBox="([^"]*)"/) || [])[1] ?? '0 0 286 265';
+const d = (faceRaw.match(/\sd="([^"]*)"/) || [])[1] ?? '';
+// One stroke per subpath so the draw can stagger like a hand sketching.
+const subpaths = d.split(/(?=[Mm])/).map((s) => s.trim()).filter(Boolean);
+// Deterministic, slightly varied stroke widths → pencil-drawn, not rigid.
+const strokeWidth = (i: number) => (1.05 + ((i * 7) % 4) * 0.16).toFixed(2);
+---
+
+<svg
+  viewBox={viewBox}
+  width={width}
+  height={height}
+  class={`face-draw ${className ?? ''}`.trim()}
+  role={label ? 'img' : undefined}
+  aria-label={label || undefined}
+  aria-hidden={label ? undefined : 'true'}
+  style={`color: ${color}`}
+  data-face-draw
+>
+  <path class="ff-fill" d={d} fill="currentColor" fill-rule="evenodd" />
+  <g class="ff-strokes" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    {subpaths.map((s, i) => <path d={s} stroke-width={strokeWidth(i)} />)}
+  </g>
+</svg>
+
+<style>
+  .face-draw { display: block; height: auto; overflow: visible; }
+  /* Resting: filled only; strokes hidden. The faceDraw effect toggles .is-drawing. */
+  .ff-fill { transition: opacity 0.25s var(--ease-out); }
+  .ff-strokes { opacity: 0; transition: opacity 0.32s var(--ease-out); }
+  .face-draw.is-drawing .ff-fill { opacity: 0; }
+  .face-draw.is-drawing .ff-strokes { opacity: 1; }
+</style>

@@ -1,6 +1,7 @@
 ---
 import { siteConfig } from '../config/site';
-import { Face, Wordmark } from '../lib/brand';
+import { Wordmark } from '../lib/brand';
+import FaceDraw from './FaceDraw.astro';
 import NewsletterForm from './NewsletterForm.astro';
 
 const { address, hours, links } = siteConfig;
@@ -31,7 +32,7 @@ const explore = [
     <div class="foot-cols">
       <!-- Brand -->
       <div class="foot-col foot-brand">
-        <Face class="foot-face" width={56} height={52} aria-hidden="true" />
+        <FaceDraw class="foot-face" width={56} height={52} color="var(--coral)" />
         <Wordmark class="foot-wordmark" width={180} height={116} aria-label={siteConfig.name} />
         <p class="foot-tag">{siteConfig.tagline}.</p>
       </div>

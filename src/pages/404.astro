@@ -1,7 +1,8 @@
 ---
 import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { Face, Wordmark } from '../lib/brand';
+import { Wordmark } from '../lib/brand';
+import FaceDraw from '../components/FaceDraw.astro';
 
 const c = (await getEntry('copy', 'notFound'))!.data;
 ---
@@ -10,7 +11,7 @@ const c = (await getEntry('copy', 'notFound'))!.data;
   <section class="nf">
     <div class="container nf-inner">
       <div class="nf-lockup">
-        <Face class="nf-mark" width={84} height={78} aria-hidden="true" />
+        <FaceDraw class="nf-mark" width={84} height={78} color="var(--red)" />
         <Wordmark class="nf-wordmark" width={150} height={96} aria-label={c.title} />
       </div>
       <p class="eyebrow">{c.eyebrow}</p>

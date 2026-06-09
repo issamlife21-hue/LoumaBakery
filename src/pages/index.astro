@@ -66,6 +66,7 @@ const countdown = [
         </a>
       </div>
     </div>
+    <div class="hero-cue" aria-hidden="true"><span class="hero-cue-dot"></span></div>
   </section>
 
   {/* ====================================== 2 · COUNTDOWN ========= */}
@@ -299,24 +300,28 @@ const countdown = [
   }
   .hero-grid { position: relative; z-index: 2; width: 100%; }
   .hero-panel {
-    max-width: 620px;
+    max-width: clamp(320px, 52vw, 600px);
     margin-inline-start: clamp(0px, 2vw, 40px);
-    padding: clamp(1.75rem, 4vw, 3rem);
-    background: color-mix(in srgb, var(--surface-0) 12%, transparent);
-    border: 1px solid color-mix(in srgb, var(--surface-0) 22%, transparent);
-    -webkit-backdrop-filter: blur(10px) saturate(120%);
-    backdrop-filter: blur(10px) saturate(120%);
+    padding: clamp(1.5rem, 4vw, 3rem);
+    background: color-mix(in srgb, var(--ink) 24%, transparent);
+    border: 1px solid color-mix(in srgb, var(--surface-0) 24%, transparent);
+    -webkit-backdrop-filter: blur(14px) saturate(125%);
+    backdrop-filter: blur(14px) saturate(125%);
     border-radius: var(--radius-lg);
+    box-shadow:
+      0 24px 60px color-mix(in srgb, var(--ink) 38%, transparent),
+      inset 0 1px 0 color-mix(in srgb, var(--surface-0) 22%, transparent);
     color: var(--surface-0);
   }
-  .hero-eyebrow { color: color-mix(in srgb, var(--surface-0) 78%, transparent); }
+  .hero-eyebrow { color: color-mix(in srgb, var(--surface-0) 82%, transparent); }
   .hero-headline {
-    margin-top: var(--space-4);
+    margin-top: var(--space-3);
     font-family: var(--font-display);
     font-weight: 300;
     font-style: italic;
     font-size: var(--t-hero);
     line-height: var(--lh-tight);
+    letter-spacing: -0.012em;
     color: var(--surface-0);
     text-wrap: balance;
   }
@@ -327,6 +332,47 @@ const countdown = [
     max-width: 42ch;
   }
   .hero-cta { margin-top: var(--space-6); }
+
+  /* Quiet scroll cue */
+  .hero-cue {
+    position: absolute;
+    inset-block-end: clamp(14px, 3vh, 30px);
+    inset-inline: 0;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .hero-cue-dot {
+    width: 2px;
+    height: 44px;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(color-mix(in srgb, var(--surface-0) 70%, transparent), transparent);
+    position: relative;
+  }
+  .hero-cue-dot::after {
+    content: '';
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-start: -1px;
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--surface-0);
+    animation: cue-fall 2.4s var(--ease-out) infinite;
+  }
+  @keyframes cue-fall {
+    0% { transform: translateY(0); opacity: 0; }
+    25% { opacity: 1; }
+    80% { opacity: 0.4; }
+    100% { transform: translateY(40px); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-cue-dot::after { animation: none; opacity: 0.8; }
+  }
+  @media (max-height: 620px) {
+    .hero-cue { display: none; }
+  }
 
   /* ================================ 2 · COUNTDOWN ===== */
   .countdown {

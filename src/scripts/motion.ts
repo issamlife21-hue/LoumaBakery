@@ -32,7 +32,7 @@ const reduced = () => mql('(prefers-reduced-motion: reduce)').matches;
 const coarse = () => mql('(pointer: coarse)').matches;
 const mobile = () => mql('(max-width: 760px)').matches;
 
-const POINTER_FX = new Set(['cardTilt', 'imageTilt', 'magneticButtons', 'flourDustCursor', 'photoCursor']);
+const POINTER_FX = new Set(['cardTilt', 'imageTilt', 'magneticButtons', 'flourDustCursor', 'photoCursor', 'faceDraw']);
 
 declare global {
   interface Window {
@@ -258,19 +258,61 @@ const builders: Record<string, () => void> = {
           p.style.strokeDasharray = String(len);
           p.style.strokeDashoffset = String(len);
         });
+        // Ease the scroll progress so the line accelerates/eases like a hand
+        // drawing, rather than a constant-speed machine wipe.
+        const easeDraw = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
         const stop = scroll(
-          (prog: number) => { strokePaths.forEach((p) => { const len = p.getTotalLength(); p.style.strokeDashoffset = String(len * (1 - prog)); }); },
+          (prog: number) => {
+            const e = easeDraw(Math.min(1, Math.max(0, prog)));
+            strokePaths.forEach((p) => { const len = p.getTotalLength(); p.style.strokeDashoffset = String(len * (1 - e)); });
+          },
           { target: svg, offset: ['start 0.9', 'end 0.55'] },
         );
         add('scrollDraw', () => { stop(); strokePaths.forEach((p) => { p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; }); });
       } else {
-        // filled mark (face): reveal/scale instead of stroke draw
+        // filled mark: reveal/scale instead of stroke draw
         const fn = inView(svg, () => {
           animate(svg, { opacity: [0, 1], scale: [0.9, 1] }, { duration: 0.7, ease: EASE });
           return () => {};
         }, { amount: 0.4 });
         add('scrollDraw', () => { fn(); (svg as HTMLElement).style.opacity = ''; (svg as HTMLElement).style.transform = ''; });
       }
+    });
+  },
+
+  // --- Face hover-draw (footer / 404 ornaments) ---
+  faceDraw() {
+    $('[data-face-draw]').forEach((svg) => {
+      const strokes = Array.from(svg.querySelectorAll<SVGPathElement>('.ff-strokes path'));
+      if (!strokes.length) return;
+      let lens: number[] | null = null;
+      let drawing = false;
+      const enter = () => {
+        if (drawing) return;
+        drawing = true;
+        if (!lens) lens = strokes.map((p) => p.getTotalLength());
+        svg.classList.add('is-drawing');
+        const total = strokes.length;
+        strokes.forEach((p, i) => {
+          const L = lens![i];
+          p.style.strokeDasharray = String(L);
+          p.style.strokeDashoffset = String(L);
+          // slight per-stroke stagger → reads like a hand sketching
+          animate(p, { strokeDashoffset: [L, 0] }, { duration: 0.5, delay: (i / total) * 0.5, ease: [0.4, 0, 0.2, 1] });
+        });
+      };
+      const leave = () => {
+        drawing = false;
+        svg.classList.remove('is-drawing'); // CSS fades fill back / strokes out
+      };
+      svg.addEventListener('mouseenter', enter);
+      svg.addEventListener('mouseleave', leave);
+      add('faceDraw', () => {
+        svg.removeEventListener('mouseenter', enter);
+        svg.removeEventListener('mouseleave', leave);
+        svg.classList.remove('is-drawing');
+        strokes.forEach((p) => { p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; });
+      });
     });
   },
 
@@ -490,6 +532,7 @@ const META: Record<string, string> = {
   magneticButtons: 'Buttons pull slightly toward the cursor.',
   flourDustCursor: 'Flour-dust particle trail under the cursor (desktop only).',
   scrollDraw: 'Sketches draw themselves on scroll; the face fades in.',
+  faceDraw: 'The face mark pen-draws itself on hover (footer / 404).',
   reveal: 'Sections fade and rise into view on scroll.',
   typewriter: 'Eyebrow text types itself out.',
   marquee: 'Looping word ticker.',

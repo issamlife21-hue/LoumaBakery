@@ -30,6 +30,8 @@ export const features = {
   // --- Scroll-linked ---
   /** Stroke-draw on the baguette/toast sketches as they enter. */
   scrollDraw: true,
+  /** The face mark draws itself on hover (footer / 404 ornaments). */
+  faceDraw: true,
   /** Depth parallax on layered sections. */
   parallax: true,
   /** Generic on-scroll reveal (fade/translate) for sections. */
