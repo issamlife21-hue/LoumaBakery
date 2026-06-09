@@ -55,7 +55,6 @@
       { "title": "High standards", "body": "Inclusion and excellence aren't a trade-off. The bread proves it every morning." }
     ],
     "stats": [
-      { "value": 50, "label": "of the team with IDD", "suffix": "%" },
       { "value": 100, "label": "of tips shared", "suffix": "%" },
       { "value": 1, "label": "neighborhood, all in", "prefix": "" }
     ],
@@ -105,7 +104,7 @@
       "A short walk from the Metro E Line; bike racks out front."
     ],
     "openingTag": "Opening July 2026",
-    "mapEmbed": "https://www.google.com/maps/embed?pb=!1m3!2m1!1sWilshire+Blvd,+Santa+Monica,+CA+90401!6i14"
+    "mapEmbed": "https://www.google.com/maps/embed?pb=!1m3!2m1!1s3223+Wilshire+Blvd,+Santa+Monica,+CA+90403!6i14"
   },
   "notFound": {
     "eyebrow": "404",

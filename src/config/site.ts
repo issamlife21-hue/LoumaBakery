@@ -18,16 +18,16 @@ export const siteConfig = {
   email: 'hello@loumabakery.com', // PLACEHOLDER email
 
   address: {
-    street: '0000 Wilshire Blvd', // PLACEHOLDER street
+    street: '3223 Wilshire Blvd',
     city: 'Santa Monica',
     state: 'CA',
-    zip: '90401', // PLACEHOLDER zip
+    zip: '90403',
   },
 
   /** Opening hours. Strings so they render as-is; edit freely. */
   hours: [
-    { days: 'Tuesday – Friday', open: '7:00 AM', close: '4:00 PM' },
-    { days: 'Saturday – Sunday', open: '8:00 AM', close: '3:00 PM' },
+    { days: 'Tuesday – Friday', open: '7:00 AM', close: '2:30 PM' },
+    { days: 'Saturday – Sunday', open: '7:00 AM', close: '2:30 PM' },
     { days: 'Monday', open: 'Closed', close: '' },
   ],
 
