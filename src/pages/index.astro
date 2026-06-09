@@ -436,7 +436,7 @@ const countdown = [
   .product-price { color: var(--burgundy); }
   .product-desc { margin-top: var(--space-2); font-size: 14px; color: var(--muted); }
   .product-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
-  .tag { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.5rem; border: 1px solid color-mix(in srgb, var(--clay) 40%, transparent); border-radius: var(--radius-pill); color: var(--clay); }
+  .tag { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.5rem; border: 1px solid color-mix(in srgb, var(--clay) 55%, transparent); border-radius: var(--radius-pill); color: var(--burgundy); }
 
   /* ================================ 8 · TESTIMONIAL ===== */
   .testimonial { padding-block: var(--space-9); text-align: center; }
@@ -494,11 +494,11 @@ const countdown = [
     padding: 0 0.9rem;
     border: 1px solid color-mix(in srgb, var(--surface-0) 30%, transparent);
     border-radius: var(--radius-md);
-    /* opaque dark fill so the light value text reads (and contrast tools see it) */
-    background: color-mix(in srgb, var(--surface-0) 10%, var(--ink));
+    /* opaque dark fill so the light value text reads (plain hex for a11y tools) */
+    background: #382c22;
     color: var(--surface-0);
   }
-  .news-row input::placeholder { color: color-mix(in srgb, var(--surface-0) 62%, var(--ink)); }
+  .news-row input::placeholder { color: #b3a695; }
 
   /* ===================================== Responsive ===== */
   @media (max-width: 860px) {

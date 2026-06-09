@@ -107,11 +107,11 @@ const explore = [
     padding: 0 0.9rem;
     border: 1px solid color-mix(in srgb, var(--surface-0) 30%, transparent);
     border-radius: var(--radius-md);
-    /* opaque dark fill so the light value text reads (and contrast tools see it) */
-    background: color-mix(in srgb, var(--surface-0) 10%, var(--ink));
+    /* opaque dark fill so the light value text reads (plain hex for a11y tools) */
+    background: #382c22;
     color: var(--surface-0);
   }
-  .foot-news-row input::placeholder { color: color-mix(in srgb, var(--surface-0) 62%, var(--ink)); }
+  .foot-news-row input::placeholder { color: #b3a695; }
   @media (max-width: 520px) {
     .foot-news-row { flex-direction: column; }
   }
