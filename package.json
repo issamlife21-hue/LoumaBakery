@@ -12,12 +12,14 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
     "astro": "^6.4.5",
     "motion": "^12.40.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "netlify-cli": "^26.1.0",
+    "png-to-ico": "^3.0.1",
     "typescript": "^6.0.3"
   }
 }

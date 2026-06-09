@@ -1,7 +1,7 @@
 ---
 import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { Face } from '../lib/brand';
+import { Face, Wordmark } from '../lib/brand';
 
 const c = (await getEntry('copy', 'notFound'))!.data;
 ---
@@ -9,7 +9,10 @@ const c = (await getEntry('copy', 'notFound'))!.data;
 <BaseLayout title="Not found" description={c.lede}>
   <section class="nf">
     <div class="container nf-inner">
-      <Face class="nf-mark" width={92} height={85} aria-hidden="true" />
+      <div class="nf-lockup">
+        <Face class="nf-mark" width={84} height={78} aria-hidden="true" />
+        <Wordmark class="nf-wordmark" width={150} height={96} aria-label={c.title} />
+      </div>
       <p class="eyebrow">{c.eyebrow}</p>
       <h1 class="nf-title">{c.title}</h1>
       {c.lede && <p class="nf-lede">{c.lede}</p>}
@@ -28,7 +31,9 @@ const c = (await getEntry('copy', 'notFound'))!.data;
     padding-block: var(--space-9);
   }
   .nf-inner { max-width: 560px; display: flex; flex-direction: column; align-items: center; }
-  .nf-mark { color: var(--red); margin-bottom: var(--space-5); }
+  .nf-lockup { display: flex; flex-direction: column; align-items: center; gap: var(--space-3); margin-bottom: var(--space-5); }
+  .nf-mark { color: var(--red); }
+  .nf-wordmark { color: var(--burgundy); height: auto; }
   .nf-title {
     margin-top: var(--space-3);
     font-family: var(--font-display);

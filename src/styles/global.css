@@ -323,6 +323,20 @@ a:hover {
   .form-grid { grid-template-columns: 1fr; }
 }
 
+/* Inline form confirmation / error messages (brand voice) */
+.form-msg { margin-top: var(--space-3); grid-column: 1 / -1; }
+.form-msg--success {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(18px, 1.8vw, 22px);
+  color: var(--burgundy);
+}
+.form-msg--error { color: var(--red); font-size: 15px; }
+.on-dark .form-msg--success,
+.site-foot .form-msg--success { color: var(--butter); }
+.on-dark .form-msg--error,
+.site-foot .form-msg--error { color: var(--coral); }
+
 /* ===================================================== Motion scaffolding
    Hidden initial states apply ONLY when the matching html class is present
    (set pre-paint from the live flags, and never under reduced-motion).

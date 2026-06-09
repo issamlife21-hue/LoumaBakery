@@ -8,7 +8,7 @@ const c = (await getEntry('copy', 'visit'))!.data;
 const { address, hours } = siteConfig;
 ---
 
-<BaseLayout title="Visit" description={c.lede}>
+<BaseLayout title="Visit" description={c.lede} schema="localbusiness">
   <header class="page-head">
     <div class="container">
       <p class="eyebrow">{c.eyebrow}</p>

@@ -17,6 +17,8 @@ interface Props {
   transparentNav?: boolean;
   /** Keep the page out of search indexes (internal pages). */
   noindex?: boolean;
+  /** schema.org structured data: 'bakery' (home), 'localbusiness' (visit), or none. */
+  schema?: 'bakery' | 'localbusiness';
 }
 
 const {
@@ -26,32 +28,74 @@ const {
   ogType = 'website',
   transparentNav = false,
   noindex = false,
+  schema,
 } = Astro.props;
 
 const pageTitle = title ? `${title} · ${siteConfig.name}` : `${siteConfig.name} — ${siteConfig.tagline}`;
 const canonical = new URL(Astro.url.pathname, SITE_URL).href;
 const ogImage = new URL(image, SITE_URL).href;
 
-// schema.org Bakery, assembled from the single config source.
-const jsonLd = {
-  '@context': 'https://schema.org',
-  '@type': 'Bakery',
-  name: siteConfig.name,
-  description: siteConfig.tagline,
-  url: SITE_URL,
-  telephone: siteConfig.phone,
-  email: siteConfig.email,
-  image: ogImage,
-  priceRange: '$$',
-  address: {
-    '@type': 'PostalAddress',
-    streetAddress: siteConfig.address.street,
-    addressLocality: siteConfig.address.city,
-    addressRegion: siteConfig.address.state,
-    postalCode: siteConfig.address.zip,
-    addressCountry: 'US',
-  },
+// schema.org structured data, assembled from the single config source.
+// Bakery on the home page; LocalBusiness (with opening hours) on /visit.
+const postalAddress = {
+  '@type': 'PostalAddress',
+  streetAddress: siteConfig.address.street,
+  addressLocality: siteConfig.address.city,
+  addressRegion: siteConfig.address.state,
+  postalCode: siteConfig.address.zip,
+  addressCountry: 'US',
 };
+const dayMap: Record<string, string[]> = {
+  'Tuesday – Friday': ['Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+  'Saturday – Sunday': ['Saturday', 'Sunday'],
+};
+const to24 = (t: string) => {
+  const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return undefined;
+  let h = parseInt(m[1], 10);
+  const min = m[2];
+  if (/pm/i.test(m[3]) && h !== 12) h += 12;
+  if (/am/i.test(m[3]) && h === 12) h = 0;
+  return `${String(h).padStart(2, '0')}:${min}`;
+};
+const openingHours = siteConfig.hours
+  .filter((h) => h.close && dayMap[h.days])
+  .map((h) => ({
+    '@type': 'OpeningHoursSpecification',
+    dayOfWeek: dayMap[h.days].map((d) => `https://schema.org/${d}`),
+    opens: to24(h.open),
+    closes: to24(h.close),
+  }));
+
+const jsonLd =
+  schema === 'localbusiness'
+    ? {
+        '@context': 'https://schema.org',
+        '@type': 'LocalBusiness',
+        name: siteConfig.name,
+        description: siteConfig.tagline,
+        url: SITE_URL,
+        telephone: siteConfig.phone,
+        email: siteConfig.email,
+        image: ogImage,
+        priceRange: '$$',
+        address: postalAddress,
+        openingHoursSpecification: openingHours,
+      }
+    : schema === 'bakery'
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'Bakery',
+          name: siteConfig.name,
+          description: siteConfig.tagline,
+          url: SITE_URL,
+          telephone: siteConfig.phone,
+          email: siteConfig.email,
+          image: ogImage,
+          priceRange: '$$',
+          address: postalAddress,
+        }
+      : null;
 ---
 
 <html lang="en" class={features.grainTexture ? 'grain' : ''}>
@@ -66,9 +110,13 @@ const jsonLd = {
     <meta name="theme-color" content="#2A1F18" />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
-    <!-- Favicons (face mark) -->
+    <!-- Favicons + app icons (generated from face.svg) -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
 
     <!-- Open Graph -->
     <meta property="og:type" content={ogType} />
@@ -92,8 +140,8 @@ const jsonLd = {
       href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;0,600;1,300;1,500&family=Cormorant+SC:wght@500;600&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap"
     />
 
-    <!-- schema.org Bakery -->
-    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />
+    <!-- schema.org structured data (home: Bakery, visit: LocalBusiness) -->
+    {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} is:inline />}
 
     {features.pageTransition && <ClientRouter />}
 
@@ -173,12 +221,11 @@ const jsonLd = {
     <main id="main">
       <slot />
     </main>
-    <Footer>
-      <slot name="newsletter" slot="newsletter" />
-    </Footer>
+    <Footer />
 
     <script>
       import '../scripts/motion.ts';
+      import '../scripts/forms.ts';
     </script>
   </body>
 </html>

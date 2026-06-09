@@ -17,9 +17,30 @@ const explore = [
 
 <footer class="site-foot on-dark">
   <div class="container foot-inner">
-    <!-- Newsletter region (page supplies the form via slot) -->
+    <!-- Newsletter — on every page's footer. A page may override via the slot. -->
     <div class="foot-newsletter">
-      <slot name="newsletter" />
+      <slot name="newsletter">
+        <div class="foot-news">
+          <p class="foot-news-h">Get word when we open</p>
+          <form
+            name="newsletter"
+            method="POST"
+            data-netlify="true"
+            netlify-honeypot="bot-field"
+            class="foot-news-form"
+            data-success="You're on the list. We'll write when the ovens are warm."
+            data-error="That didn't send. Try again, or email hello@loumabakery.com."
+          >
+            <input type="hidden" name="form-name" value="newsletter" />
+            <p class="visually-hidden"><label>Don’t fill this out: <input name="bot-field" /></label></p>
+            <label class="visually-hidden" for="foot-news-email">Email address</label>
+            <div class="foot-news-row">
+              <input id="foot-news-email" type="email" name="email" required placeholder="you@email.com" autocomplete="email" />
+              <button type="submit" class="btn btn-coral">Notify me</button>
+            </div>
+          </form>
+        </div>
+      </slot>
     </div>
 
     <div class="foot-cols">
@@ -85,6 +106,28 @@ const explore = [
     padding-bottom: var(--space-7);
     margin-bottom: var(--space-7);
     border-bottom: 1px solid color-mix(in srgb, var(--surface-0) 14%, transparent);
+  }
+  .foot-news { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-4); }
+  .foot-news-h {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(20px, 2.4vw, 28px);
+    color: var(--surface-0);
+  }
+  .foot-news-form { flex: 1; min-width: 280px; max-width: 460px; }
+  .foot-news-row { display: flex; gap: var(--space-2); }
+  .foot-news-row input {
+    flex: 1;
+    min-height: 48px;
+    padding: 0 0.9rem;
+    border: 1px solid color-mix(in srgb, var(--surface-0) 28%, transparent);
+    border-radius: var(--radius-md);
+    background: color-mix(in srgb, var(--surface-0) 8%, transparent);
+    color: var(--surface-0);
+  }
+  .foot-news-row input::placeholder { color: color-mix(in srgb, var(--surface-0) 45%, transparent); }
+  @media (max-width: 520px) {
+    .foot-news-row { flex-direction: column; }
   }
 
   .foot-cols {

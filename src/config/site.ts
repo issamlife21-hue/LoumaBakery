@@ -36,11 +36,13 @@ export const siteConfig = {
 
   // --- External links (ALL PLACEHOLDERS — replace when accounts exist) ---
   links: {
-    uberEats: 'https://www.ubereats.com/', // PLACEHOLDER — real Uber Eats store URL
-    paypalDonate: 'https://www.paypal.com/donate', // PLACEHOLDER — real PayPal donate link
-    instagram: 'https://www.instagram.com/', // PLACEHOLDER — @loumabakery handle URL
+    uberEats: 'https://www.ubereats.com/', // PLACEHOLDER — swap before launch (real Uber Eats store URL)
+    paypalDonate: 'https://www.paypal.com/donate', // PLACEHOLDER — swap before launch (real PayPal donate link)
+    instagram: 'https://www.instagram.com/', // PLACEHOLDER — swap before launch (@loumabakery handle URL)
     /** Order/contact form endpoint. Netlify Forms by default; swap to a Formspree URL if used. */
-    formspreeOrNetlify: '', // PLACEHOLDER — empty = use Netlify Forms (form posts to self)
+    formspreeOrNetlify: '', // PLACEHOLDER — swap before launch (empty = use Netlify Forms)
+    /** Hero background video URL. Empty = poster/placeholder only; wire when footage lands. */
+    heroVideo: '', // PLACEHOLDER — swap before launch (hero background video MP4/WebM)
   },
 } as const;
 

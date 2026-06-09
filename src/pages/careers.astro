@@ -48,7 +48,15 @@ const roles = c.roles ?? [];
   <section class="apply" id="apply" data-anim={f.reveal ? 'reveal' : undefined}>
     <div class="container narrow">
       <div class="sec-head"><p class="eyebrow">Apply</p><h2>Tell us about you</h2></div>
-      <form name="careers" method="POST" data-netlify="true" netlify-honeypot="bot-field" class="form-grid">
+      <form
+        name="careers"
+        method="POST"
+        data-netlify="true"
+        netlify-honeypot="bot-field"
+        class="form-grid"
+        data-success="Thanks for reaching out — we'll be in touch soon."
+        data-error="That didn't send. Try again, or email hello@loumabakery.com."
+      >
         <input type="hidden" name="form-name" value="careers" />
         <p class="visually-hidden"><label>Don’t fill this out: <input name="bot-field" /></label></p>
         <div class="field"><label for="job-name">Name</label><input id="job-name" name="name" type="text" required autocomplete="name" /></div>
