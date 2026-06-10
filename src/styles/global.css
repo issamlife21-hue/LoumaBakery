@@ -283,6 +283,7 @@ img.img-cover { display: block; width: 100%; height: 100%; object-fit: cover; }
 .ph-film { aspect-ratio: 3 / 4; border-radius: var(--radius-md); }
 .ph-ig { aspect-ratio: 1; border-radius: var(--radius-sm); }
 .block-numeral-img { aspect-ratio: 4 / 5; border-radius: var(--radius-lg); }
+.hero-ed-photo { aspect-ratio: 4 / 5; }
 .chapter-img { aspect-ratio: 4 / 5; border-radius: var(--radius-lg); }
 .founder-img { aspect-ratio: 3 / 4; border-radius: var(--radius-lg); }
 .ing-img { aspect-ratio: 1; border-radius: var(--radius-md); }
@@ -294,6 +295,8 @@ img.img-cover { display: block; width: 100%; height: 100%; object-fit: cover; }
 @media (max-width: 860px) {
   .block--numeral .block-numeral-img { order: -1; }
   .duo-img { position: static; width: 100%; }
+  /* Editorial-hero photo reads as a wide frame on phones, not a tall column. */
+  .hero-ed-photo { aspect-ratio: 16 / 10; }
 }
 @media (max-width: 820px) {
   .chapter-img,

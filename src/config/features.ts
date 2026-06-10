@@ -77,3 +77,9 @@ export const features = {
 } as const;
 
 export type FeatureFlag = keyof typeof features;
+
+/** Hero variant. 'editorial' = type-led headline on cream with a self-drawing
+ *  baguette and a framed photo; 'photo' = the full-bleed photo + glass panel.
+ *  Flip to 'photo' to restore exactly the previous hero. */
+export type HeroStyle = 'editorial' | 'photo';
+export const heroStyle: HeroStyle = 'editorial';
