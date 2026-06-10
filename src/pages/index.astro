@@ -5,6 +5,7 @@ import { siteConfig } from '../config/site';
 import { features as f } from '../config/features';
 import type { ImageMetadata } from 'astro';
 import Img from '../components/Img.astro';
+import Sketch from '../components/Sketch.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
 import images from '../data/images.json';
 import heroFallback from '../assets/placeholders/hero.jpg';
@@ -71,6 +72,9 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
       <h2 class="editorial-line">{home.craftLine}</h2>
       {home.body.map((p) => <p class="editorial-body">{p}</p>)}
       {home.missionLine && <p class="editorial-mission">{home.missionLine}</p>}
+      <div class="home-break" aria-hidden="true">
+        <Sketch name="baguette" width={200} height={71} color="var(--clay)" draw={f.scrollDraw} />
+      </div>
     </div>
   </section>
 
@@ -129,6 +133,11 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
       ))}
     </div>
   </section>
+
+  {/* Section break ornament */}
+  <div class="home-break home-break--toast container" aria-hidden="true">
+    <Sketch name="toast" width={84} height={97} color="var(--clay)" draw={f.scrollDraw} />
+  </div>
 
   {/* =================================== 7 · PRODUCT GRID ========= */}
   <section class="menu-sec section" data-anim={f.reveal ? 'reveal' : undefined}>
@@ -215,6 +224,11 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
      full-bleed signature block, the burgundy marquee ribbon, and the footer.
      Sections separate by rhythm (consistent vertical padding), not color. */
   .section { padding-block: clamp(3.25rem, 7vw, 6rem); }
+
+  /* Hand-drawn section-break ornaments. */
+  .home-break { display: flex; justify-content: center; }
+  .editorial-inner .home-break { margin-top: var(--space-7); }
+  .home-break--toast { padding-block: var(--space-6); }
 
   /* ===================================== 1 · HERO ===== */
   .hero {

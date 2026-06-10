@@ -247,28 +247,27 @@ const builders: Record<string, () => void> = {
     });
   },
 
-  // --- Scroll-draw sketches (stroke) / reveal (fill) ---
+  // --- Scroll-draw sketches: ONE-SHOT timed draw on enter, staggered subpaths ---
   scrollDraw() {
     $('[data-anim="scroll-draw"]').forEach((svg) => {
       const paths = Array.from(svg.querySelectorAll<SVGPathElement>('path'));
       const strokePaths = paths.filter((p) => getComputedStyle(p).fill === 'none' || svg.getAttribute('fill') === 'none' || svg.getAttribute('stroke'));
       if (strokePaths.length) {
-        strokePaths.forEach((p) => {
-          const len = p.getTotalLength();
-          p.style.strokeDasharray = String(len);
-          p.style.strokeDashoffset = String(len);
-        });
-        // Ease the scroll progress so the line accelerates/eases like a hand
-        // drawing, rather than a constant-speed machine wipe.
-        const easeDraw = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-        const stop = scroll(
-          (prog: number) => {
-            const e = easeDraw(Math.min(1, Math.max(0, prog)));
-            strokePaths.forEach((p) => { const len = p.getTotalLength(); p.style.strokeDashoffset = String(len * (1 - e)); });
-          },
-          { target: svg, offset: ['start 0.9', 'end 0.55'] },
-        );
-        add('scrollDraw', () => { stop(); strokePaths.forEach((p) => { p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; }); });
+        // Hide each subpath by its own length, then draw it in ONCE when seen
+        // (timed, not scroll-scrubbed). Keep each path's baked stroke width.
+        const lens = strokePaths.map((p) => p.getTotalLength());
+        strokePaths.forEach((p, i) => { p.style.strokeDasharray = String(lens[i]); p.style.strokeDashoffset = String(lens[i]); });
+        let drawn = false;
+        const fn = inView(svg, () => {
+          if (drawn) return; // one shot
+          drawn = true;
+          // ~1.1s ease-out per subpath, ~80ms stagger → reads like a hand sketching.
+          strokePaths.forEach((p, i) => {
+            animate(p, { strokeDashoffset: [lens[i], 0] }, { duration: 1.1, delay: i * 0.08, ease: EASE });
+          });
+          return () => {};
+        }, { amount: 0.4 });
+        add('scrollDraw', () => { fn(); strokePaths.forEach((p) => { p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; }); });
       } else {
         // filled mark: reveal/scale instead of stroke draw
         const fn = inView(svg, () => {

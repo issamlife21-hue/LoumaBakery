@@ -1,0 +1,64 @@
+---
+import baguetteRaw from '../assets/brand/baguette.svg?raw';
+import toastRaw from '../assets/brand/toast.svg?raw';
+
+/**
+ * Hand-drawn sketch ornament (baguette / toast). Renders the committed brand
+ * SVG, splitting its single path into one <path> per subpath so the draw-on
+ * effect can stagger them like a hand sketching. The baked roughen filter
+ * (feTurbulence + feDisplacementMap) and stroke widths come straight from the
+ * source file — never overridden here. Recolors via CSS `color` (currentColor).
+ *
+ * `draw` attaches the scroll-draw hook (gate it on the feature flag at the call
+ * site). With motion off / reduced-motion the mark just shows static + filled-in.
+ */
+const RAW: Record<string, string> = { baguette: baguetteRaw, toast: toastRaw };
+
+interface Props {
+  name: 'baguette' | 'toast';
+  width?: number;
+  height?: number;
+  class?: string;
+  /** Attach the one-shot scroll-draw hook. */
+  draw?: boolean;
+  /** Accessible label; omit for a decorative mark (aria-hidden). */
+  label?: string;
+  /** Stroke color (drives currentColor). Set here, not via parent — Astro
+      scoped styles don't reach this child component. */
+  color?: string;
+}
+const { name, width, height, class: className, draw = false, label, color = 'var(--red)' } = Astro.props;
+
+const raw = RAW[name];
+const viewBox = (raw.match(/viewBox="([^"]*)"/) || [])[1] ?? '0 0 100 100';
+const defs = (raw.match(/<defs>[\s\S]*?<\/defs>/) || [''])[0];
+const d = (raw.match(/\sd="([^"]*)"/) || [])[1] ?? '';
+const strokeWidth = (raw.match(/stroke-width="([^"]*)"/) || [])[1] ?? '3';
+const filterId = (raw.match(/filter id="([^"]*)"/) || [])[1];
+const filterRef = filterId ? `url(#${filterId})` : undefined;
+// One stroke per subpath so the draw can stagger.
+const subpaths = d.split(/(?=[Mm])/).map((s) => s.trim()).filter(Boolean);
+---
+
+<svg
+  viewBox={viewBox}
+  width={width}
+  height={height}
+  class={`sketch ${className ?? ''}`.trim()}
+  role={label ? 'img' : undefined}
+  aria-label={label || undefined}
+  aria-hidden={label ? undefined : 'true'}
+  fill="none"
+  stroke="currentColor"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  style={`color: ${color}`}
+  data-anim={draw ? 'scroll-draw' : undefined}
+>
+  <Fragment set:html={defs} />
+  {subpaths.map((s) => <path d={s} stroke-width={strokeWidth} filter={filterRef} />)}
+</svg>
+
+<style>
+  .sketch { display: block; height: auto; overflow: visible; }
+</style>

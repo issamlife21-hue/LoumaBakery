@@ -4,6 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { features as f } from '../config/features';
 import type { ImageMetadata } from 'astro';
 import { Face } from '../lib/brand';
+import Sketch from '../components/Sketch.astro';
 import Img from '../components/Img.astro';
 import images from '../data/images.json';
 import portraitImg from '../assets/placeholders/portrait.jpg';
@@ -38,6 +39,11 @@ const founder = c.founder;
       {c.body.map((p) => <p class="story-p">{p}</p>)}
     </div>
   </section>
+
+  {/* Section break ornament */}
+  <div class="story-break" aria-hidden="true">
+    <Sketch name="toast" width={92} height={107} color="var(--clay)" draw={f.scrollDraw} />
+  </div>
 
   {/* Chapters rail (alternating) */}
   <div class="chapters" data-anim={f.storyRail ? 'story-rail' : undefined}>
@@ -94,6 +100,7 @@ const founder = c.founder;
 
 <style>
   .narrow { max-width: 720px; }
+  .story-break { display: flex; justify-content: center; padding-block: var(--space-2) var(--space-6); }
   .story-intro { padding-block: var(--space-8); }
   .story-p { font-size: clamp(18px, 1.6vw, 21px); color: var(--body); }
   .story-p + .story-p { margin-top: var(--space-4); }

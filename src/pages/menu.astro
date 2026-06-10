@@ -4,6 +4,7 @@ import { getImage } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { features as f } from '../config/features';
+import Sketch from '../components/Sketch.astro';
 
 const c = (await getEntry('copy', 'menu'))!.data;
 const menu = (await getCollection('menu')).sort((a, b) => a.data.order - b.data.order);
@@ -20,11 +21,12 @@ for (const cat of menu) {
 ---
 
 <BaseLayout title="Menu" description={c.lede}>
-  <header class="page-head">
+  <header class="page-head menu-head">
     <div class="container">
       <p class="eyebrow">{c.eyebrow}</p>
       <h1>{c.title}</h1>
       {c.lede && <p class="lede">{c.lede}</p>}
+      <Sketch name="baguette" width={188} height={67} class="head-sketch" color="var(--clay)" draw={f.scrollDraw} />
     </div>
   </header>
 
@@ -134,6 +136,20 @@ for (const cat of menu) {
     max-width: 70ch;
   }
   .allergen p:last-child { margin-top: var(--space-2); color: var(--body); }
+
+  /* Hand-drawn baguette tucked into the header corner. */
+  .menu-head { position: relative; overflow: hidden; }
+  .menu-head .container { position: relative; }
+  .head-sketch {
+    position: absolute;
+    inset-inline-end: 0;
+    inset-block-end: 0;
+    width: clamp(120px, 16vw, 188px);
+    height: auto;
+  }
+  @media (max-width: 680px) {
+    .head-sketch { position: static; margin-top: var(--space-5); width: 150px; }
+  }
 </style>
 
 <script>
