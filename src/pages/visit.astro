@@ -6,6 +6,14 @@ import { features as f } from '../config/features';
 
 const c = (await getEntry('copy', 'visit'))!.data;
 const { address, hours } = siteConfig;
+
+// Only ever frame a real Google Maps embed. A CMS editor can change this string,
+// so validate the origin at build time; anything else falls back to the static
+// placeholder rather than framing an arbitrary site under our domain.
+const mapEmbed =
+  typeof c.mapEmbed === 'string' && /^https:\/\/www\.google\.com\/maps\/embed/.test(c.mapEmbed)
+    ? c.mapEmbed
+    : undefined;
 ---
 
 <BaseLayout title="Visit" description={c.lede} schema="localbusiness">
@@ -53,13 +61,14 @@ const { address, hours } = siteConfig;
       </div>
 
       <div class="visit-map">
-        {c.mapEmbed ? (
+        {mapEmbed ? (
           <iframe
             class="map-frame"
-            src={c.mapEmbed}
+            src={mapEmbed}
             title={`Map to ${siteConfig.name}`}
             loading="lazy"
             referrerpolicy="no-referrer-when-downgrade"
+            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
             allowfullscreen
           ></iframe>
         ) : (

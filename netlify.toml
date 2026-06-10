@@ -1,0 +1,31 @@
+# Louma Bakery — build + security headers (committed, in-repo source of truth).
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# ----------------------------------------------------------------------------
+# Security headers for the whole site.
+# CSP whitelists exactly what the site uses: self, inline styles/scripts that
+# Astro emits, Google Fonts (until self-hosted), and the Google Maps embed.
+# frame-ancestors/X-Frame-Options block clickjacking.
+# ----------------------------------------------------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; img-src 'self' data:; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; frame-src https://www.google.com; connect-src 'self'"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+
+# ----------------------------------------------------------------------------
+# /admin (Decap CMS) needs a looser CSP: the pinned unpkg bundle, DecapBridge
+# auth/gateway, and the image hosts the media library uses. This rule is more
+# specific and comes after /*, so its CSP wins for the editor only.
+# ----------------------------------------------------------------------------
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com data:; frame-src https://*.decapbridge.com; connect-src 'self' https://*.decapbridge.com https://api.github.com https://unpkg.com; worker-src 'self' blob:"
