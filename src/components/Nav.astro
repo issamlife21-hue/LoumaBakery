@@ -18,6 +18,9 @@ const links = [
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const isActive = (href: string) => path === href;
+
+// Order link is a placeholder until a real Uber Eats URL is set.
+const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 'https://www.ubereats.com/';
 ---
 
 <nav class="site-nav" data-transparent={String(transparent)} aria-label="Primary">
@@ -37,9 +40,11 @@ const isActive = (href: string) => path === href;
     </ul>
 
     <div class="nav-right">
-      <a class="order-cta" href={siteConfig.links.uberEats} target="_blank" rel="noopener">
-        Order
-      </a>
+      {orderReady ? (
+        <a class="order-cta" href={siteConfig.links.uberEats} target="_blank" rel="noopener">Order</a>
+      ) : (
+        <span class="order-cta is-inert" aria-disabled="true" title="Online ordering opens with the bakery.">Ordering soon</span>
+      )}
       <button
         type="button"
         class="nav-toggle"
@@ -67,9 +72,11 @@ const isActive = (href: string) => path === href;
         ))
       }
       <li>
-        <a class="order-cta order-cta--block" href={siteConfig.links.uberEats} target="_blank" rel="noopener">
-          Order on Uber Eats
-        </a>
+        {orderReady ? (
+          <a class="order-cta order-cta--block" href={siteConfig.links.uberEats} target="_blank" rel="noopener">Order on Uber Eats</a>
+        ) : (
+          <span class="order-cta order-cta--block is-inert" aria-disabled="true">Ordering soon</span>
+        )}
       </li>
     </ul>
   </aside>
@@ -169,6 +176,20 @@ const isActive = (href: string) => path === href;
     background: var(--red);
     color: var(--surface-0);
   }
+  /* Inert "Ordering soon" until a real Order link exists. */
+  .order-cta.is-inert {
+    background: color-mix(in srgb, var(--burgundy) 45%, var(--muted));
+    color: color-mix(in srgb, var(--butter) 85%, transparent);
+    cursor: default;
+  }
+
+  /* Hide-on-scroll-down / show-on-scroll-up (keeps the glass state). */
+  .site-nav { transition: transform 0.35s var(--ease-out); will-change: transform; }
+  .site-nav[data-hidden='true'] { transform: translateY(-100%); }
+  @media (prefers-reduced-motion: reduce) {
+    .site-nav { transition: none; }
+    .site-nav[data-hidden='true'] { transform: none; }
+  }
 
   /* --- Mobile toggle (hidden on desktop) --- */
   .nav-toggle {
@@ -267,14 +288,25 @@ const isActive = (href: string) => path === href;
   const panel = document.querySelector<HTMLElement>('#mobile-panel');
   const overlay = document.querySelector<HTMLElement>('[data-overlay]');
 
-  // --- Scroll glass (throttled via rAF) ---
+  // --- Scroll glass + hide-on-scroll-down / show-on-scroll-up (rAF throttled) ---
   if (nav) {
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let ticking = false;
+    let lastY = window.scrollY;
     const onScroll = () => {
       if (ticking) return;
       ticking = true;
       requestAnimationFrame(() => {
-        nav.dataset.scrolled = window.scrollY > 8 ? 'true' : 'false';
+        const y = window.scrollY;
+        nav.dataset.scrolled = y > 8 ? 'true' : 'false';
+        // Tuck away when scrolling down past the nav; reveal on the way up.
+        // Never hide while the mobile menu is open, near the top, or reduced-motion.
+        if (!reduce && nav.dataset.menuOpen !== 'true') {
+          const goingDown = y > lastY;
+          if (goingDown && y > 120) nav.dataset.hidden = 'true';
+          else if (!goingDown) nav.dataset.hidden = 'false';
+        }
+        lastY = y;
         ticking = false;
       });
     };
@@ -290,6 +322,8 @@ const isActive = (href: string) => path === href;
       ).filter((el) => el.offsetParent !== null);
 
     const open = () => {
+      // Keep the bar visible while the menu is open.
+      if (nav) { nav.dataset.menuOpen = 'true'; nav.dataset.hidden = 'false'; }
       panel.hidden = false;
       overlay.hidden = false;
       // next frame so the transition runs
@@ -305,6 +339,7 @@ const isActive = (href: string) => path === href;
     };
 
     const close = () => {
+      if (nav) nav.dataset.menuOpen = 'false';
       panel.dataset.open = 'false';
       panel.setAttribute('aria-hidden', 'true');
       toggle.setAttribute('aria-expanded', 'false');

@@ -3,7 +3,6 @@ import { getEntry, getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { siteConfig } from '../config/site';
 import { features as f } from '../config/features';
-import { Baguette } from '../lib/brand';
 import type { ImageMetadata } from 'astro';
 import Img from '../components/Img.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
@@ -20,47 +19,28 @@ const pick = (name?: string): ImageMetadata | undefined => {
   if (!name) return undefined;
   return photos[`../assets/img/${name.split('/').pop()}`];
 };
-const imageMap = images as Record<string, string>;
 const heroPhoto = pick(images.hero) ?? heroFallback;
 
 // --- All content pulled from collections / config. No hardcoded copy. ---
 const home = (await getEntry('copy', 'home'))!.data;
-
 const menu = (await getCollection('menu')).sort((a, b) => a.data.order - b.data.order);
 const marquee = (await getCollection('marquee')).sort((a, b) => a.data.order - b.data.order);
 const chapters = (await getCollection('storyChapters')).sort((a, b) => a.data.order - b.data.order);
 const testimonials = await getCollection('testimonials');
-const igTiles = await getCollection('instagramTiles');
 
 const lead = testimonials[0]?.data;
 const altBlocks = chapters.slice(0, 3);
-// Flatten menu items for the "from the oven" film strip.
-const ovenItems = menu.flatMap((cat) => cat.data.items);
 
-// --- Countdown: build-time snapshot; the live tick is wired by the
-//     `countdown` flag (data-countdown / data-target hooks) in a later phase. ---
-const opening = new Date(siteConfig.openingDateISO);
-let rem = Math.max(0, opening.getTime() - new Date().getTime());
-const DAY = 86_400_000, HR = 3_600_000, MIN = 60_000;
-const cDays = Math.floor(rem / DAY); rem -= cDays * DAY;
-const cHours = Math.floor(rem / HR); rem -= cHours * HR;
-const cMins = Math.floor(rem / MIN); rem -= cMins * MIN;
-const cSecs = Math.floor(rem / 1000);
-const pad = (n: number) => String(n).padStart(2, '0');
-const countdown = [
-  { label: 'Days', value: pad(cDays) },
-  { label: 'Hours', value: pad(cHours) },
-  { label: 'Minutes', value: pad(cMins) },
-  { label: 'Seconds', value: pad(cSecs) },
-];
+// Order link is a placeholder until a real Uber Eats URL is set — render the
+// button inert ("Ordering soon") rather than a dead link. Becomes a real link
+// the moment a non-default URL lands in settings.
+const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 'https://www.ubereats.com/';
 ---
 
 <BaseLayout transparentNav schema="bakery">
   {/* ============================================ 1 · HERO ========= */}
-  <section class="hero" data-fx-kenburns={f.kenBurns ? '' : undefined}>
+  <section class="hero">
     <Img src={heroPhoto} alt="" class="hero-bg" anim={f.kenBurns ? 'ken-burns' : undefined} priority sizes="100vw" />
-    {/* Hero video slot — wired but empty until footage lands. Only rendered
-        once siteConfig.links.heroVideo is set (avoids a sourceless <video>). */}
     {siteConfig.links.heroVideo && (
       <video class="hero-video" data-hero-video={siteConfig.links.heroVideo} autoplay muted loop playsinline aria-hidden="true">
         <source src={siteConfig.links.heroVideo} />
@@ -72,56 +52,29 @@ const countdown = [
         <p class="eyebrow hero-eyebrow" data-anim={f.typewriter ? 'typewriter' : undefined}>{home.eyebrow}</p>
         <h1 class="hero-headline" data-anim={f.weightBreath ? 'weight-breath' : undefined}>{home.title}</h1>
         {home.lede && <p class="hero-lede">{home.lede}</p>}
-        <a class="btn btn-primary hero-cta" href={siteConfig.links.uberEats} target="_blank" rel="noopener" data-fx-magnetic={f.magneticButtons ? '' : undefined}>
-          {home.cta?.label ?? 'Order'}
-        </a>
+        {orderReady ? (
+          <a class="btn btn-primary hero-cta" href={siteConfig.links.uberEats} target="_blank" rel="noopener" data-fx-magnetic={f.magneticButtons ? '' : undefined}>
+            {home.cta?.label ?? 'Order'}
+          </a>
+        ) : (
+          <button class="btn btn-primary hero-cta" type="button" disabled aria-disabled="true" title="Online ordering opens with the bakery.">
+            Ordering soon
+          </button>
+        )}
       </div>
     </div>
-    <div class="hero-cue" aria-hidden="true"><span class="hero-cue-dot"></span></div>
   </section>
 
-  {/* ====================================== 2 · COUNTDOWN ========= */}
-  <section class="countdown" aria-label="Countdown to opening" data-anim={f.countdown ? 'countdown' : undefined} data-target={siteConfig.openingDateISO}>
-    <div class="container countdown-inner">
-      <p class="eyebrow">{home.countdownLabel}</p>
-      <ul class="countdown-units" role="list">
-        {countdown.map((u) => (
-          <li class="cd-unit">
-            <span class="cd-value mono" data-unit={u.label.toLowerCase()}>{u.value}</span>
-            <span class="cd-label mono">{u.label}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-  </section>
-
-  {/* ====================================== 3 · EDITORIAL ========= */}
-  <section class="editorial" data-anim={f.reveal ? 'reveal' : undefined}>
+  {/* ====================================== 2 · EDITORIAL (thesis) = */}
+  <section class="editorial section" data-anim={f.reveal ? 'reveal' : undefined}>
     <div class="editorial-inner">
       <h2 class="editorial-line">{home.craftLine}</h2>
       {home.body.map((p) => <p class="editorial-body">{p}</p>)}
+      {home.missionLine && <p class="editorial-mission">{home.missionLine}</p>}
     </div>
   </section>
 
-  {/* ============================ 4 · BAGUETTE DIVIDER + MISSION === */}
-  <section class="divider" aria-hidden={home.missionLine ? undefined : 'true'}>
-    <Baguette class="divider-sketch" width={260} height={93} aria-hidden="true" data-anim={f.scrollDraw ? 'scroll-draw' : undefined} />
-    {home.missionLine && <p class="divider-line">{home.missionLine}</p>}
-  </section>
-
-  {/* ======================================= 5 · MARQUEE ========= */}
-  <section class="marquee" aria-label="Louma in a few words" data-anim={f.marquee ? 'marquee' : undefined}>
-    <div class="marquee-track">
-      {marquee.map((m) => (
-        <span class="marquee-item">
-          <span>{m.data.text}</span>
-          <span class="marquee-dot" aria-hidden="true">·</span>
-        </span>
-      ))}
-    </div>
-  </section>
-
-  {/* ==================================== 6 · ALT-BLOCKS ========= */}
+  {/* ==================================== 3 · SIGNATURE (full-bleed) */}
   {altBlocks[0] && (
     <section class="block block--fullbleed" data-anim={f.parallax ? 'parallax' : undefined}>
       <Img src={pick(images.story1) ?? featureImg} alt="" class="block-bg" anim={f.kenBurns ? 'ken-burns' : undefined} sizes="100vw" />
@@ -134,8 +87,9 @@ const countdown = [
     </section>
   )}
 
+  {/* ==================================== 4 · NUMERAL block ======== */}
   {altBlocks[1] && (
-    <section class="block block--numeral" data-anim={f.reveal ? 'reveal' : undefined}>
+    <section class="block block--numeral section" data-anim={f.reveal ? 'reveal' : undefined}>
       <div class="container block-numeral-grid">
         <div class="block-numeral-text">
           <span class="big-numeral" aria-hidden="true">{altBlocks[1].data.eyebrow ?? '02'}</span>
@@ -147,8 +101,9 @@ const countdown = [
     </section>
   )}
 
+  {/* ==================================== 5 · DUO block =========== */}
   {altBlocks[2] && (
-    <section class="block block--duo" data-anim={f.reveal ? 'reveal' : undefined}>
+    <section class="block block--duo section" data-anim={f.reveal ? 'reveal' : undefined}>
       <div class="container block-duo-grid">
         <div class="block-duo-imgs">
           <Img src={pick(images.story3) ?? portraitImg} alt={altBlocks[2].data.title} class="duo-img duo-img--1" tilt={f.imageTilt} sizes="(max-width: 860px) 50vw, 30vw" />
@@ -163,8 +118,20 @@ const countdown = [
     </section>
   )}
 
+  {/* ======================================= 6 · MARQUEE (accent) = */}
+  <section class="marquee" aria-label="Louma in a few words" data-anim={f.marquee ? 'marquee' : undefined}>
+    <div class="marquee-track">
+      {marquee.map((m) => (
+        <span class="marquee-item">
+          <span>{m.data.text}</span>
+          <span class="marquee-dot" aria-hidden="true">·</span>
+        </span>
+      ))}
+    </div>
+  </section>
+
   {/* =================================== 7 · PRODUCT GRID ========= */}
-  <section class="menu-sec" data-anim={f.reveal ? 'reveal' : undefined}>
+  <section class="menu-sec section" data-anim={f.reveal ? 'reveal' : undefined}>
     <div class="container">
       <header class="sec-head">
         <p class="eyebrow">The menu</p>
@@ -176,7 +143,7 @@ const countdown = [
           <ul class="product-grid" role="list">
             {cat.data.items.map((item) => (
               <li class="product-card" data-fx-tilt={f.cardTilt ? '' : undefined} data-fx-lift={f.hoverLift ? '' : undefined}>
-                <Img src={pick(item.image) ?? landscapeImg} alt={item.name} class="product-img" sizes="(max-width: 520px) 90vw, 280px" />
+                <Img src={pick(item.image) ?? landscapeImg} alt={item.name} class="product-img" sizes="(max-width: 520px) 90vw, 300px" />
                 <div class="product-meta">
                   <div class="product-row">
                     <h4 class="product-name">{item.name}</h4>
@@ -199,7 +166,7 @@ const countdown = [
 
   {/* ==================================== 8 · TESTIMONIAL ========= */}
   {lead && (
-    <section class="testimonial" data-anim={f.reveal ? 'reveal' : undefined}>
+    <section class="testimonial section" data-anim={f.reveal ? 'reveal' : undefined}>
       <figure class="container testimonial-inner">
         <blockquote class="testimonial-quote">“{lead.quote}”</blockquote>
         <figcaption class="testimonial-by mono">
@@ -209,48 +176,8 @@ const countdown = [
     </section>
   )}
 
-  {/* ===================================== 9 · FILM STRIP ========= */}
-  <section class="filmstrip" data-anim={f.filmStrip ? 'film-strip' : undefined}>
-    <div class="container sec-head">
-      <p class="eyebrow">In the case</p>
-      <h2>{home.ovenTitle}</h2>
-    </div>
-    <ul class="filmstrip-track" role="list">
-      {ovenItems.map((item) => (
-        <li class="film-frame">
-          <Img src={pick(item.image) ?? portraitImg} alt={item.name} class="ph-film" sizes="300px" />
-          <p class="film-cap mono">{item.name}</p>
-        </li>
-      ))}
-    </ul>
-  </section>
-
-  {/* ================================= 10 · INSTAGRAM GRID ======== */}
-  <section class="ig" data-anim={f.instagramGrid ? 'instagram-grid' : undefined}>
-    <div class="container sec-head">
-      <p class="eyebrow">@loumabakery</p>
-      <h2>Lately</h2>
-    </div>
-    <ul class="ig-grid container" role="list">
-      {igTiles.map((tile, i) => {
-        const igSrc = pick(imageMap[`ig${i + 1}`]) ?? squareImg;
-        return (
-          <li class="ig-tile">
-            {tile.data.href ? (
-              <a href={tile.data.href} target="_blank" rel="noopener">
-                <Img src={igSrc} alt={tile.data.alt} class="ph-ig" sizes="(max-width: 860px) 50vw, 33vw" />
-              </a>
-            ) : (
-              <Img src={igSrc} alt={tile.data.alt} class="ph-ig" sizes="(max-width: 860px) 50vw, 33vw" />
-            )}
-          </li>
-        );
-      })}
-    </ul>
-  </section>
-
-  {/* ============================ 11 · FIND US + NEWSLETTER ======= */}
-  <section class="findus" data-anim={f.reveal ? 'reveal' : undefined}>
+  {/* ============================ 9 · FIND US + NEWSLETTER ======= */}
+  <section class="findus section" data-anim={f.reveal ? 'reveal' : undefined}>
     <div class="container findus-grid">
       <div class="findus-info">
         <p class="eyebrow">Visit</p>
@@ -279,11 +206,15 @@ const countdown = [
       </div>
     </div>
   </section>
-  {/* 12 · Footer comes from BaseLayout. */}
+  {/* Footer comes from BaseLayout. */}
 </BaseLayout>
 
 <style>
-  /* Buttons, .sec-head, and the .ph/.limg primitives now live in global.css. */
+  /* The homepage rides on ONE background tone (cream, the page default). Only
+     three deliberate dark/accent moments break it: the hero photo, the
+     full-bleed signature block, the burgundy marquee ribbon, and the footer.
+     Sections separate by rhythm (consistent vertical padding), not color. */
+  .section { padding-block: clamp(3.25rem, 7vw, 6rem); }
 
   /* ===================================== 1 · HERO ===== */
   .hero {
@@ -293,7 +224,6 @@ const countdown = [
     align-items: center;
     overflow: hidden;
   }
-  /* Hero video covers the placeholder only once a real source is wired in. */
   .hero-video { display: none; }
   .hero-video:not([data-hero-video=""]) {
     display: block;
@@ -304,29 +234,31 @@ const countdown = [
     height: 100%;
     object-fit: cover;
   }
+  /* Stronger scrim so the headline + body are legible over ANY hero photo. */
   .hero-overlay {
     position: absolute;
     inset: 0;
     z-index: 1;
-    /* directional dark overlay — heavier at lower-left, under the panel */
-    background: linear-gradient(105deg, color-mix(in srgb, var(--ink) 78%, transparent) 0%, color-mix(in srgb, var(--ink) 30%, transparent) 55%, transparent 80%);
+    background:
+      linear-gradient(100deg, color-mix(in srgb, var(--ink) 84%, transparent) 0%, color-mix(in srgb, var(--ink) 52%, transparent) 48%, color-mix(in srgb, var(--ink) 28%, transparent) 100%),
+      linear-gradient(0deg, color-mix(in srgb, var(--ink) 30%, transparent), transparent 45%);
   }
   .hero-grid { position: relative; z-index: 2; width: 100%; }
   .hero-panel {
     max-width: clamp(320px, 52vw, 600px);
     margin-inline-start: clamp(0px, 2vw, 40px);
     padding: clamp(1.5rem, 4vw, 3rem);
-    background: color-mix(in srgb, var(--ink) 24%, transparent);
-    border: 1px solid color-mix(in srgb, var(--surface-0) 24%, transparent);
-    -webkit-backdrop-filter: blur(14px) saturate(125%);
-    backdrop-filter: blur(14px) saturate(125%);
+    background: color-mix(in srgb, var(--ink) 46%, transparent);
+    border: 1px solid color-mix(in srgb, var(--surface-0) 22%, transparent);
+    -webkit-backdrop-filter: blur(12px) saturate(120%);
+    backdrop-filter: blur(12px) saturate(120%);
     border-radius: var(--radius-lg);
     box-shadow:
-      0 24px 60px color-mix(in srgb, var(--ink) 38%, transparent),
-      inset 0 1px 0 color-mix(in srgb, var(--surface-0) 22%, transparent);
+      0 24px 60px color-mix(in srgb, var(--ink) 46%, transparent),
+      inset 0 1px 0 color-mix(in srgb, var(--surface-0) 20%, transparent);
     color: var(--surface-0);
   }
-  .hero-eyebrow { color: color-mix(in srgb, var(--surface-0) 82%, transparent); }
+  .hero-eyebrow { color: color-mix(in srgb, var(--surface-0) 84%, transparent); }
   .hero-headline {
     margin-top: var(--space-3);
     font-family: var(--font-display);
@@ -337,77 +269,17 @@ const countdown = [
     letter-spacing: -0.012em;
     color: var(--surface-0);
     text-wrap: balance;
+    text-shadow: 0 1px 24px color-mix(in srgb, var(--ink) 40%, transparent);
   }
   .hero-lede {
     margin-top: var(--space-4);
-    color: color-mix(in srgb, var(--surface-0) 88%, transparent);
+    color: color-mix(in srgb, var(--surface-0) 92%, transparent);
     font-size: clamp(17px, 1.4vw, 20px);
     max-width: 42ch;
   }
   .hero-cta { margin-top: var(--space-6); }
 
-  /* Quiet scroll cue */
-  .hero-cue {
-    position: absolute;
-    inset-block-end: clamp(14px, 3vh, 30px);
-    inset-inline: 0;
-    z-index: 2;
-    display: flex;
-    justify-content: center;
-    pointer-events: none;
-  }
-  .hero-cue-dot {
-    width: 2px;
-    height: 44px;
-    border-radius: var(--radius-pill);
-    background: linear-gradient(color-mix(in srgb, var(--surface-0) 70%, transparent), transparent);
-    position: relative;
-  }
-  .hero-cue-dot::after {
-    content: '';
-    position: absolute;
-    inset-block-start: 0;
-    inset-inline-start: -1px;
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--surface-0);
-    animation: cue-fall 2.4s var(--ease-out) infinite;
-  }
-  @keyframes cue-fall {
-    0% { transform: translateY(0); opacity: 0; }
-    25% { opacity: 1; }
-    80% { opacity: 0.4; }
-    100% { transform: translateY(40px); opacity: 0; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .hero-cue-dot::after { animation: none; opacity: 0.8; }
-  }
-  @media (max-height: 620px) {
-    .hero-cue { display: none; }
-  }
-
-  /* ================================ 2 · COUNTDOWN ===== */
-  .countdown {
-    background: var(--ink);
-    color: var(--surface-0);
-    padding-block: var(--space-6);
-  }
-  .countdown-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: var(--space-4);
-  }
-  .countdown .eyebrow { color: color-mix(in srgb, var(--surface-0) 64%, transparent); }
-  .countdown-units { display: flex; gap: clamp(1rem, 4vw, 3rem); }
-  .cd-unit { display: flex; flex-direction: column; align-items: center; }
-  .cd-value { font-size: clamp(28px, 4vw, 44px); color: var(--coral); line-height: 1; }
-  .cd-label { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: color-mix(in srgb, var(--surface-0) 60%, transparent); margin-top: var(--space-2); }
-
-  /* ================================ 3 · EDITORIAL ===== */
-  .editorial { padding-block: var(--space-9); }
+  /* ================================ 2 · EDITORIAL ===== */
   .editorial-inner { max-width: 720px; margin-inline: auto; padding-inline: var(--gutter); text-align: center; }
   .editorial-line {
     font-family: var(--font-display);
@@ -418,32 +290,24 @@ const countdown = [
   }
   .editorial-body { margin-inline: auto; color: var(--body); }
   .editorial-body + .editorial-body { margin-top: var(--space-4); }
-
-  /* ================================ 4 · DIVIDER ===== */
-  .divider { display: flex; flex-direction: column; align-items: center; gap: var(--space-4); padding-block: var(--space-7); }
-  .divider-sketch { color: var(--red); }
-  .divider-line {
+  .editorial-mission {
+    margin-top: var(--space-6);
     font-family: var(--font-display);
     font-style: italic;
     font-size: clamp(20px, 2.2vw, 28px);
     color: var(--burgundy);
-    text-align: center;
-    max-width: 30ch;
+    max-width: 28ch;
+    margin-inline: auto;
   }
 
-  /* ================================ 5 · MARQUEE ===== */
+  /* ================================ MARQUEE (accent) ===== */
   .marquee {
     background: var(--burgundy);
     color: var(--butter);
     padding-block: var(--space-4);
     overflow: hidden;
   }
-  .marquee-track {
-    display: flex;
-    gap: 0;
-    white-space: nowrap;
-    /* static now; the `marquee` flag animates the scroll later */
-  }
+  .marquee-track { display: flex; white-space: nowrap; }
   .marquee-item {
     display: inline-flex;
     align-items: center;
@@ -455,72 +319,52 @@ const countdown = [
   }
   .marquee-dot { color: var(--coral); }
 
-  /* ================================ 6 · ALT-BLOCKS ===== */
+  /* ================================ ALT-BLOCKS ===== */
   .block h2 { margin-bottom: var(--space-3); }
 
-  .block--fullbleed { position: relative; min-height: 70vh; display: flex; align-items: flex-end; overflow: hidden; }
-  .block-bg { position: absolute; inset: 0; z-index: 0; }
-  .block-overlay { position: absolute; inset: 0; z-index: 1; background: linear-gradient(0deg, color-mix(in srgb, var(--ink) 72%, transparent), transparent 70%); }
+  .block--fullbleed { position: relative; min-height: min(70vh, 560px); display: flex; align-items: flex-end; overflow: hidden; }
+  .block-overlay { position: absolute; inset: 0; z-index: 1; background: linear-gradient(0deg, color-mix(in srgb, var(--ink) 76%, transparent), transparent 72%); }
   .block-fb-text { position: relative; z-index: 2; padding-block: var(--space-8); max-width: 620px; }
   .block-fb-text h2, .block-fb-text p { color: var(--surface-0); }
 
-  .block--numeral { padding-block: var(--space-9); }
-  .block-numeral-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: var(--space-7); align-items: center; }
+  .block-numeral-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(var(--space-5), 5vw, var(--space-8)); align-items: center; }
   .big-numeral { font-family: var(--font-display); font-size: clamp(60px, 9vw, 120px); line-height: 0.9; color: color-mix(in srgb, var(--clay) 40%, transparent); display: block; margin-bottom: var(--space-3); }
 
-  .block--duo { padding-block: var(--space-9); }
-  .block-duo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-7); align-items: center; }
+  .block-duo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(var(--space-5), 5vw, var(--space-8)); align-items: center; }
   .block-duo-imgs { position: relative; min-height: 420px; }
 
-  /* ================================ 7 · MENU ===== */
-  .menu-sec { padding-block: var(--space-9); background: var(--surface-1); }
+  /* ================================ MENU ===== */
   .menu-cat { margin-top: var(--space-7); }
+  .menu-cat:first-of-type { margin-top: var(--space-5); }
   .menu-cat-title { font-size: 22px; color: var(--clay); margin-bottom: var(--space-4); }
-  .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: var(--space-5); }
+  /* auto-fit so each category's items fill the row evenly (no orphan gaps). */
+  .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-5); }
   .product-card {
-    background: var(--surface-0);
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-1);
     border-radius: var(--radius-lg);
     overflow: hidden;
     box-shadow: var(--shadow-sm);
     transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out);
   }
-  .product-meta { padding: var(--space-4); }
+  .product-meta { padding: var(--space-4); display: flex; flex-direction: column; flex: 1; }
   .product-row { display: flex; justify-content: space-between; gap: var(--space-3); align-items: baseline; }
   .product-name { font-size: 20px; }
   .product-price { color: var(--burgundy); }
   .product-desc { margin-top: var(--space-2); font-size: 14px; color: var(--muted); }
-  .product-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
+  .product-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: auto; padding-top: var(--space-3); }
   .tag { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.5rem; border: 1px solid color-mix(in srgb, var(--clay) 55%, transparent); border-radius: var(--radius-pill); color: var(--burgundy); }
 
-  /* ================================ 8 · TESTIMONIAL ===== */
-  .testimonial { padding-block: var(--space-9); text-align: center; }
+  /* ================================ TESTIMONIAL ===== */
+  .testimonial { text-align: center; }
   .testimonial-inner { max-width: 800px; }
   .testimonial-quote { font-family: var(--font-display); font-style: italic; font-weight: 300; font-size: clamp(26px, 3.4vw, 44px); line-height: 1.25; color: var(--ink); }
   .testimonial-by { margin-top: var(--space-5); color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-size: 12px; }
   .testimonial-role { color: var(--clay); }
 
-  /* ================================ 9 · FILM STRIP ===== */
-  .filmstrip { padding-block: var(--space-8); }
-  .filmstrip-track {
-    display: flex;
-    gap: var(--space-4);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding-inline: var(--gutter);
-    padding-bottom: var(--space-3);
-    -webkit-overflow-scrolling: touch;
-  }
-  .film-frame { flex: 0 0 auto; width: min(72vw, 300px); scroll-snap-align: start; }
-  .film-cap { margin-top: var(--space-2); font-size: 13px; color: var(--muted); }
-
-  /* ================================ 10 · INSTAGRAM ===== */
-  .ig { padding-block: var(--space-8) var(--space-9); }
-  .ig-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
-  .ig-tile a { display: block; }
-
-  /* ================================ 11 · FIND US ===== */
-  .findus { padding-block: var(--space-9); background: var(--surface-1); }
-  .findus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-7); align-items: stretch; }
+  /* ================================ FIND US ===== */
+  .findus-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(var(--space-5), 5vw, var(--space-7)); align-items: stretch; }
   .findus-info h2 { margin: var(--space-2) 0 var(--space-5); }
   .findus-address { font-style: normal; line-height: 1.8; }
   .findus-hours { margin: var(--space-4) 0; font-size: 14px; max-width: 360px; }
@@ -538,8 +382,7 @@ const countdown = [
     justify-content: center;
   }
   .news-title { color: var(--surface-0); }
-  .news-body { margin: var(--space-3) 0 var(--space-5); color: color-mix(in srgb, var(--surface-0) 76%, transparent); }
-  /* Newsletter input styling lives in NewsletterForm.astro (scoped to where the input renders). */
+  .news-body { margin: var(--space-3) 0 var(--space-5); color: color-mix(in srgb, var(--surface-0) 78%, transparent); }
 
   /* ===================================== Responsive ===== */
   @media (max-width: 860px) {
@@ -547,14 +390,10 @@ const countdown = [
     .block-duo-grid,
     .findus-grid { grid-template-columns: 1fr; }
     .block-duo-imgs { min-height: 0; display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
-    .ig-grid { grid-template-columns: repeat(2, 1fr); }
   }
-  @media (max-width: 520px) {
-    .countdown-inner { justify-content: center; text-align: center; }
-  }
-
-  /* Reduced motion: nothing here animates yet, but keep snap calm. */
-  @media (prefers-reduced-motion: reduce) {
-    .filmstrip-track { scroll-snap-type: none; }
+  /* Tighten the hero on phones so the panel doesn't dominate the screen. */
+  @media (max-width: 430px) {
+    .hero { min-height: 78svh; }
+    .hero-panel { padding: 1.25rem 1.25rem 1.5rem; }
   }
 </style>
