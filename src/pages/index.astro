@@ -32,9 +32,38 @@ const altBlocks = chapters.slice(0, 3);
 const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 'https://www.ubereats.com/';
 ---
 
-<BaseLayout transparentNav={heroStyle === 'photo'} schema="bakery" footerNewsletter={false}>
+<BaseLayout transparentNav={heroStyle === 'photo' || heroStyle === 'media'} schema="bakery" footerNewsletter={false}>
   {/* ============================================ 1 · HERO ========= */}
-  {heroStyle === 'photo' ? (
+  {heroStyle === 'media' ? (
+    <section class="hero-media">
+      <Img src={heroPhoto} alt="" class="hero-bg" anim={f.kenBurns ? 'ken-burns' : undefined} priority sizes="100vw" />
+      {/* Video-ready: set siteConfig.links.heroVideo to a bakery-interior MP4/WebM
+          and it autoplays muted/looped over the photo poster. PLACEHOLDER: empty
+          until real footage lands (see src/config/site.ts). */}
+      {siteConfig.links.heroVideo && (
+        <video class="hero-video" data-hero-video={siteConfig.links.heroVideo} autoplay muted loop playsinline aria-hidden="true">
+          <source src={siteConfig.links.heroVideo} />
+        </video>
+      )}
+      <div class="hero-media-scrim" aria-hidden="true"></div>
+      <div class="container hero-media-inner">
+        <div class="hero-media-content">
+          <p class="eyebrow hero-media-eyebrow" data-anim={f.typewriter ? 'typewriter' : undefined}>{home.eyebrow}</p>
+          <h1 class="hero-headline hero-media-headline" data-anim={f.weightBreath ? 'weight-breath' : undefined}>{home.title}</h1>
+          {home.lede && <p class="hero-media-lede">{home.lede}</p>}
+          {orderReady ? (
+            <a class="btn btn-primary hero-media-cta" href={siteConfig.links.uberEats} target="_blank" rel="noopener" data-fx-magnetic={f.magneticButtons ? '' : undefined}>
+              {home.cta?.label ?? 'Order'}
+            </a>
+          ) : (
+            <button class="btn btn-primary hero-media-cta" type="button" disabled aria-disabled="true" title="Online ordering opens with the bakery.">
+              Ordering soon
+            </button>
+          )}
+        </div>
+      </div>
+    </section>
+  ) : heroStyle === 'photo' ? (
     <section class="hero">
       <Img src={heroPhoto} alt="" class="hero-bg" anim={f.kenBurns ? 'ken-burns' : undefined} priority sizes="100vw" />
       {siteConfig.links.heroVideo && (
@@ -250,6 +279,56 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
   .home-break { display: flex; justify-content: center; }
   .editorial-inner .home-break { margin-top: var(--space-7); }
   .home-break--toast { padding-block: var(--space-6); }
+
+  /* ============================ 1 · HERO (media, full-bleed) ===== */
+  .hero-media {
+    position: relative;
+    min-height: 100svh;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+  }
+  /* Dark scrim, stronger toward bottom-left where the content sits. */
+  .hero-media-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+      linear-gradient(to top right, color-mix(in srgb, var(--ink) 86%, transparent), color-mix(in srgb, var(--ink) 40%, transparent) 45%, color-mix(in srgb, var(--ink) 8%, transparent) 78%),
+      linear-gradient(0deg, color-mix(in srgb, var(--ink) 55%, transparent), transparent 42%);
+  }
+  .hero-media-inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding-top: calc(var(--nav-h) + var(--space-6));
+    padding-bottom: clamp(2.5rem, 7vw, 5.5rem);
+  }
+  .hero-media-content { max-width: clamp(320px, 60vw, 680px); color: var(--surface-0); }
+  .hero-media .hero-media-eyebrow { color: color-mix(in srgb, var(--surface-0) 86%, transparent); }
+  .hero-media .hero-media-headline {
+    margin-top: var(--space-3);
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-style: italic;
+    font-size: var(--t-hero);
+    line-height: var(--lh-tight);
+    letter-spacing: -0.012em;
+    color: var(--butter);
+    text-wrap: balance;
+    text-shadow: 0 1px 28px color-mix(in srgb, var(--ink) 55%, transparent);
+  }
+  .hero-media-lede {
+    margin-top: var(--space-4);
+    color: color-mix(in srgb, var(--surface-0) 92%, transparent);
+    font-size: clamp(17px, 1.4vw, 20px);
+    max-width: 46ch;
+    text-shadow: 0 1px 16px color-mix(in srgb, var(--ink) 45%, transparent);
+  }
+  .hero-media-cta { margin-top: var(--space-6); }
+  @media (max-width: 430px) {
+    .hero-media { min-height: 78svh; }
+  }
 
   /* ============================ 1 · HERO (editorial, type-led) ===== */
   .hero-ed {
