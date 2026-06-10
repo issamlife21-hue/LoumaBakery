@@ -252,35 +252,29 @@ const builders: Record<string, () => void> = {
     });
   },
 
-  // --- Scroll-draw sketches: ONE-SHOT timed draw on enter, staggered subpaths ---
+  // --- Scroll-draw: ONE-SHOT timed draw when a mark scrolls into view ---
+  // Covers the outline sketches (baguette/toast) AND the face. Native IO + WAAPI
+  // (motion's strokeDashoffset animation does not apply reliably here), with a
+  // hard guarantee the mark is never left invisible.
   scrollDraw() {
     $('[data-anim="scroll-draw"]').forEach((svg) => {
-      const paths = Array.from(svg.querySelectorAll<SVGPathElement>('path'));
-      const strokePaths = paths.filter((p) => getComputedStyle(p).fill === 'none' || svg.getAttribute('fill') === 'none' || svg.getAttribute('stroke'));
-      if (strokePaths.length) {
-        // Hide each subpath by its own length, then draw it in ONCE when seen
-        // (timed, not scroll-scrubbed). Keep each path's baked stroke width.
-        const lens = strokePaths.map((p) => p.getTotalLength());
-        strokePaths.forEach((p, i) => { p.style.strokeDasharray = String(lens[i]); p.style.strokeDashoffset = String(lens[i]); });
-        let drawn = false;
-        const fn = inView(svg, () => {
-          if (drawn) return; // one shot
-          drawn = true;
-          // ~1.1s ease-out per subpath, ~80ms stagger → reads like a hand sketching.
-          strokePaths.forEach((p, i) => {
-            animate(p, { strokeDashoffset: [lens[i], 0] }, { duration: 1.1, delay: i * 0.08, ease: EASE });
-          });
-          return () => {};
-        }, { amount: 0.4 });
-        add('scrollDraw', () => { fn(); strokePaths.forEach((p) => { p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; }); });
-      } else {
-        // filled mark: reveal/scale instead of stroke draw
+      const strokes = Array.from(svg.querySelectorAll<SVGPathElement>('path'))
+        .filter((p) => getComputedStyle(p).fill === 'none' || svg.getAttribute('fill') === 'none');
+      if (strokes.length) drawOnScroll(svg, strokes);
+      else {
+        // Filled mark with no strokes: reveal/scale instead.
         const fn = inView(svg, () => {
           animate(svg, { opacity: [0, 1], scale: [0.9, 1] }, { duration: 0.7, ease: EASE });
           return () => {};
         }, { amount: 0.4 });
         add('scrollDraw', () => { fn(); (svg as HTMLElement).style.opacity = ''; (svg as HTMLElement).style.transform = ''; });
       }
+    });
+    // Face marks (footer / 404): draw the stroked outline on scroll-in, then
+    // settle back to the filled resting state.
+    $('[data-face-draw]').forEach((svg) => {
+      const strokes = Array.from(svg.querySelectorAll<SVGPathElement>('.ff-strokes path'));
+      if (strokes.length) drawOnScroll(svg, strokes, svg);
     });
   },
 
@@ -301,8 +295,13 @@ const builders: Record<string, () => void> = {
           const L = lens![i];
           p.style.strokeDasharray = String(L);
           p.style.strokeDashoffset = String(L);
-          // slight per-stroke stagger → reads like a hand sketching
-          animate(p, { strokeDashoffset: [L, 0] }, { duration: 0.5, delay: (i / total) * 0.5, ease: [0.4, 0, 0.2, 1] });
+          // slight per-stroke stagger → reads like a hand sketching (WAAPI:
+          // motion's strokeDashoffset animation does not apply reliably here)
+          p.animate(
+            [{ strokeDashoffset: L }, { strokeDashoffset: 0 }],
+            { duration: 500, delay: (i / total) * 500, easing: 'cubic-bezier(0.4,0,0.2,1)', fill: 'forwards' },
+          );
+          p.style.strokeDashoffset = '0';
         });
       };
       const leave = () => {
@@ -472,6 +471,59 @@ const builders: Record<string, () => void> = {
     add('toast', () => {});
   },
 };
+
+// One-shot stroke draw when an element scrolls into view. Native
+// IntersectionObserver + Web Animations API. Guarantees the mark is NEVER left
+// invisible: under reduced-motion (or if IO never fires) it shows the final
+// state. With a `face`, the fill fades out while the outline draws, then settles
+// back to the filled resting state.
+function drawOnScroll(svg: Element, strokes: SVGPathElement[], face?: Element) {
+  const lens = strokes.map((p) => p.getTotalLength());
+  strokes.forEach((p, i) => { p.style.strokeDasharray = String(lens[i]); p.style.strokeDashoffset = String(lens[i]); });
+
+  const settleFilled = () => { if (face) face.classList.remove('is-drawing'); };
+  const showFinal = () => {
+    // Outline marks settle fully drawn; a face settles filled (strokes hidden by CSS).
+    if (!face) strokes.forEach((p) => { p.style.strokeDashoffset = '0'; });
+    settleFilled();
+  };
+  if (reduced()) { showFinal(); return; }
+
+  const step = Math.min(80, Math.floor(700 / strokes.length)); // ms between subpaths
+  let done = false;
+  const draw = () => {
+    if (done) return;
+    done = true;
+    io.disconnect();
+    clearTimeout(safety);
+    if (face) face.classList.add('is-drawing');
+    let maxEnd = 0;
+    strokes.forEach((p, i) => {
+      const delay = i * step;
+      p.animate(
+        [{ strokeDashoffset: lens[i] }, { strokeDashoffset: 0 }],
+        { duration: 1100, delay, easing: 'cubic-bezier(0.22,1,0.36,1)', fill: 'forwards' },
+      );
+      p.style.strokeDashoffset = '0'; // settled base value once the animation holds
+      maxEnd = Math.max(maxEnd, delay + 1100);
+    });
+    if (face) window.setTimeout(settleFilled, maxEnd + 150);
+  };
+
+  const io = new IntersectionObserver((entries) => {
+    if (entries.some((e) => e.isIntersecting)) draw();
+  }, { threshold: 0.35 });
+  io.observe(svg);
+  // Never leave a sketch invisible if IO somehow doesn't fire.
+  const safety = window.setTimeout(draw, 2500);
+
+  add('scrollDraw', () => {
+    io.disconnect();
+    clearTimeout(safety);
+    strokes.forEach((p) => { p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; });
+    settleFilled();
+  });
+}
 
 // Shared tilt for cards + images. Each group has its OWN selector so an element
 // is never bound twice (cards: [data-fx-tilt], images: [data-fx-tilt-img]).
