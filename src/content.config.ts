@@ -111,15 +111,6 @@ const ingredients = defineCollection({
   }),
 });
 
-const instagramTiles = defineCollection({
-  loader: file('src/data/instagram-tiles.json'),
-  schema: z.object({
-    image: z.string(), // PLACEHOLDER path
-    alt: z.string(),
-    href: z.string().optional(),
-  }),
-});
-
 export const collections = {
   menu,
   copy,
@@ -127,5 +118,4 @@ export const collections = {
   marquee,
   storyChapters,
   ingredients,
-  instagramTiles,
 };

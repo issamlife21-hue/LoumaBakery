@@ -214,6 +214,16 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
     background: var(--surface-0);
   }
 
+  /* Open: lift the bar above the overlay/panel so the close control is visible
+     and tappable, and morph the hamburger into an X. */
+  .site-nav[data-menu-open='true'] { z-index: 1300; }
+  .nav-toggle[aria-expanded='true'] .nav-toggle-bar:first-child {
+    transform: translateY(4px) rotate(45deg);
+  }
+  .nav-toggle[aria-expanded='true'] .nav-toggle-bar:last-child {
+    transform: translateY(-4px) rotate(-45deg);
+  }
+
   /* --- Mobile panel --- */
   .mobile-overlay {
     position: fixed;

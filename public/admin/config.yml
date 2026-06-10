@@ -86,12 +86,7 @@ collections:
           - { name: story1, label: "Story — photo 1", widget: image, choose_url: false, hint: "First story photo (also the big “01” block on the home page)." }
           - { name: story2, label: "Story — photo 2", widget: image, choose_url: false }
           - { name: story3, label: "Story — photo 3", widget: image, choose_url: false }
-          - { name: ig1, label: "Instagram — photo 1", widget: image, choose_url: false }
-          - { name: ig2, label: "Instagram — photo 2", widget: image, choose_url: false }
-          - { name: ig3, label: "Instagram — photo 3", widget: image, choose_url: false }
-          - { name: ig4, label: "Instagram — photo 4", widget: image, choose_url: false }
-          - { name: ig5, label: "Instagram — photo 5", widget: image, choose_url: false }
-          - { name: ig6, label: "Instagram — photo 6", widget: image, choose_url: false }
+          - { name: ig1, label: "Home — accent photo", widget: image, choose_url: false, hint: "The small inset photo in the home story block." }
 
   # ================================================== SITE SETTINGS =========
   - name: settings
@@ -153,7 +148,6 @@ collections:
               - { name: lede, label: "Intro line", widget: text }
               - { name: craftLine, label: "“Craft” line", widget: string }
               - { name: body, label: "Paragraphs", widget: list, field: { name: text, label: "Paragraph", widget: text } }
-              - { name: countdownLabel, label: "Countdown label", widget: string }
               - { name: missionLine, label: "Mission line", widget: string }
               - { name: menuTitle, label: "Menu section title", widget: string }
               - { name: ovenTitle, label: "“From the oven” title", widget: string }

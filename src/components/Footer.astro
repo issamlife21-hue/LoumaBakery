@@ -4,8 +4,14 @@ import { Wordmark } from '../lib/brand';
 import FaceDraw from './FaceDraw.astro';
 import NewsletterForm from './NewsletterForm.astro';
 
+interface Props {
+  /** Show the footer newsletter. Pages with their own signup (home) pass false. */
+  newsletter?: boolean;
+}
+const { newsletter = true } = Astro.props;
+
 const { address, hours, links } = siteConfig;
-const year = 2026; // build-time placeholder; swap to dynamic when SSR/date matters
+const year = new Date().getFullYear();
 
 const explore = [
   { label: 'Menu', href: '/menu' },
@@ -19,15 +25,15 @@ const explore = [
 
 <footer class="site-foot on-dark">
   <div class="container foot-inner">
-    <!-- Newsletter — on every page's footer. A page may override via the slot. -->
-    <div class="foot-newsletter">
-      <slot name="newsletter">
+    <!-- Newsletter — on every page's footer except those with their own signup. -->
+    {newsletter && (
+      <div class="foot-newsletter">
         <div class="foot-news">
           <p class="foot-news-h">Get word when we open</p>
           <NewsletterForm variant="footer" />
         </div>
-      </slot>
-    </div>
+      </div>
+    )}
 
     <div class="foot-cols">
       <!-- Brand -->

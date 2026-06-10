@@ -30,7 +30,7 @@ const useWidths = Array.from(new Set(candidate.filter((w) => w <= src.width).con
 );
 const pictureAttributes: Record<string, unknown> = { class: `limg ${className ?? ''}`.trim() };
 if (anim) pictureAttributes['data-anim'] = anim;
-if (tilt) pictureAttributes['data-fx-tilt'] = '';
+if (tilt) pictureAttributes['data-fx-tilt-img'] = '';
 ---
 
 <Picture

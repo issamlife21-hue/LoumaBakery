@@ -247,6 +247,14 @@ a:hover {
 .btn:disabled,
 .btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; pointer-events: none; box-shadow: none; }
 
+/* Hover lift — the attribute is only present when the hoverLift flag is on
+   (set in markup), so this rule already respects the flag. Gated to real hover
+   pointers and non-reduced motion. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  [data-fx-lift] { transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out); }
+  [data-fx-lift]:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+}
+
 /* --- Placeholder image blocks (swap for real <img> later) --- */
 .ph {
   --c1: var(--surface-2);

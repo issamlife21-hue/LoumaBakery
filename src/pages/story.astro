@@ -2,20 +2,13 @@
 import { getEntry, getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { features as f } from '../config/features';
-import type { ImageMetadata } from 'astro';
 import { Face } from '../lib/brand';
 import Sketch from '../components/Sketch.astro';
 import Img from '../components/Img.astro';
+import { resolveImage as pick } from '../lib/images';
 import images from '../data/images.json';
 import portraitImg from '../assets/placeholders/portrait.jpg';
-import squareImg from '../assets/placeholders/square.jpg';
 
-const photos = import.meta.glob('../assets/img/*.{jpg,jpeg,png,webp}', { eager: true, import: 'default' }) as Record<string, ImageMetadata>;
-const pick = (name?: string): ImageMetadata | undefined => {
-  if (!name) return undefined;
-  return photos[`../assets/img/${name.split('/').pop()}`];
-};
-const imageMap = images as Record<string, string>;
 const founderPhoto = pick(images.founder) ?? portraitImg;
 
 const c = (await getEntry('copy', 'story'))!.data;
@@ -50,7 +43,7 @@ const founder = c.founder;
     {chapters.map((ch, i) => (
       <section class={`chapter ${i % 2 ? 'chapter--flip' : ''}`} data-anim={f.reveal ? 'reveal' : undefined}>
         <div class="container chapter-grid">
-          <Img src={pick(imageMap[`story${ch.data.order}`]) ?? portraitImg} alt={ch.data.title} class="chapter-img" tilt={f.imageTilt} sizes="(max-width: 820px) 100vw, 50vw" />
+          <Img src={pick(ch.data.image) ?? portraitImg} alt={ch.data.title} class="chapter-img" tilt={f.imageTilt} sizes="(max-width: 820px) 100vw, 50vw" />
           <div class="chapter-text">
             {ch.data.eyebrow && <span class="big-numeral" aria-hidden="true">{ch.data.eyebrow}</span>}
             <h2>{ch.data.title}</h2>
@@ -86,9 +79,9 @@ const founder = c.founder;
         <h2>A short list, done well</h2>
       </div>
       <ul class="ing-track" role="list">
-        {ingredients.map((ing) => (
+        {ingredients.map((ing, i) => (
           <li class="ing-card">
-            <Img src={squareImg} alt={ing.data.name} class="ing-img" sizes="240px" />
+            <span class="ing-index mono" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
             <h3 class="ing-name">{ing.data.name}</h3>
             {ing.data.note && <p class="ing-note">{ing.data.note}</p>}
           </li>
@@ -126,9 +119,18 @@ const founder = c.founder;
     padding-bottom: var(--space-3);
     scroll-snap-type: x mandatory;
   }
-  .ing-card { flex: 0 0 auto; width: min(70vw, 240px); scroll-snap-align: start; }
-  .ing-name { margin-top: var(--space-3); font-size: 22px; }
-  .ing-note { margin-top: var(--space-1); color: var(--muted); font-size: 14px; }
+  .ing-card {
+    flex: 0 0 auto;
+    width: min(70vw, 240px);
+    scroll-snap-align: start;
+    padding: var(--space-5);
+    background: var(--surface-1);
+    border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+    border-radius: var(--radius-lg);
+  }
+  .ing-index { display: block; color: var(--clay); font-size: 13px; margin-bottom: var(--space-3); }
+  .ing-name { font-size: 22px; }
+  .ing-note { margin-top: var(--space-2); color: var(--muted); font-size: 14px; }
 
   @media (max-width: 820px) {
     .chapter-grid,

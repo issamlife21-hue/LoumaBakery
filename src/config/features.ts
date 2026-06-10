@@ -38,10 +38,6 @@ export const features = {
   reveal: true,
   /** Horizontal pinned story rail. */
   storyRail: true,
-  /** Film-strip horizontal scroller. */
-  filmStrip: true,
-  /** Countdown to openingDateISO. */
-  countdown: true,
   /** Count-up animation on stat numbers. */
   countUp: true,
   /** Looping marquee strip. */
@@ -50,8 +46,6 @@ export const features = {
   typewriter: true,
 
   // --- Components ---
-  /** Instagram grid hover/stagger. */
-  instagramGrid: true,
   /** Ingredient slider/compare interaction. */
   ingredientSlider: true,
   /** Transient toast notifications. */

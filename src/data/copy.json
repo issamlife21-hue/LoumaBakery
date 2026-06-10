@@ -8,7 +8,6 @@
       "Long ferments and laminated layers, the way they're done in Paris. Cardamom, orange blossom, and sesame, the way they're done at home.",
       "Louma is named for Milla's sister. It's a small place with a big idea: that a bakery run well can be a place where everyone belongs."
     ],
-    "countdownLabel": "Opening in",
     "missionLine": "Built so everyone at the counter belongs.",
     "menuTitle": "What we bake",
     "ovenTitle": "From the oven",
@@ -55,8 +54,7 @@
       { "title": "High standards", "body": "Inclusion and excellence aren't a trade-off. The bread proves it every morning." }
     ],
     "stats": [
-      { "value": 100, "label": "of tips shared", "suffix": "%" },
-      { "value": 1, "label": "neighborhood, all in", "prefix": "" }
+      { "value": 100, "label": "of tips shared", "suffix": "%" }
     ],
     "donateTitle": "Support the mission",
     "donateBody": "Every dollar goes straight to training and wages. No overhead, no middleman.",

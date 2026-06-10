@@ -22,11 +22,6 @@ the file keeping the same name — the build picks it up automatically.
 | chapter-team.jpg | Story — bakers at work | Yasin Onuş | https://www.pexels.com/photo/36445326/ | Pexels |
 | chapter-corner.jpg | Story — café corner | Zahir Namane | https://unsplash.com/photos/0qF1JTmDLBY | Unsplash |
 | founder.jpg | Story — founder portrait | Mike Jones | https://www.pexels.com/photo/9051695/ | Pexels |
-| ig-1.jpg | Instagram — croissants | Conor Brown | https://unsplash.com/photos/sqkXyyj4WdE | Unsplash |
-| ig-2.jpg | Instagram — cooling rack | Robert Gareth | https://unsplash.com/photos/yKoOxhQ4ook | Unsplash |
-| ig-3.jpg | Instagram — coffee & pastry | Nathan Dumlao | https://unsplash.com/photos/nCeR4kAcZ2c | Unsplash |
-| ig-4.jpg | Instagram — pastry case | Siyi | https://unsplash.com/photos/w-8SzMGe3H0 | Unsplash |
-| ig-5.jpg | Instagram — person with bread | Felicity Tai | https://www.pexels.com/photo/7966491/ | Pexels |
-| ig-6.jpg | Instagram — cake slice | Tolga Deniz Aran | https://unsplash.com/photos/4qoBGQD3bIw | Unsplash |
+| ig-1.jpg | Home — accent photo | Conor Brown | https://unsplash.com/photos/sqkXyyj4WdE | Unsplash |
 
 Unsplash License: https://unsplash.com/license · Pexels License: https://www.pexels.com/license/

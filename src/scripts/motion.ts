@@ -170,9 +170,9 @@ const builders: Record<string, () => void> = {
     });
   },
 
-  // --- 3D card / image tilt ---
-  cardTilt() { tiltGroup('cardTilt'); },
-  imageTilt() { tiltGroup('imageTilt'); },
+  // --- 3D card / image tilt (distinct hooks → each element binds once) ---
+  cardTilt() { tiltGroup('cardTilt', '[data-fx-tilt]'); },
+  imageTilt() { tiltGroup('imageTilt', '[data-fx-tilt-img]'); },
 
   // --- Magnetic buttons ---
   magneticButtons() {
@@ -468,9 +468,10 @@ const builders: Record<string, () => void> = {
   },
 };
 
-// Shared tilt for cards + images
-function tiltGroup(name: 'cardTilt' | 'imageTilt') {
-  $('[data-fx-tilt]').forEach((el) => {
+// Shared tilt for cards + images. Each group has its OWN selector so an element
+// is never bound twice (cards: [data-fx-tilt], images: [data-fx-tilt-img]).
+function tiltGroup(name: 'cardTilt' | 'imageTilt', selector: string) {
+  $(selector).forEach((el) => {
     let raf = 0;
     const onMove = (e: PointerEvent) => {
       const r = el.getBoundingClientRect();

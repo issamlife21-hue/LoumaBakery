@@ -74,4 +74,10 @@ function initForms() {
   });
 }
 
+// Bind independently of the page-transition flag. `astro:page-load` only fires
+// when the ClientRouter is mounted (pageTransition on); without it we still need
+// to wire forms, so also run on DOM ready. initForms is idempotent (data-fxBound
+// guard), so binding from both paths can't double-bind.
+if (document.readyState !== 'loading') initForms();
+else document.addEventListener('DOMContentLoaded', initForms, { once: true });
 document.addEventListener('astro:page-load', initForms);
