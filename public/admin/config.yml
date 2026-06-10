@@ -301,3 +301,95 @@ collections:
                 fields:
                   - { name: label, label: "Button text", widget: string }
                   - { name: href, label: "Link", widget: string }
+
+  # ================================================= STORY CHAPTERS =========
+  - name: storyChapters
+    label: "Story chapters"
+    description: "The numbered chapters on the Our Story page."
+    delete: false
+    editor: { preview: false }
+    files:
+      - name: chapters
+        label: "Chapters"
+        file: "src/data/story-chapters.json"
+        description: "Add, edit, reorder, or remove story chapters."
+        fields:
+          - name: chapters
+            label: "Chapters"
+            label_singular: "Chapter"
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { name: id, label: "Internal ID", widget: string, hint: "A short code the site uses. Leave it as it is." }
+              - { name: order, label: "Show order", widget: number, value_type: int, default: 1, hint: "1 shows first, then 2, 3…" }
+              - { name: eyebrow, label: "Number label", widget: string, required: false, hint: "e.g. 01" }
+              - { name: title, label: "Title", widget: string }
+              - { name: body, label: "Text", widget: text }
+              - { name: image, label: "Photo", widget: image, required: false, choose_url: false, hint: "Optional photo for this chapter." }
+
+  # =================================================== TESTIMONIALS =========
+  - name: testimonials
+    label: "Testimonials"
+    description: "Short quotes shown around the site."
+    delete: false
+    editor: { preview: false }
+    files:
+      - name: testimonials
+        label: "Testimonials"
+        file: "src/data/testimonials.json"
+        description: "Add, edit, or remove quotes."
+        fields:
+          - name: testimonials
+            label: "Quotes"
+            label_singular: "Quote"
+            widget: list
+            summary: "{{fields.quote}}"
+            fields:
+              - { name: id, label: "Internal ID", widget: string, hint: "Leave it as it is." }
+              - { name: quote, label: "Quote", widget: text }
+              - { name: name, label: "Name", widget: string }
+              - { name: role, label: "Role", widget: string, required: false, hint: "e.g. Neighbor, Regular." }
+
+  # ===================================================== INGREDIENTS =========
+  - name: ingredients
+    label: "Ingredients"
+    description: "The short “what goes in” list on the Our Story page."
+    delete: false
+    editor: { preview: false }
+    files:
+      - name: ingredients
+        label: "Ingredients"
+        file: "src/data/ingredients.json"
+        description: "Add, edit, reorder, or remove ingredients."
+        fields:
+          - name: ingredients
+            label: "Ingredients"
+            label_singular: "Ingredient"
+            widget: list
+            summary: "{{fields.name}}"
+            fields:
+              - { name: id, label: "Internal ID", widget: string, hint: "Leave it as it is." }
+              - { name: name, label: "Name", widget: string, hint: "e.g. Flour" }
+              - { name: note, label: "Note", widget: text, required: false, hint: "One short line." }
+
+  # ======================================================== MARQUEE =========
+  - name: marquee
+    label: "Marquee words"
+    description: "The looping word ribbon on the home page."
+    delete: false
+    editor: { preview: false }
+    files:
+      - name: marquee
+        label: "Marquee"
+        file: "src/data/marquee.json"
+        description: "Short phrases that scroll across the home page."
+        fields:
+          - name: items
+            label: "Words"
+            label_singular: "Phrase"
+            widget: list
+            summary: "{{fields.text}}"
+            fields:
+              - { name: id, label: "Internal ID", widget: string, hint: "Leave it as it is." }
+              - { name: text, label: "Phrase", widget: string }
+              - { name: order, label: "Show order", widget: number, value_type: int, default: 1, hint: "1 shows first, then 2, 3…" }

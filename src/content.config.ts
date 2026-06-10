@@ -70,7 +70,9 @@ const copy = defineCollection({
 });
 
 const testimonials = defineCollection({
-  loader: file('src/data/testimonials.json'),
+  // wrapped as { testimonials: [...] } so the CMS can edit it (Decap can't edit
+  // a root-level array). Unwrap to the list here.
+  loader: file('src/data/testimonials.json', { parser: (text) => JSON.parse(text).testimonials }),
   schema: z.object({
     quote: z.string(),
     name: z.string(),
@@ -79,7 +81,8 @@ const testimonials = defineCollection({
 });
 
 const marquee = defineCollection({
-  loader: file('src/data/marquee.json'),
+  // wrapped as { items: [...] } for the CMS; unwrap here.
+  loader: file('src/data/marquee.json', { parser: (text) => JSON.parse(text).items }),
   schema: z.object({
     text: z.string(),
     order: z.number().default(0),
@@ -87,7 +90,8 @@ const marquee = defineCollection({
 });
 
 const storyChapters = defineCollection({
-  loader: file('src/data/story-chapters.json'),
+  // wrapped as { chapters: [...] } for the CMS; unwrap here.
+  loader: file('src/data/story-chapters.json', { parser: (text) => JSON.parse(text).chapters }),
   schema: z.object({
     order: z.number().default(0),
     eyebrow: z.string().optional(),
@@ -98,7 +102,8 @@ const storyChapters = defineCollection({
 });
 
 const ingredients = defineCollection({
-  loader: file('src/data/ingredients.json'),
+  // wrapped as { ingredients: [...] } for the CMS; unwrap here.
+  loader: file('src/data/ingredients.json', { parser: (text) => JSON.parse(text).ingredients }),
   schema: z.object({
     name: z.string(),
     note: z.string().optional(),

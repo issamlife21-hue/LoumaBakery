@@ -1,7 +1,9 @@
-[
-  { "id": "m1", "text": "Out of the oven by eight", "order": 1 },
-  { "id": "m2", "text": "Baked on Wilshire", "order": 2 },
-  { "id": "m3", "text": "Named for Louma", "order": 3 },
-  { "id": "m4", "text": "Everyone belongs at the counter", "order": 4 },
-  { "id": "m5", "text": "Opening July 2026", "order": 5 }
-]
+{
+  "items": [
+    { "id": "m1", "text": "Out of the oven by eight", "order": 1 },
+    { "id": "m2", "text": "Baked on Wilshire", "order": 2 },
+    { "id": "m3", "text": "Named for Louma", "order": 3 },
+    { "id": "m4", "text": "Everyone belongs at the counter", "order": 4 },
+    { "id": "m5", "text": "Opening July 2026", "order": 5 }
+  ]
+}
