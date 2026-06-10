@@ -219,8 +219,10 @@ const builders: Record<string, () => void> = {
         parts.push({ x: e.clientX * dpr, y: e.clientY * dpr, vx: (Math.random() - 0.5) * 0.3 * dpr, vy: (Math.random() * 0.5 + 0.2) * dpr, life: 1, r: (Math.random() * 2 + 1) * dpr });
       }
       if (parts.length > 240) parts.splice(0, parts.length - 240);
+      start();
     };
     let raf = 0;
+    let running = false;
     const loop = () => {
       ctx.clearRect(0, 0, w, h);
       for (let i = parts.length - 1; i >= 0; i--) {
@@ -234,9 +236,12 @@ const builders: Record<string, () => void> = {
         ctx.fill();
       }
       ctx.globalAlpha = 1;
+      // Idle-pause: stop the loop when there's nothing to draw; a pointermove
+      // restarts it. No wasted frames while the cursor is still.
+      if (parts.length === 0) { running = false; return; }
       raf = requestAnimationFrame(loop);
     };
-    raf = requestAnimationFrame(loop);
+    const start = () => { if (!running) { running = true; raf = requestAnimationFrame(loop); } };
     window.addEventListener('pointermove', onMove, { passive: true });
     window.addEventListener('resize', resize);
     add('flourDustCursor', () => {
