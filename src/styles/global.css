@@ -131,6 +131,42 @@ p + p {
   font-weight: 400;
 }
 
+/* ---- Bolder display treatment (boldDisplay flag → html.type-bold) ----
+   Bumps the display type scale (reaches the heroes too, via the shared --t-*
+   vars) plus weight/tracking on headings. Reverts instantly when the flag is
+   off. Cormorant stays the face; body type is untouched. */
+.type-bold {
+  --t-hero: clamp(48px, 6.6vw, 104px);
+  --t-h1: clamp(42px, 5.6vw, 82px);
+  --t-h2: clamp(36px, 4.8vw, 66px);
+  --t-h3: clamp(26px, 2.9vw, 40px);
+}
+.type-bold h1,
+.type-bold h2,
+.type-bold .editorial-line { font-weight: 600; letter-spacing: -0.018em; }
+
+/* ---- Unified warm image tone (imageTone flag → html.img-tone) ----
+   One subtle treatment so mixed stock photography reads as a single warm brand. */
+.img-tone img.img-cover { filter: saturate(1.06) contrast(1.03) sepia(0.05) brightness(1.01); }
+
+/* ---- Sketchy link underline (sketchyLinks flag → html.links-sketch) ----
+   Body-copy links get a hand-drawn wavy underline that deepens on hover
+   (currentColor, so it adapts to context). Always visible (a11y); nav/buttons
+   excluded. Native text-decoration → no layout shift, reduced-motion safe. */
+.links-sketch :is(p, address, figcaption) a:not(.btn) {
+  text-decoration-line: underline;
+  text-decoration-style: wavy;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.2em;
+  transition: text-decoration-color var(--dur) var(--ease-out);
+}
+@media (hover: hover) {
+  .links-sketch :is(p, address, figcaption) a:not(.btn):hover {
+    text-decoration-color: currentColor;
+  }
+}
+
 /* --------------------------------------------------------------- Links */
 a {
   color: var(--link);

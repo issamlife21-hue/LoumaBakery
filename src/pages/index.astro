@@ -30,6 +30,16 @@ const altBlocks = chapters.slice(0, 3);
 // button inert ("Ordering soon") rather than a dead link. Becomes a real link
 // the moment a non-default URL lands in settings.
 const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 'https://www.ubereats.com/';
+
+// The hero must never dead-end. Real Order link when ready; otherwise the
+// newsletter ("Get word when we open", the existing footer string) so the CTA
+// still goes somewhere; falls back to the inert "Ordering soon" if that flag is
+// off. Used by all three hero variants.
+const heroCta = orderReady
+  ? { as: 'a' as const, href: siteConfig.links.uberEats, external: true, label: home.cta?.label ?? 'Order' }
+  : f.heroNewsletterCta
+    ? { as: 'a' as const, href: '#newsletter', external: false, label: 'Get word when we open' }
+    : { as: 'button' as const, href: '', external: false, label: 'Ordering soon' };
 ---
 
 <BaseLayout transparentNav={heroStyle === 'photo' || heroStyle === 'media'} schema="bakery" footerNewsletter={false}>
@@ -51,14 +61,14 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
           <p class="eyebrow hero-media-eyebrow" data-anim={f.typewriter ? 'typewriter' : undefined}>{home.eyebrow}</p>
           <h1 class="hero-headline hero-media-headline" data-anim={f.weightBreath ? 'weight-breath' : undefined}>{home.title}</h1>
           {home.lede && <p class="hero-media-lede">{home.lede}</p>}
-          {orderReady ? (
-            <a class="btn btn-primary hero-media-cta" href={siteConfig.links.uberEats} target="_blank" rel="noopener" data-fx-magnetic={f.magneticButtons ? '' : undefined}>
-              {home.cta?.label ?? 'Order'}
-            </a>
-          ) : (
+          {heroCta.as === 'button' ? (
             <button class="btn btn-primary hero-media-cta" type="button" disabled aria-disabled="true" title="Online ordering opens with the bakery.">
-              Ordering soon
+              {heroCta.label}
             </button>
+          ) : (
+            <a class="btn btn-primary hero-media-cta" href={heroCta.href} target={heroCta.external ? '_blank' : undefined} rel={heroCta.external ? 'noopener' : undefined} data-fx-magnetic={f.magneticButtons ? '' : undefined}>
+              {heroCta.label}
+            </a>
           )}
         </div>
       </div>
@@ -77,14 +87,14 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
           <p class="eyebrow hero-eyebrow" data-anim={f.typewriter ? 'typewriter' : undefined}>{home.eyebrow}</p>
           <h1 class="hero-headline" data-anim={f.weightBreath ? 'weight-breath' : undefined}>{home.title}</h1>
           {home.lede && <p class="hero-lede">{home.lede}</p>}
-          {orderReady ? (
-            <a class="btn btn-primary hero-cta" href={siteConfig.links.uberEats} target="_blank" rel="noopener" data-fx-magnetic={f.magneticButtons ? '' : undefined}>
-              {home.cta?.label ?? 'Order'}
-            </a>
-          ) : (
+          {heroCta.as === 'button' ? (
             <button class="btn btn-primary hero-cta" type="button" disabled aria-disabled="true" title="Online ordering opens with the bakery.">
-              Ordering soon
+              {heroCta.label}
             </button>
+          ) : (
+            <a class="btn btn-primary hero-cta" href={heroCta.href} target={heroCta.external ? '_blank' : undefined} rel={heroCta.external ? 'noopener' : undefined} data-fx-magnetic={f.magneticButtons ? '' : undefined}>
+              {heroCta.label}
+            </a>
           )}
         </div>
       </div>
@@ -96,14 +106,14 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
           <p class="eyebrow" data-anim={f.typewriter ? 'typewriter' : undefined}>{home.eyebrow}</p>
           <h1 class="hero-headline hero-ed-headline" data-anim={f.weightBreath ? 'weight-breath' : undefined}>{home.title}</h1>
           {home.lede && <p class="hero-ed-lede">{home.lede}</p>}
-          {orderReady ? (
-            <a class="btn btn-primary hero-ed-cta" href={siteConfig.links.uberEats} target="_blank" rel="noopener" data-fx-magnetic={f.magneticButtons ? '' : undefined}>
-              {home.cta?.label ?? 'Order'}
-            </a>
-          ) : (
+          {heroCta.as === 'button' ? (
             <button class="btn btn-primary hero-ed-cta" type="button" disabled aria-disabled="true" title="Online ordering opens with the bakery.">
-              Ordering soon
+              {heroCta.label}
             </button>
+          ) : (
+            <a class="btn btn-primary hero-ed-cta" href={heroCta.href} target={heroCta.external ? '_blank' : undefined} rel={heroCta.external ? 'noopener' : undefined} data-fx-magnetic={f.magneticButtons ? '' : undefined}>
+              {heroCta.label}
+            </a>
           )}
           <div class="hero-ed-sketch" aria-hidden="true">
             <Sketch name="baguette" width={240} height={86} color="var(--red)" draw={f.scrollDraw} />
@@ -265,7 +275,7 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
         </address>
       </div>
 
-      <div class="findus-news on-dark">
+      <div class="findus-news on-dark" id="newsletter">
         <h2 class="news-title">{home.newsletterTitle}</h2>
         {home.newsletterBody && <p class="news-body">{home.newsletterBody}</p>}
         <NewsletterForm variant="page" />
@@ -301,8 +311,8 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
     inset: 0;
     z-index: 1;
     background:
-      linear-gradient(to top right, color-mix(in srgb, var(--ink) 86%, transparent), color-mix(in srgb, var(--ink) 40%, transparent) 45%, color-mix(in srgb, var(--ink) 8%, transparent) 78%),
-      linear-gradient(0deg, color-mix(in srgb, var(--ink) 55%, transparent), transparent 42%);
+      linear-gradient(to top right, color-mix(in srgb, var(--ink) 88%, transparent), color-mix(in srgb, var(--ink) 44%, transparent) 46%, color-mix(in srgb, var(--ink) 8%, transparent) 80%),
+      linear-gradient(0deg, color-mix(in srgb, var(--ink) 64%, transparent), transparent 46%);
   }
   .hero-media-inner {
     position: relative;
@@ -563,6 +573,7 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
 
   /* Burgundy (not ink) so it doesn't fuse with the ink footer directly below. */
   .findus-news {
+    scroll-margin-top: calc(var(--nav-h) + var(--space-5));
     background: var(--burgundy);
     color: var(--surface-0);
     border-radius: var(--radius-lg);

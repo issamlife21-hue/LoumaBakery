@@ -116,7 +116,15 @@ const jsonLd =
       : null;
 ---
 
-<html lang="en" class={features.grainTexture ? 'grain' : ''}>
+<html
+  lang="en"
+  class={[
+    features.grainTexture && 'grain',
+    features.boldDisplay && 'type-bold',
+    features.imageTone && 'img-tone',
+    features.sketchyLinks && 'links-sketch',
+  ].filter(Boolean).join(' ')}
+>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
