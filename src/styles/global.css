@@ -275,7 +275,12 @@ a:hover {
   text-decoration: none;
   cursor: pointer;
   transition: background var(--dur-fast) var(--ease-out),
-    color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out);
+    color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out),
+    transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
+}
+/* Tactile press. */
+@media (prefers-reduced-motion: no-preference) {
+  .btn:not(:disabled):not([aria-disabled="true"]):active { transform: translateY(1px) scale(0.985); }
 }
 .btn-primary { background: var(--burgundy); color: var(--butter); }
 .btn-primary:hover { background: var(--red); color: var(--surface-0); }
@@ -396,6 +401,8 @@ img.img-cover { display: block; width: 100%; height: 100%; object-fit: cover; }
   outline: 2.5px solid var(--burgundy);
   outline-offset: 2px;
   border-color: var(--burgundy);
+  /* warm focus ring with personality */
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--burgundy) 12%, transparent);
 }
 .form-grid {
   display: grid;
@@ -498,12 +505,13 @@ img.img-cover { display: block; width: 100%; height: 100%; object-fit: cover; }
   background: var(--ink);
   color: var(--surface-0);
   border-radius: var(--radius-md);
+  border-inline-start: 3px solid var(--coral);
   box-shadow: var(--shadow-lg);
   font-family: var(--font-mono);
   font-size: 13px;
   max-width: 320px;
 }
-.toast--good { background: var(--burgundy); color: var(--butter); }
+.toast--good { background: var(--burgundy); color: var(--butter); border-inline-start-color: var(--butter); }
 
 /* Ingredient slider cursor affordance */
 .ing-track.is-dragging { cursor: grabbing; user-select: none; }

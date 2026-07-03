@@ -46,7 +46,7 @@ for (const cat of menu) {
         <h2 class="menu-cat-title smallcaps" id={`h-${cat.id}`}>{cat.data.title}</h2>
         <ul class="menu-rows" role="list">
           {cat.data.items.map((item) => (
-            <li class="menu-row" data-fx-photocursor={f.photoCursor ? '' : undefined} data-img={thumbs[item.name] || undefined}>
+            <li class="menu-row" data-menu-hover={f.menuHover ? '' : undefined} data-fx-photocursor={f.photoCursor ? '' : undefined} data-img={thumbs[item.name] || undefined}>
               <div class="row-main">
                 <div class="row-head">
                   <h3 class="row-name">{item.name}</h3>
@@ -120,7 +120,14 @@ for (const cat of menu) {
     border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
   }
   .row-head { display: flex; align-items: baseline; gap: var(--space-3); }
-  .row-name { font-family: var(--font-display); font-weight: 500; font-size: 22px; color: var(--ink); }
+  .row-name { font-family: var(--font-display); font-weight: 500; font-size: 22px; color: var(--ink); display: inline-block; }
+  /* Tactile row hover (menuHover flag): the dish name leans in, price warms. */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .menu-row[data-menu-hover] .row-name,
+    .menu-row[data-menu-hover] .row-price { transition: transform var(--dur) var(--ease-out), color var(--dur) var(--ease-out); }
+    .menu-row[data-menu-hover]:hover .row-name { transform: translateX(8px); color: var(--burgundy); }
+    .menu-row[data-menu-hover]:hover .row-price { color: var(--red); }
+  }
   .row-dots { flex: 1; border-bottom: 1px dotted color-mix(in srgb, var(--ink) 28%, transparent); transform: translateY(-4px); }
   .row-price { color: var(--burgundy); font-size: 16px; }
   .row-desc { margin-top: var(--space-2); color: var(--muted); max-width: 60ch; }
