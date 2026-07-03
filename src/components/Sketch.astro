@@ -21,13 +21,16 @@ interface Props {
   class?: string;
   /** Attach the one-shot scroll-draw hook. */
   draw?: boolean;
+  /** Attach the scroll-linked set-piece draw hook (oversized, draws with scroll). */
+  setpiece?: boolean;
   /** Accessible label; omit for a decorative mark (aria-hidden). */
   label?: string;
   /** Stroke color (drives currentColor). Set here, not via parent — Astro
       scoped styles don't reach this child component. */
   color?: string;
 }
-const { name, width, height, class: className, draw = false, label, color = 'var(--red)' } = Astro.props;
+const { name, width, height, class: className, draw = false, setpiece = false, label, color = 'var(--red)' } = Astro.props;
+const animHook = setpiece ? 'setpiece-draw' : draw ? 'scroll-draw' : undefined;
 
 const raw = RAW[name];
 const viewBox = (raw.match(/viewBox="([^"]*)"/) || [])[1] ?? '0 0 100 100';
@@ -53,7 +56,7 @@ const subpaths = d.split(/(?=[Mm])/).map((s) => s.trim()).filter(Boolean);
   stroke-linecap="round"
   stroke-linejoin="round"
   style={`color: ${color}`}
-  data-anim={draw ? 'scroll-draw' : undefined}
+  data-anim={animHook}
 >
   <Fragment set:html={defs} />
   {subpaths.map((s) => <path d={s} stroke-width={strokeWidth} filter={filterRef} />)}

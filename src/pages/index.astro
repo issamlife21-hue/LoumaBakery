@@ -117,8 +117,8 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
   )}
 
   {/* ====================================== 2 · EDITORIAL (thesis) = */}
-  <section class="editorial section" data-anim={f.reveal ? 'reveal' : undefined}>
-    <div class="editorial-inner">
+  <section class="editorial section">
+    <div class="editorial-inner" data-anim={f.reveal ? 'reveal' : undefined} data-reveal="rise" data-reveal-children>
       <h2 class="editorial-line">{home.craftLine}</h2>
       {home.body.map((p) => <p class="editorial-body">{p}</p>)}
       {home.missionLine && <p class="editorial-mission">{home.missionLine}</p>}
@@ -143,8 +143,8 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
 
   {/* ==================================== 4 · NUMERAL block ======== */}
   {altBlocks[1] && (
-    <section class="block block--numeral section" data-anim={f.reveal ? 'reveal' : undefined}>
-      <div class="container block-numeral-grid">
+    <section class="block block--numeral section">
+      <div class="container block-numeral-grid" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
         <div class="block-numeral-text">
           <span class="big-numeral" aria-hidden="true">{altBlocks[1].data.eyebrow ?? '02'}</span>
           <h2>{altBlocks[1].data.title}</h2>
@@ -157,8 +157,8 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
 
   {/* ==================================== 5 · DUO block =========== */}
   {altBlocks[2] && (
-    <section class="block block--duo section" data-anim={f.reveal ? 'reveal' : undefined}>
-      <div class="container block-duo-grid">
+    <section class="block block--duo section">
+      <div class="container block-duo-grid" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
         <div class="block-duo-imgs">
           <Img src={pick(images.story3) ?? portraitImg} alt={altBlocks[2].data.title} class="duo-img duo-img--1" tilt={f.imageTilt} sizes="(max-width: 860px) 50vw, 30vw" />
           <Img src={pick(images.ig1) ?? squareImg} alt="" class="duo-img duo-img--2" tilt={f.imageTilt} sizes="(max-width: 860px) 50vw, 30vw" />
@@ -172,15 +172,22 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
     </section>
   )}
 
+  {/* Oversized set-piece: a huge baguette draws itself across the break. */}
+  <section class="setpiece" aria-hidden="true">
+    <Sketch name="baguette" class="setpiece-sketch" color="var(--red)" setpiece={f.setPiece} draw={!f.setPiece && f.scrollDraw} />
+  </section>
+
   {/* ======================================= 6 · MARQUEE (accent) = */}
-  <section class="marquee" aria-label="Louma in a few words" data-anim={f.marquee ? 'marquee' : undefined}>
-    <div class="marquee-track">
-      {marquee.map((m) => (
-        <span class="marquee-item">
-          <span>{m.data.text}</span>
-          <span class="marquee-dot" aria-hidden="true">·</span>
-        </span>
-      ))}
+  <section class="marquee" aria-label="Louma in a few words" data-anim={f.reveal ? 'reveal' : undefined}>
+    <div class="marquee-vp" data-anim={f.marquee ? 'marquee' : undefined}>
+      <div class="marquee-track">
+        {marquee.map((m) => (
+          <span class="marquee-item">
+            <span>{m.data.text}</span>
+            <span class="marquee-dot" aria-hidden="true">·</span>
+          </span>
+        ))}
+      </div>
     </div>
   </section>
 
@@ -190,16 +197,16 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
   </div>
 
   {/* =================================== 7 · PRODUCT GRID ========= */}
-  <section class="menu-sec section" data-anim={f.reveal ? 'reveal' : undefined}>
+  <section class="menu-sec section">
     <div class="container">
-      <header class="sec-head">
+      <header class="sec-head" data-anim={f.reveal ? 'reveal' : undefined}>
         <p class="eyebrow">The menu</p>
         <h2>{home.menuTitle}</h2>
       </header>
       {menu.map((cat) => (
         <div class="menu-cat">
           <h3 class="menu-cat-title smallcaps">{cat.data.title}</h3>
-          <ul class="product-grid" role="list">
+          <ul class="product-grid" role="list" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
             {cat.data.items.map((item) => (
               <li class="product-card" data-fx-tilt={f.cardTilt ? '' : undefined} data-fx-lift={f.hoverLift ? '' : undefined}>
                 <Img src={pick(item.image) ?? landscapeImg} alt={item.name} class="product-img" sizes="(max-width: 520px) 90vw, 300px" />
@@ -225,7 +232,7 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
 
   {/* ==================================== 8 · TESTIMONIAL ========= */}
   {lead && (
-    <section class="testimonial section" data-anim={f.reveal ? 'reveal' : undefined}>
+    <section class="testimonial section" data-anim={f.reveal ? 'reveal' : undefined} data-reveal="blur">
       <figure class="container testimonial-inner">
         <blockquote class="testimonial-quote">“{lead.quote}”</blockquote>
         <figcaption class="testimonial-by mono">
@@ -236,8 +243,8 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
   )}
 
   {/* ============================ 9 · FIND US + NEWSLETTER ======= */}
-  <section class="findus section" data-anim={f.reveal ? 'reveal' : undefined}>
-    <div class="container findus-grid">
+  <section class="findus section">
+    <div class="container findus-grid" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
       <div class="findus-info">
         <p class="eyebrow">Visit</p>
         <h2>{home.findTitle}</h2>
@@ -472,6 +479,15 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
     margin-inline: auto;
   }
 
+  /* ================================ SET-PIECE ===== */
+  .setpiece {
+    padding-block: clamp(2.5rem, 8vw, 6rem);
+    display: flex;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .setpiece-sketch { width: min(1100px, 92vw); height: auto; }
+
   /* ================================ MARQUEE (accent) ===== */
   .marquee {
     background: var(--burgundy);
@@ -479,6 +495,7 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
     padding-block: var(--space-4);
     overflow: hidden;
   }
+  .marquee-vp { overflow: hidden; }
   .marquee-track { display: flex; white-space: nowrap; }
   .marquee-item {
     display: inline-flex;
