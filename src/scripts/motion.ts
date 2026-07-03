@@ -319,16 +319,54 @@ const builders: Record<string, () => void> = {
     });
   },
 
-  // --- Reveal on scroll ---
+  // --- Reveal on scroll: editorial variants + optional staggered children ---
+  // data-reveal="up|left|right|rise|blur" picks the entrance; add
+  // data-reveal-children to stagger the container's direct children instead.
   reveal() {
+    const V: Record<string, { from: string; blur?: boolean }> = {
+      up: { from: 'translateY(28px)' },
+      left: { from: 'translateX(-44px)' },
+      right: { from: 'translateX(44px)' },
+      rise: { from: 'translateY(52px)' },
+      blur: { from: 'translateY(16px)', blur: true },
+    };
     $('[data-anim="reveal"]').forEach((el) => {
-      el.style.opacity = '0';
-      el.style.transform = 'translateY(24px)';
+      const staggered = el.hasAttribute('data-reveal-children');
+      const targets = (staggered ? Array.from(el.children) : [el]) as HTMLElement[];
+      const v = V[el.getAttribute('data-reveal') || 'up'] ?? V.up;
+      if (staggered) el.style.opacity = '1'; // container visible; children carry the reveal
+      targets.forEach((t) => { t.style.opacity = '0'; t.style.transform = v.from; if (v.blur) t.style.filter = 'blur(7px)'; });
       const fn = inView(el, () => {
-        animate(el, { opacity: 1, transform: 'translateY(0px)' }, { duration: 0.7, ease: EASE });
+        targets.forEach((t, i) => {
+          animate(
+            t,
+            { opacity: 1, transform: 'translate(0px, 0px)', ...(v.blur ? { filter: 'blur(0px)' } : {}) },
+            { duration: 0.85, delay: targets.length > 1 ? i * 0.09 : 0, ease: EASE },
+          );
+        });
         return () => {};
       }, { amount: 0.15 });
-      add('reveal', () => { fn(); el.style.opacity = ''; el.style.transform = ''; });
+      add('reveal', () => { fn(); targets.forEach((t) => { t.style.opacity = ''; t.style.transform = ''; t.style.filter = ''; }); });
+    });
+  },
+
+  // --- Oversized set-piece: a huge baguette draws itself as you scroll past ---
+  setPiece() {
+    $('[data-anim="setpiece-draw"]').forEach((svg) => {
+      const paths = Array.from(svg.querySelectorAll<SVGPathElement>('path'))
+        .filter((p) => getComputedStyle(p).fill === 'none' || svg.getAttribute('fill') === 'none');
+      if (!paths.length) return;
+      const lens = paths.map((p) => p.getTotalLength());
+      paths.forEach((p, i) => { p.style.strokeDasharray = String(lens[i]); p.style.strokeDashoffset = String(lens[i]); });
+      const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+      const stop = scroll(
+        (prog: number) => {
+          const e = ease(Math.min(1, Math.max(0, prog)));
+          paths.forEach((p, i) => { p.style.strokeDashoffset = String(lens[i] * (1 - e)); });
+        },
+        { target: svg, offset: ['start 0.85', 'end 0.4'] },
+      );
+      add('setPiece', () => { stop(); paths.forEach((p) => { p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; }); });
     });
   },
 
@@ -594,6 +632,7 @@ const META: Record<string, string> = {
   magneticButtons: 'Buttons pull slightly toward the cursor.',
   flourDustCursor: 'Flour-dust particle trail under the cursor (desktop only).',
   scrollDraw: 'Sketches draw themselves on scroll; the face fades in.',
+  setPiece: 'An oversized baguette draws itself as you scroll past.',
   faceDraw: 'The face mark pen-draws itself on hover (footer / 404).',
   reveal: 'Sections fade and rise into view on scroll.',
   typewriter: 'Eyebrow text types itself out.',

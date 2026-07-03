@@ -45,6 +45,20 @@ export const features = {
   /** Typewriter effect on select eyebrows/lines. */
   typewriter: true,
 
+  // --- Wow pass: choreography + set-pieces ---
+  /** Oversized baguette that draws itself, scroll-linked, across a home break. */
+  setPiece: true,
+  /** Bolder display headline treatment (heavier Cormorant + scale). Type only. */
+  boldDisplay: true,
+  /** Hero CTA becomes the newsletter ("Get word when we open") while ordering is inert. */
+  heroNewsletterCta: true,
+  /** Hand-drawn sketchy underline that wipes in on link hover. */
+  sketchyLinks: true,
+  /** One warm tone treatment on all photography so mixed stock reads as one brand. */
+  imageTone: true,
+  /** Menu rows reveal the dish photo inline on hover (desktop). */
+  menuHover: true,
+
   // --- Components ---
   /** Ingredient slider/compare interaction. */
   ingredientSlider: true,
