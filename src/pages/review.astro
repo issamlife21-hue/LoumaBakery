@@ -17,7 +17,6 @@ const effects: { name: string; desc: string; kind: string; scroll?: boolean; poi
   { name: 'imageTilt', desc: '3D tilt on images toward the cursor.', kind: 'tilt', pointer: true },
   { name: 'magneticButtons', desc: 'Buttons pull slightly toward the cursor.', kind: 'magnetic', pointer: true },
   { name: 'scrollDraw', desc: 'Sketches draw on scroll; the face fades in.', kind: 'draw', scroll: true },
-  { name: 'setPiece', desc: 'Oversized baguette draws itself as you scroll past.', kind: 'setpiece', scroll: true },
   { name: 'reveal', desc: 'Sections fade and rise into view on scroll.', kind: 'reveal', scroll: true },
   { name: 'typewriter', desc: 'Eyebrow text types itself out.', kind: 'type' },
   { name: 'marquee', desc: 'Looping word ticker.', kind: 'marquee' },
@@ -92,7 +91,6 @@ const names = effects.map((e) => e.name);
               {e.kind === 'tilt' && <div class="ph ph-c demo-tile-card" aria-hidden="true" data-fx-tilt></div>}
               {e.kind === 'magnetic' && <a class="btn btn-primary" href="#" data-fx-magnetic onclick="return false">Order</a>}
               {e.kind === 'draw' && <Baguette class="demo-sketch" width={200} height={71} aria-hidden="true" data-anim="scroll-draw" />}
-              {e.kind === 'setpiece' && <Baguette class="demo-sketch" width={260} height={93} aria-hidden="true" data-anim="setpiece-draw" />}
               {e.kind === 'reveal' && <div class="demo-reveal" data-anim="reveal">Hello from the bakery.</div>}
               {e.kind === 'type' && <p class="eyebrow demo-type" data-anim="typewriter">Out of the oven by eight</p>}
               {e.kind === 'marquee' && (

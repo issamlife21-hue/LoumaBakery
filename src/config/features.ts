@@ -45,9 +45,7 @@ export const features = {
   /** Typewriter effect on select eyebrows/lines. */
   typewriter: true,
 
-  // --- Wow pass: choreography + set-pieces ---
-  /** Oversized baguette that draws itself, scroll-linked, across a home break. */
-  setPiece: true,
+  // --- Wow pass: choreography ---
   /** Bolder display headline treatment (heavier Cormorant + scale). Type only. */
   boldDisplay: true,
   /** Hero CTA becomes the newsletter ("Get word when we open") while ordering is inert. */

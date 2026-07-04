@@ -25,7 +25,7 @@ for (const cat of menu) {
       <p class="eyebrow">{c.eyebrow}</p>
       <h1>{c.title}</h1>
       {c.lede && <p class="lede">{c.lede}</p>}
-      <Sketch name="baguette" width={188} height={67} class="head-sketch" color="var(--clay)" draw={f.scrollDraw} />
+      <Sketch name="baguette" width={150} height={54} class="head-sketch" color="var(--clay)" draw={f.scrollDraw} />
     </div>
   </header>
 
@@ -150,11 +150,11 @@ for (const cat of menu) {
     position: absolute;
     inset-inline-end: 0;
     inset-block-end: 0;
-    width: clamp(120px, 16vw, 188px);
+    width: clamp(100px, 11vw, 150px);
     height: auto;
   }
   @media (max-width: 680px) {
-    .head-sketch { position: static; margin-top: var(--space-5); width: 150px; }
+    .head-sketch { position: static; margin-top: var(--space-5); width: 110px; }
   }
 </style>
 

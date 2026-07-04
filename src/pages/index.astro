@@ -26,6 +26,10 @@ const testimonials = await getCollection('testimonials');
 const lead = testimonials[0]?.data;
 const altBlocks = chapters.slice(0, 3);
 
+// Home shows a tight 6-item signature grid, not the full category-by-category
+// menu (that lives on /menu). Keeps the page short and gives the CTA a job.
+const featured = menu.flatMap((cat) => cat.data.items).slice(0, 6);
+
 // Order link is a placeholder until a real Uber Eats URL is set — render the
 // button inert ("Ordering soon") rather than a dead link. Becomes a real link
 // the moment a non-default URL lands in settings.
@@ -116,7 +120,7 @@ const heroCta = orderReady
             </a>
           )}
           <div class="hero-ed-sketch" aria-hidden="true">
-            <Sketch name="baguette" width={240} height={86} color="var(--red)" draw={f.scrollDraw} />
+            <Sketch name="baguette" width={160} height={57} color="var(--red)" draw={f.scrollDraw} />
           </div>
         </div>
         <div class="hero-ed-media">
@@ -133,7 +137,7 @@ const heroCta = orderReady
       {home.body.map((p) => <p class="editorial-body">{p}</p>)}
       {home.missionLine && <p class="editorial-mission">{home.missionLine}</p>}
       <div class="home-break" aria-hidden="true">
-        <Sketch name="baguette" width={200} height={71} color="var(--clay)" draw={f.scrollDraw} />
+        <Sketch name="baguette" width={150} height={54} color="var(--clay)" draw={f.scrollDraw} />
       </div>
     </div>
   </section>
@@ -156,7 +160,8 @@ const heroCta = orderReady
     <section class="block block--numeral section">
       <div class="container block-numeral-grid" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
         <div class="block-numeral-text">
-          <span class="big-numeral" aria-hidden="true">{altBlocks[1].data.eyebrow ?? '02'}</span>
+          {/* Numbered markers removed by request; could return later as small
+              custom images (drawn numerals) if the brand wants them back. */}
           <h2>{altBlocks[1].data.title}</h2>
           <p>{altBlocks[1].data.body}</p>
         </div>
@@ -181,11 +186,6 @@ const heroCta = orderReady
       </div>
     </section>
   )}
-
-  {/* Oversized set-piece: a huge baguette draws itself across the break. */}
-  <section class="setpiece" aria-hidden="true">
-    <Sketch name="baguette" class="setpiece-sketch" color="var(--red)" setpiece={f.setPiece} draw={!f.setPiece && f.scrollDraw} />
-  </section>
 
   {/* ======================================= 6 · MARQUEE (accent) = */}
   <section class="marquee" aria-label="Louma in a few words" data-anim={f.reveal ? 'reveal' : undefined}>
@@ -213,30 +213,21 @@ const heroCta = orderReady
         <p class="eyebrow">The menu</p>
         <h2>{home.menuTitle}</h2>
       </header>
-      {menu.map((cat) => (
-        <div class="menu-cat">
-          <h3 class="menu-cat-title smallcaps">{cat.data.title}</h3>
-          <ul class="product-grid" role="list" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
-            {cat.data.items.map((item) => (
-              <li class="product-card" data-fx-tilt={f.cardTilt ? '' : undefined} data-fx-lift={f.hoverLift ? '' : undefined}>
-                <Img src={pick(item.image) ?? landscapeImg} alt={item.name} class="product-img" sizes="(max-width: 520px) 90vw, 300px" />
-                <div class="product-meta">
-                  <div class="product-row">
-                    <h4 class="product-name">{item.name}</h4>
-                    <span class="product-price mono">{item.price}</span>
-                  </div>
-                  {item.description && <p class="product-desc">{item.description}</p>}
-                  {item.tags.length > 0 && (
-                    <ul class="product-tags" role="list">
-                      {item.tags.map((t) => <li class="tag mono">{t}</li>)}
-                    </ul>
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ))}
+      <ul class="product-grid" role="list" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
+        {featured.map((item) => (
+          <li class="product-card" data-fx-tilt={f.cardTilt ? '' : undefined} data-fx-lift={f.hoverLift ? '' : undefined}>
+            <Img src={pick(item.image) ?? landscapeImg} alt={item.name} class="product-img" sizes="(max-width: 520px) 90vw, 300px" />
+            <div class="product-meta">
+              <div class="product-row">
+                <h4 class="product-name">{item.name}</h4>
+                <span class="product-price mono">{item.price}</span>
+              </div>
+              {item.description && <p class="product-desc">{item.description}</p>}
+            </div>
+          </li>
+        ))}
+      </ul>
+      <p class="menu-more"><a class="btn btn-ghost" href="/menu">See the full menu</a></p>
     </div>
   </section>
 
@@ -290,12 +281,12 @@ const heroCta = orderReady
      three deliberate dark/accent moments break it: the hero photo, the
      full-bleed signature block, the burgundy marquee ribbon, and the footer.
      Sections separate by rhythm (consistent vertical padding), not color. */
-  .section { padding-block: clamp(3.25rem, 7vw, 6rem); }
+  .section { padding-block: clamp(2.75rem, 5.5vw, 4.75rem); }
 
-  /* Hand-drawn section-break ornaments. */
+  /* Hand-drawn section-break ornaments (small, charming accents). */
   .home-break { display: flex; justify-content: center; }
-  .editorial-inner .home-break { margin-top: var(--space-7); }
-  .home-break--toast { padding-block: var(--space-6); }
+  .editorial-inner .home-break { margin-top: var(--space-6); }
+  .home-break--toast { padding-block: var(--space-4); }
 
   /* ============================ 1 · HERO (media, full-bleed) ===== */
   .hero-media {
@@ -489,15 +480,6 @@ const heroCta = orderReady
     margin-inline: auto;
   }
 
-  /* ================================ SET-PIECE ===== */
-  .setpiece {
-    padding-block: clamp(2.5rem, 8vw, 6rem);
-    display: flex;
-    justify-content: center;
-    overflow: hidden;
-  }
-  .setpiece-sketch { width: min(1100px, 92vw); height: auto; }
-
   /* ================================ MARQUEE (accent) ===== */
   .marquee {
     background: var(--burgundy);
@@ -527,17 +509,14 @@ const heroCta = orderReady
   .block-fb-text h2, .block-fb-text p { color: var(--surface-0); }
 
   .block-numeral-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: clamp(var(--space-5), 5vw, var(--space-8)); align-items: center; }
-  .big-numeral { font-family: var(--font-display); font-size: clamp(60px, 9vw, 120px); line-height: 0.9; color: color-mix(in srgb, var(--clay) 40%, transparent); display: block; margin-bottom: var(--space-3); }
 
   .block-duo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(var(--space-5), 5vw, var(--space-8)); align-items: center; }
   .block-duo-imgs { position: relative; min-height: 420px; }
 
-  /* ================================ MENU ===== */
-  .menu-cat { margin-top: var(--space-7); }
-  .menu-cat:first-of-type { margin-top: var(--space-5); }
-  .menu-cat-title { font-size: 22px; color: var(--clay); margin-bottom: var(--space-4); }
-  /* auto-fit so each category's items fill the row evenly (no orphan gaps). */
+  /* ================================ MENU (6 signatures) ===== */
+  /* auto-fit so the items fill each row evenly (no orphan gaps). */
   .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-5); }
+  .menu-more { margin-top: var(--space-6); text-align: center; max-width: none; }
   .product-card {
     display: flex;
     flex-direction: column;
@@ -552,8 +531,6 @@ const heroCta = orderReady
   .product-name { font-size: 20px; }
   .product-price { color: var(--burgundy); }
   .product-desc { margin-top: var(--space-2); font-size: 14px; color: var(--muted); }
-  .product-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: auto; padding-top: var(--space-3); }
-  .tag { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.5rem; border: 1px solid color-mix(in srgb, var(--clay) 55%, transparent); border-radius: var(--radius-pill); color: var(--burgundy); }
 
   /* ================================ TESTIMONIAL ===== */
   .testimonial { text-align: center; }

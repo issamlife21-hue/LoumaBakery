@@ -27,7 +27,8 @@ const today = new Date().toISOString().slice(0, 10);
         <ol class="process-grid">
           {steps.map((s) => (
             <li class="step">
-              <span class="step-n mono" aria-hidden="true">{s.n}</span>
+              {/* Numbered markers removed by request; could return later as
+                  small custom drawn-numeral images. */}
               <h2 class="step-title">{s.title}</h2>
               <p>{s.body}</p>
             </li>
@@ -88,8 +89,7 @@ const today = new Date().toISOString().slice(0, 10);
   .narrow { max-width: 760px; }
   .process { padding-block: var(--space-8); }
   .process-grid { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-6); }
-  .step-n { color: var(--red); font-size: 14px; }
-  .step-title { margin: var(--space-2) 0 var(--space-2); font-size: 26px; }
+  .step-title { margin-bottom: var(--space-2); font-size: 26px; }
   .step::before { content: ''; display: block; width: 40px; height: 2px; background: var(--clay); margin-bottom: var(--space-4); }
 
   .tiers { padding-block: var(--space-8) var(--space-9); background: var(--surface-1); }

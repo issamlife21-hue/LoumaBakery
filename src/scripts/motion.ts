@@ -296,26 +296,6 @@ const builders: Record<string, () => void> = {
     });
   },
 
-  // --- Oversized set-piece: a huge baguette draws itself as you scroll past ---
-  setPiece() {
-    $('[data-anim="setpiece-draw"]').forEach((svg) => {
-      const paths = Array.from(svg.querySelectorAll<SVGPathElement>('path'))
-        .filter((p) => getComputedStyle(p).fill === 'none' || svg.getAttribute('fill') === 'none');
-      if (!paths.length) return;
-      const lens = paths.map((p) => p.getTotalLength());
-      paths.forEach((p, i) => { p.style.strokeDasharray = String(lens[i]); p.style.strokeDashoffset = String(lens[i]); });
-      const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-      const stop = scroll(
-        (prog: number) => {
-          const e = ease(Math.min(1, Math.max(0, prog)));
-          paths.forEach((p, i) => { p.style.strokeDashoffset = String(lens[i] * (1 - e)); });
-        },
-        { target: svg, offset: ['start 0.85', 'end 0.4'] },
-      );
-      add('setPiece', () => { stop(); paths.forEach((p) => { p.style.strokeDasharray = ''; p.style.strokeDashoffset = ''; }); });
-    });
-  },
-
   // --- Typewriter ---
   typewriter() {
     $('[data-anim="typewriter"]').forEach((el) => {
@@ -588,7 +568,6 @@ const META: Record<string, string> = {
   imageTilt: '3D tilt on images toward the cursor.',
   magneticButtons: 'Buttons pull slightly toward the cursor.',
   scrollDraw: 'Sketches draw themselves on scroll; the face fades in.',
-  setPiece: 'An oversized baguette draws itself as you scroll past.',
   faceDraw: 'The face mark pen-draws itself on hover (footer / 404).',
   reveal: 'Sections fade and rise into view on scroll.',
   typewriter: 'Eyebrow text types itself out.',
