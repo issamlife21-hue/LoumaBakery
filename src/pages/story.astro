@@ -94,7 +94,9 @@ const founder = c.founder;
   .narrow { max-width: 720px; }
   .story-head { position: relative; overflow: hidden; }
   .story-head .container { position: relative; }
-  .head-toast {
+  /* :global — the class lands on the Sketch CHILD component's svg, which a
+     page-scoped selector cannot reach. */
+  .story-head :global(.head-toast) {
     position: absolute;
     inset-inline-end: 0;
     inset-block-end: 0;
@@ -102,7 +104,7 @@ const founder = c.founder;
     height: auto;
   }
   @media (max-width: 680px) {
-    .head-toast { position: static; margin-top: var(--space-4); width: 72px; }
+    .story-head :global(.head-toast) { position: static; margin-top: var(--space-4); width: 72px; }
   }
   .story-intro { padding-block: var(--space-7); }
   .story-p { font-size: clamp(18px, 1.6vw, 21px); color: var(--body); }

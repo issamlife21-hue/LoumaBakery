@@ -328,6 +328,9 @@ const builders: Record<string, () => void> = {
   },
 
   // --- Image reveal wipe: clip-path unveil + scale settle on entry ---
+  // The IO watches the UNCLIPPED PARENT: Chromium factors clip-path into
+  // intersection geometry, so observing the fully-clipped picture itself would
+  // never fire and the image would stay invisible.
   imageWipe() {
     $<HTMLElement>('[data-anim="wipe"]').forEach((pic) => {
       const img = pic.querySelector<HTMLElement>('img');
@@ -337,15 +340,30 @@ const builders: Record<string, () => void> = {
       pic.style.clipPath = 'inset(100% 0 0 0)';
       if (img) img.style.transform = 'scale(1.05)';
       let ran = false;
-      const fn = inView(pic, () => {
+      const play = () => {
         if (ran) return;
         ran = true;
+        io.disconnect();
+        clearTimeout(safety);
         animate(pic, { clipPath: ['inset(100% 0 0 0)', 'inset(0% 0 0 0)'] }, { duration: 0.8, ease: EASE })
           .finished.then(() => { pic.style.clipPath = ''; });
         if (img) animate(img, { transform: ['scale(1.05)', 'scale(1)'] }, { duration: 0.9, ease: EASE }).finished.then(() => { img.style.transform = ''; });
-        return () => {};
-      }, { amount: 0.25 });
-      add('imageWipe', () => { fn(); pic.style.clipPath = ''; if (img) img.style.transform = ''; });
+      };
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((e) => e.isIntersecting)) play();
+      }, { threshold: 0.2 });
+      io.observe(pic.parentElement ?? pic);
+      // Never-blank watchdog: if the slot is on screen and the wipe hasn't
+      // played (IO missed), play it.
+      let safety = 0;
+      const watchdog = () => {
+        if (ran) return;
+        const rr = (pic.parentElement ?? pic).getBoundingClientRect();
+        if (rr.bottom > 0 && rr.top < window.innerHeight) play();
+        else safety = window.setTimeout(watchdog, 2000);
+      };
+      safety = window.setTimeout(watchdog, 2000);
+      add('imageWipe', () => { io.disconnect(); clearTimeout(safety); pic.style.clipPath = ''; if (img) img.style.transform = ''; });
     });
   },
 

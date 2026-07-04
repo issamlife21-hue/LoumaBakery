@@ -232,7 +232,7 @@ const names = effects.map((e) => e.name);
     if (!fx) return;
     // Clear pre-paint hidden states so demos are visible by default (off = shown,
     // on = re-animates). Done here so it runs after the head class script.
-    ['fx-reveal', 'fx-hero', 'fx-headline', 'fx-preloader'].forEach((c) =>
+    ['fx-reveal', 'fx-hero', 'fx-headline', 'fx-lines', 'fx-preloader'].forEach((c) =>
       document.documentElement.classList.remove(c),
     );
     document.querySelectorAll<HTMLInputElement>('[data-fx-toggle]').forEach((cb) => {

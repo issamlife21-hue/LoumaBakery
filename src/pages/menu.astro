@@ -146,7 +146,9 @@ for (const cat of menu) {
   /* Hand-drawn baguette tucked into the header corner. */
   .menu-head { position: relative; overflow: hidden; }
   .menu-head .container { position: relative; }
-  .head-sketch {
+  /* :global — the class lands on the Sketch CHILD component's svg, which a
+     page-scoped selector cannot reach. */
+  .menu-head :global(.head-sketch) {
     position: absolute;
     inset-inline-end: 0;
     inset-block-end: 0;
@@ -154,7 +156,7 @@ for (const cat of menu) {
     height: auto;
   }
   @media (max-width: 680px) {
-    .head-sketch { position: static; margin-top: var(--space-5); width: 110px; }
+    .menu-head :global(.head-sketch) { position: static; margin-top: var(--space-5); width: 110px; }
   }
 </style>
 
