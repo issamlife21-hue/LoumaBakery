@@ -22,9 +22,9 @@ const today = new Date().toISOString().slice(0, 10);
 
   {/* Process */}
   {steps.length > 0 && (
-    <section class="process" data-anim={f.reveal ? 'reveal' : undefined}>
+    <section class="process">
       <div class="container">
-        <ol class="process-grid">
+        <ol class="process-grid" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
           {steps.map((s) => (
             <li class="step">
               {/* Numbered markers removed by request; could return later as
@@ -40,10 +40,10 @@ const today = new Date().toISOString().slice(0, 10);
 
   {/* Tiers */}
   {tiers.length > 0 && (
-    <section class="tiers" data-anim={f.reveal ? 'reveal' : undefined}>
+    <section class="tiers">
       <div class="container">
         <div class="sec-head"><p class="eyebrow">Options</p><h2>Pick a starting point</h2></div>
-        <ul class="tiers-grid" role="list">
+        <ul class="tiers-grid" role="list" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
           {tiers.map((t) => (
             <li class="tier" data-fx-tilt={f.cardTilt ? '' : undefined}>
               {t.note && <span class="tier-note mono">{t.note}</span>}

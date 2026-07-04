@@ -26,10 +26,10 @@ const roles = c.roles ?? [];
 
   {/* Roles */}
   {roles.length > 0 && (
-    <section class="roles" data-anim={f.reveal ? 'reveal' : undefined}>
+    <section class="roles">
       <div class="container">
         <div class="sec-head"><p class="eyebrow">Open roles</p><h2>Where you'd fit</h2></div>
-        <ul class="roles-list" role="list">
+        <ul class="roles-list" role="list" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
           {roles.map((r, i) => (
             <li class={`role ${i === 0 ? 'role--feature' : ''}`} data-fx-lift={f.hoverLift ? '' : undefined}>
               <div class="role-head">

@@ -165,7 +165,7 @@ const heroCta = orderReady
           <h2>{altBlocks[1].data.title}</h2>
           <p>{altBlocks[1].data.body}</p>
         </div>
-        <Img src={pick(images.story2) ?? portraitImg} alt={altBlocks[1].data.title} class="block-numeral-img" tilt={f.imageTilt} sizes="(max-width: 860px) 100vw, 45vw" />
+        <Img src={pick(images.story2) ?? portraitImg} alt={altBlocks[1].data.title} class="block-numeral-img" tilt={f.imageTilt} anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 860px) 100vw, 45vw" />
       </div>
     </section>
   )}
@@ -175,8 +175,8 @@ const heroCta = orderReady
     <section class="block block--duo section">
       <div class="container block-duo-grid" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
         <div class="block-duo-imgs">
-          <Img src={pick(images.story3) ?? portraitImg} alt={altBlocks[2].data.title} class="duo-img duo-img--1" tilt={f.imageTilt} sizes="(max-width: 860px) 50vw, 30vw" />
-          <Img src={pick(images.ig1) ?? squareImg} alt="" class="duo-img duo-img--2" tilt={f.imageTilt} sizes="(max-width: 860px) 50vw, 30vw" />
+          <Img src={pick(images.story3) ?? portraitImg} alt={altBlocks[2].data.title} class="duo-img duo-img--1" tilt={f.imageTilt} anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 860px) 50vw, 30vw" />
+          <Img src={pick(images.ig1) ?? squareImg} alt="" class="duo-img duo-img--2" tilt={f.imageTilt} anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 860px) 50vw, 30vw" />
         </div>
         <div class="block-duo-text">
           {altBlocks[2].data.eyebrow && <p class="eyebrow">{altBlocks[2].data.eyebrow}</p>}
@@ -209,9 +209,9 @@ const heroCta = orderReady
   {/* =================================== 7 · PRODUCT GRID ========= */}
   <section class="menu-sec section">
     <div class="container">
-      <header class="sec-head" data-anim={f.reveal ? 'reveal' : undefined}>
+      <header class="sec-head">
         <p class="eyebrow">The menu</p>
-        <h2>{home.menuTitle}</h2>
+        <h2 data-anim={f.lineMask ? 'lines' : undefined}>{home.menuTitle}</h2>
       </header>
       <ul class="product-grid" role="list" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
         {featured.map((item) => (
@@ -233,9 +233,9 @@ const heroCta = orderReady
 
   {/* ==================================== 8 · TESTIMONIAL ========= */}
   {lead && (
-    <section class="testimonial section" data-anim={f.reveal ? 'reveal' : undefined} data-reveal="blur">
+    <section class="testimonial section">
       <figure class="container testimonial-inner">
-        <blockquote class="testimonial-quote">“{lead.quote}”</blockquote>
+        <blockquote class="testimonial-quote" data-anim={f.lineMask ? 'lines' : undefined}>“{lead.quote}”</blockquote>
         <figcaption class="testimonial-by mono">
           {lead.name}{lead.role && <span class="testimonial-role"> · {lead.role}</span>}
         </figcaption>

@@ -41,7 +41,7 @@ const founder = c.founder;
     {chapters.map((ch, i) => (
       <section class={`chapter ${i % 2 ? 'chapter--flip' : ''}`} data-anim={f.reveal ? 'reveal' : undefined}>
         <div class="container chapter-grid">
-          <Img src={pick(ch.data.image) ?? portraitImg} alt={ch.data.title} class="chapter-img" tilt={f.imageTilt} sizes="(max-width: 820px) 100vw, 50vw" />
+          <Img src={pick(ch.data.image) ?? portraitImg} alt={ch.data.title} class="chapter-img" tilt={f.imageTilt} anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 820px) 100vw, 50vw" />
           <div class="chapter-text">
             {/* Numbered markers (01/02/03) removed by request; could return
                 later as small custom drawn-numeral images. */}
@@ -58,7 +58,7 @@ const founder = c.founder;
     <section class="founder" data-anim={f.reveal ? 'reveal' : undefined}>
       <div class="container founder-grid">
         <div class="founder-portrait">
-          <Img src={founderPhoto} alt={`${founder.name}, ${founder.role}`} class="founder-img" sizes="(max-width: 820px) 100vw, 40vw" />
+          <Img src={founderPhoto} alt={`${founder.name}, ${founder.role}`} class="founder-img" anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 820px) 100vw, 40vw" />
           <Face class="founder-mark" width={48} height={44} aria-hidden="true" />
         </div>
         <div class="founder-text">

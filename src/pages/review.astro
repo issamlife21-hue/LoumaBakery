@@ -18,6 +18,8 @@ const effects: { name: string; desc: string; kind: string; scroll?: boolean; poi
   { name: 'magneticButtons', desc: 'Buttons pull slightly toward the cursor.', kind: 'magnetic', pointer: true },
   { name: 'scrollDraw', desc: 'Sketches draw on scroll; the face fades in.', kind: 'draw', scroll: true },
   { name: 'reveal', desc: 'Sections fade and rise into view on scroll.', kind: 'reveal', scroll: true },
+  { name: 'lineMask', desc: 'Headlines rise word-by-word from behind a mask.', kind: 'lines', scroll: true },
+  { name: 'imageWipe', desc: 'Feature images unveil with a wipe + scale settle.', kind: 'wipe', scroll: true },
   { name: 'typewriter', desc: 'Eyebrow text types itself out.', kind: 'type' },
   { name: 'marquee', desc: 'Looping word ticker.', kind: 'marquee' },
   { name: 'countUp', desc: 'Stat numbers count up when seen.', kind: 'count', scroll: true },
@@ -92,6 +94,8 @@ const names = effects.map((e) => e.name);
               {e.kind === 'magnetic' && <a class="btn btn-primary" href="#" data-fx-magnetic onclick="return false">Order</a>}
               {e.kind === 'draw' && <Baguette class="demo-sketch" width={200} height={71} aria-hidden="true" data-anim="scroll-draw" />}
               {e.kind === 'reveal' && <div class="demo-reveal" data-anim="reveal">Hello from the bakery.</div>}
+              {e.kind === 'lines' && <p class="demo-headline" data-anim="lines">Out of the oven by eight</p>}
+              {e.kind === 'wipe' && <div class="demo-img limg" data-anim="wipe"><div class="ph ph-b demo-img" aria-hidden="true"></div></div>}
               {e.kind === 'type' && <p class="eyebrow demo-type" data-anim="typewriter">Out of the oven by eight</p>}
               {e.kind === 'marquee' && (
                 <div class="demo-marquee" data-anim="marquee">

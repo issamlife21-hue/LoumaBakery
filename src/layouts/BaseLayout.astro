@@ -180,6 +180,7 @@ const jsonLd =
         h.classList.add('motion');
         if (!window.matchMedia('(pointer: coarse)').matches) h.classList.add('fine-pointer');
         if (flags.reveal) h.classList.add('fx-reveal');
+        if (flags.lineMask) h.classList.add('fx-lines');
         if (flags.heroRise) h.classList.add('fx-hero');
         if (flags.headlineRise) h.classList.add('fx-headline');
         if (flags.preloader) h.classList.add('fx-preloader');

@@ -437,10 +437,11 @@ img.img-cover { display: block; width: 100%; height: 100%; object-fit: cover; }
 .fx-reveal [data-anim="reveal"] { opacity: 0; }
 .fx-hero .hero-panel { opacity: 0; }
 .fx-headline .hero-headline { opacity: 0; }
+.fx-lines [data-anim="lines"] { opacity: 0; }
 
-/* Headline word-rise scaffolding (spans injected by JS) */
-.hero-headline .word-mask { display: inline-block; overflow: hidden; vertical-align: top; }
-.hero-headline .word { display: inline-block; will-change: transform; }
+/* Headline word-rise scaffolding (spans injected by JS; hero + lineMask) */
+.word-mask { display: inline-block; overflow: hidden; vertical-align: top; }
+.word-mask .word { display: inline-block; will-change: transform; }
 
 /* Preloader */
 #preloader { display: none; }

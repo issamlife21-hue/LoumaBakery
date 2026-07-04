@@ -46,6 +46,10 @@ export const features = {
   typewriter: true,
 
   // --- Wow pass: choreography ---
+  /** Section headlines reveal word-by-word from behind a mask on entry. */
+  lineMask: true,
+  /** Feature images unveil with a clip-path wipe + scale settle on entry. */
+  imageWipe: true,
   /** Bolder display headline treatment (heavier Cormorant + scale). Type only. */
   boldDisplay: true,
   /** Hero CTA becomes the newsletter ("Get word when we open") while ordering is inert. */

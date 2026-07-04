@@ -296,6 +296,59 @@ const builders: Record<string, () => void> = {
     });
   },
 
+  // --- Line-mask headline reveal: words rise from behind a mask on entry ---
+  lineMask() {
+    $('[data-anim="lines"]').forEach((el) => {
+      const orig = el.getAttribute('data-orig') ?? el.textContent ?? '';
+      el.setAttribute('data-orig', orig);
+      const words = orig.split(/\s+/).filter(Boolean);
+      el.textContent = '';
+      const spans = words.map((w) => {
+        const outer = document.createElement('span');
+        outer.className = 'word-mask';
+        const inner = document.createElement('span');
+        inner.className = 'word';
+        inner.textContent = w;
+        inner.style.transform = 'translateY(110%)';
+        outer.appendChild(inner);
+        el.appendChild(outer);
+        el.appendChild(document.createTextNode(' '));
+        return inner;
+      });
+      (el as HTMLElement).style.opacity = '1';
+      let ran = false;
+      const fn = inView(el, () => {
+        if (ran) return;
+        ran = true;
+        animate(spans, { transform: ['translateY(110%)', 'translateY(0%)'] }, { duration: 0.65, delay: stagger(0.09), ease: EASE });
+        return () => {};
+      }, { amount: 0.5 });
+      add('lineMask', () => { fn(); el.textContent = orig; (el as HTMLElement).style.opacity = ''; });
+    });
+  },
+
+  // --- Image reveal wipe: clip-path unveil + scale settle on entry ---
+  imageWipe() {
+    $<HTMLElement>('[data-anim="wipe"]').forEach((pic) => {
+      const img = pic.querySelector<HTMLElement>('img');
+      // Only hide images still below the viewport (no flash for above-fold).
+      const r = pic.getBoundingClientRect();
+      if (r.top < window.innerHeight) return;
+      pic.style.clipPath = 'inset(100% 0 0 0)';
+      if (img) img.style.transform = 'scale(1.05)';
+      let ran = false;
+      const fn = inView(pic, () => {
+        if (ran) return;
+        ran = true;
+        animate(pic, { clipPath: ['inset(100% 0 0 0)', 'inset(0% 0 0 0)'] }, { duration: 0.8, ease: EASE })
+          .finished.then(() => { pic.style.clipPath = ''; });
+        if (img) animate(img, { transform: ['scale(1.05)', 'scale(1)'] }, { duration: 0.9, ease: EASE }).finished.then(() => { img.style.transform = ''; });
+        return () => {};
+      }, { amount: 0.25 });
+      add('imageWipe', () => { fn(); pic.style.clipPath = ''; if (img) img.style.transform = ''; });
+    });
+  },
+
   // --- Typewriter ---
   typewriter() {
     $('[data-anim="typewriter"]').forEach((el) => {
@@ -570,6 +623,8 @@ const META: Record<string, string> = {
   scrollDraw: 'Sketches draw themselves on scroll; the face fades in.',
   faceDraw: 'The face mark pen-draws itself on hover (footer / 404).',
   reveal: 'Sections fade and rise into view on scroll.',
+  lineMask: 'Section headlines rise word-by-word from behind a mask.',
+  imageWipe: 'Feature images unveil with a wipe + scale settle.',
   typewriter: 'Eyebrow text types itself out.',
   marquee: 'Looping word ticker.',
   countUp: 'Stat numbers count up when seen.',

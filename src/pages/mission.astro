@@ -27,9 +27,9 @@ const stats = c.stats ?? [];
 
   {/* Values */}
   {values.length > 0 && (
-    <section class="values" data-anim={f.reveal ? 'reveal' : undefined}>
+    <section class="values">
       <div class="container">
-        <ul class="values-grid" role="list">
+        <ul class="values-grid" role="list" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
           {values.map((v) => (
             <li class="value-card" data-fx-lift={f.hoverLift ? '' : undefined}>
               {/* Numbered markers removed by request; could return later as
