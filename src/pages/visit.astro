@@ -103,7 +103,26 @@ const mapEmbed =
   .visit-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: var(--space-7); align-items: start; }
 
   .info-block + .info-block { margin-top: var(--space-7); }
-  .info-h { font-size: 16px; color: var(--clay); margin-bottom: var(--space-3); }
+  /* Sub-labels share the site-wide label language (mono tracked + clay dash). */
+  .info-h {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7em;
+    font-family: var(--font-mono);
+    font-size: var(--t-eyebrow);
+    letter-spacing: var(--track-eyebrow);
+    text-transform: uppercase;
+    font-weight: 500;
+    color: var(--muted);
+    margin-bottom: var(--space-3);
+  }
+  .info-h::before {
+    content: "";
+    width: 1.4em;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--clay);
+  }
   .hours { display: flex; flex-direction: column; gap: var(--space-2); max-width: 360px; }
   .hours li { display: flex; justify-content: space-between; gap: var(--space-3); }
   .hours-time { color: var(--muted); }

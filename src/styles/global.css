@@ -111,13 +111,31 @@ p + p {
   color: var(--ink);
 }
 
+/* Section label: letterspaced mono + a short clay dash rule. ONE treatment,
+   used for every eyebrow site-wide (coral dash on dark surfaces). The dash
+   echoes the hand-drawn line language without spending the red budget. */
 .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.7em;
   font-family: var(--font-mono);
   font-size: var(--t-eyebrow);
   letter-spacing: var(--track-eyebrow);
   text-transform: uppercase;
   font-weight: 500;
   color: var(--muted);
+}
+.eyebrow::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 1.4em;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--clay);
+}
+.on-dark .eyebrow::before,
+.site-foot .eyebrow::before {
+  background: var(--coral);
 }
 
 .smallcaps {
@@ -129,6 +147,23 @@ p + p {
 .mono {
   font-family: var(--font-mono);
   font-weight: 400;
+}
+
+/* Prices, hours, and any numeric column line up cleanly. */
+.mono {
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Tag / badge chip: ONE style site-wide (menu tags, any future badges) --- */
+.tag {
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  border: 1px solid color-mix(in srgb, var(--clay) 55%, transparent);
+  border-radius: var(--radius-pill);
+  color: var(--burgundy);
+  background: color-mix(in srgb, var(--butter) 55%, transparent);
 }
 
 /* ---- Bolder display treatment (boldDisplay flag → html.type-bold) ----
@@ -288,9 +323,18 @@ a:hover {
 .btn-coral:hover { background: var(--butter); }
 .btn-ghost { background: transparent; border-color: currentColor; color: var(--burgundy); }
 .btn-ghost:hover { background: var(--burgundy); color: var(--butter); border-color: var(--burgundy); }
-/* Inert state (e.g. "Ordering soon" until a real Order link exists). */
+/* Inert state (e.g. "Ordering soon" until a real Order link exists).
+   Reads as a soft, deliberate "coming soon" chip — clay-dashed hairline on a
+   warm surface — never a greyed-out dead control. */
 .btn:disabled,
-.btn[aria-disabled="true"] { opacity: 0.5; cursor: not-allowed; pointer-events: none; box-shadow: none; }
+.btn[aria-disabled="true"] {
+  cursor: not-allowed;
+  pointer-events: none;
+  box-shadow: none;
+  background: var(--surface-2);
+  color: color-mix(in srgb, var(--burgundy) 78%, var(--muted));
+  border: 1.5px dashed color-mix(in srgb, var(--clay) 55%, transparent);
+}
 
 /* Hover lift — the attribute is only present when the hoverLift flag is on
    (set in markup), so this rule already respects the flag. Gated to real hover
@@ -375,11 +419,14 @@ img.img-cover { display: block; width: 100%; height: 100%; object-fit: cover; }
 
 /* --- Forms --- */
 .field { display: flex; flex-direction: column; gap: var(--space-2); }
+/* Field labels share the eyebrow's mono/tracked language (no dash — one dash
+   per section, not per field). */
 .field > label {
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.06em;
+  font-size: 11px;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
+  font-weight: 500;
   color: var(--muted);
 }
 .field input,
@@ -388,12 +435,14 @@ img.img-cover { display: block; width: 100%; height: 100%; object-fit: cover; }
   width: 100%;
   min-height: 48px;
   padding: 0.7rem 0.9rem;
-  border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+  border: 1px solid var(--hairline-strong);
   border-radius: var(--radius-md);
   background: var(--surface-0);
   color: var(--ink);
   font-size: 16px;
 }
+.field input::placeholder,
+.field textarea::placeholder { color: var(--muted); }
 .field textarea { min-height: 130px; resize: vertical; }
 .field input:focus-visible,
 .field select:focus-visible,

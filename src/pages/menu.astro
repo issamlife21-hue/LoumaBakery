@@ -83,7 +83,7 @@ for (const cat of menu) {
     background: color-mix(in srgb, var(--surface-0) 88%, transparent);
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
-    border-block: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+    border-block: 1px solid var(--hairline);
   }
   .pillnav-track {
     display: flex;
@@ -117,7 +117,7 @@ for (const cat of menu) {
   .menu-rows { display: flex; flex-direction: column; }
   .menu-row {
     padding-block: var(--space-4);
-    border-bottom: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+    border-bottom: 1px solid var(--hairline);
   }
   .row-head { display: flex; align-items: baseline; gap: var(--space-3); }
   .row-name { font-family: var(--font-display); font-weight: 500; font-size: 22px; color: var(--ink); display: inline-block; }
@@ -131,8 +131,8 @@ for (const cat of menu) {
   .row-dots { flex: 1; border-bottom: 1px dotted color-mix(in srgb, var(--ink) 28%, transparent); transform: translateY(-4px); }
   .row-price { color: var(--burgundy); font-size: 16px; }
   .row-desc { margin-top: var(--space-2); color: var(--muted); max-width: 60ch; }
+  /* .tag chip style is global (one badge language site-wide). */
   .product-tags { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-3); }
-  .tag { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.5rem; border: 1px solid color-mix(in srgb, var(--clay) 55%, transparent); border-radius: var(--radius-pill); color: var(--burgundy); }
 
   .allergen {
     margin-top: var(--space-8);
