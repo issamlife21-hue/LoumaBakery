@@ -76,12 +76,6 @@ export const features = {
   magneticButtons: true,
   /** Custom photo cursor over imagery. */
   photoCursor: true,
-  /**
-   * Flour-dust particle cursor trail.
-   * Default OFF on mobile / coarse pointers — gate at runtime with a
-   * `(pointer: fine)` + non-reduced-motion check before activating.
-   */
-  flourDustCursor: true,
 } as const;
 
 export type FeatureFlag = keyof typeof features;

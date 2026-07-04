@@ -32,7 +32,7 @@ const reduced = () => mql('(prefers-reduced-motion: reduce)').matches;
 const coarse = () => mql('(pointer: coarse)').matches;
 const mobile = () => mql('(max-width: 760px)').matches;
 
-const POINTER_FX = new Set(['cardTilt', 'imageTilt', 'magneticButtons', 'flourDustCursor', 'photoCursor', 'faceDraw']);
+const POINTER_FX = new Set(['cardTilt', 'imageTilt', 'magneticButtons', 'photoCursor', 'faceDraw']);
 
 declare global {
   interface Window {
@@ -59,7 +59,6 @@ const MOBILE_OFF = new Set(['parallax', 'storyRail', 'kenBurns']);
 const available = (name: string): boolean => {
   if (reduced()) return false;
   if (POINTER_FX.has(name) && coarse()) return false;
-  if (name === 'flourDustCursor' && mobile()) return false;
   if (MOBILE_OFF.has(name) && mobile()) return false;
   return true;
 };
@@ -196,59 +195,6 @@ const builders: Record<string, () => void> = {
         el.removeEventListener('pointerleave', onLeave);
         el.style.transform = '';
       });
-    });
-  },
-
-  // --- Flour-dust cursor (fine pointer, non-mobile) ---
-  flourDustCursor() {
-    const canvas = document.createElement('canvas');
-    canvas.className = 'flour-canvas';
-    document.body.appendChild(canvas);
-    const ctx = canvas.getContext('2d')!;
-    let w = 0, h = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const resize = () => { w = canvas.width = innerWidth * dpr; h = canvas.height = innerHeight * dpr; canvas.style.width = innerWidth + 'px'; canvas.style.height = innerHeight + 'px'; };
-    resize();
-    type P = { x: number; y: number; vx: number; vy: number; life: number; r: number };
-    const parts: P[] = [];
-    let last = 0;
-    const onMove = (e: PointerEvent) => {
-      const now = performance.now();
-      if (now - last < 16) return; // throttle ~60fps spawn
-      last = now;
-      for (let i = 0; i < 2; i++) {
-        parts.push({ x: e.clientX * dpr, y: e.clientY * dpr, vx: (Math.random() - 0.5) * 0.3 * dpr, vy: (Math.random() * 0.5 + 0.2) * dpr, life: 1, r: (Math.random() * 2 + 1) * dpr });
-      }
-      if (parts.length > 240) parts.splice(0, parts.length - 240);
-      start();
-    };
-    let raf = 0;
-    let running = false;
-    const loop = () => {
-      ctx.clearRect(0, 0, w, h);
-      for (let i = parts.length - 1; i >= 0; i--) {
-        const p = parts[i];
-        p.x += p.vx; p.y += p.vy; p.vy += 0.01 * dpr; p.life -= 0.02;
-        if (p.life <= 0) { parts.splice(i, 1); continue; }
-        ctx.globalAlpha = p.life * 0.5;
-        ctx.fillStyle = '#FBF5D4';
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-      ctx.globalAlpha = 1;
-      // Idle-pause: stop the loop when there's nothing to draw; a pointermove
-      // restarts it. No wasted frames while the cursor is still.
-      if (parts.length === 0) { running = false; return; }
-      raf = requestAnimationFrame(loop);
-    };
-    const start = () => { if (!running) { running = true; raf = requestAnimationFrame(loop); } };
-    window.addEventListener('pointermove', onMove, { passive: true });
-    window.addEventListener('resize', resize);
-    add('flourDustCursor', () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener('pointermove', onMove);
-      window.removeEventListener('resize', resize);
-      canvas.remove();
     });
   },
 
@@ -552,8 +498,19 @@ function drawOnScroll(svg: Element, strokes: SVGPathElement[], face?: Element) {
     if (entries.some((e) => e.isIntersecting)) draw();
   }, { threshold: 0.35 });
   io.observe(svg);
-  // Never leave a sketch invisible if IO somehow doesn't fire.
-  const safety = window.setTimeout(draw, 2500);
+  // Never leave a sketch invisible if IO somehow doesn't fire — but ONLY
+  // force-draw when the mark is actually on screen. (The old blanket timer drew
+  // everything 2.5s after load, so below-the-fold sketches were already done
+  // before the user reached them and looked permanently static.)
+  let safety = 0;
+  const watchdog = () => {
+    if (done) return;
+    const r = svg.getBoundingClientRect();
+    const visible = r.bottom > 0 && r.top < window.innerHeight && r.width > 0;
+    if (visible) draw(); // on screen for 2.5s with no IO callback → IO failed, rescue it
+    else safety = window.setTimeout(watchdog, 2500);
+  };
+  safety = window.setTimeout(watchdog, 2500);
 
   add('scrollDraw', () => {
     io.disconnect();
@@ -630,7 +587,6 @@ const META: Record<string, string> = {
   cardTilt: '3D tilt on cards toward the cursor.',
   imageTilt: '3D tilt on images toward the cursor.',
   magneticButtons: 'Buttons pull slightly toward the cursor.',
-  flourDustCursor: 'Flour-dust particle trail under the cursor (desktop only).',
   scrollDraw: 'Sketches draw themselves on scroll; the face fades in.',
   setPiece: 'An oversized baguette draws itself as you scroll past.',
   faceDraw: 'The face mark pen-draws itself on hover (footer / 404).',

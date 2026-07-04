@@ -461,14 +461,6 @@ img.img-cover { display: block; width: 100%; height: 100%; object-fit: cover; }
   letter-spacing: 0.01em;
 }
 
-/* Flour-dust cursor canvas */
-.flour-canvas {
-  position: fixed;
-  inset: 0;
-  z-index: 9998;
-  pointer-events: none;
-}
-
 /* Menu photo cursor */
 .photo-cursor {
   position: fixed;

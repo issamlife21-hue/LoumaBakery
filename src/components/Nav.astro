@@ -293,39 +293,54 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
 
 <script>
   // Nav behavior: scroll-glass toggle, mobile panel with focus trap + Esc.
-  const nav = document.querySelector<HTMLElement>('.site-nav');
-  const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
-  const panel = document.querySelector<HTMLElement>('#mobile-panel');
-  const overlay = document.querySelector<HTMLElement>('[data-overlay]');
+  // Bound per page-load: with view transitions the nav DOM is swapped on every
+  // navigation, so a run-once module leaves the fresh nav with NO scroll
+  // listener → data-scrolled never flips → the bar sits transparent over light
+  // content. init() re-queries and re-binds; the window listener is cleaned up
+  // before re-adding so navigations can't stack handlers.
+  let cleanupScroll: (() => void) | null = null;
 
-  // --- Scroll glass + hide-on-scroll-down / show-on-scroll-up (rAF throttled) ---
-  if (nav) {
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let ticking = false;
-    let lastY = window.scrollY;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const y = window.scrollY;
-        nav.dataset.scrolled = y > 8 ? 'true' : 'false';
-        // Tuck away when scrolling down past the nav; reveal on the way up.
-        // Never hide while the mobile menu is open, near the top, or reduced-motion.
-        if (!reduce && nav.dataset.menuOpen !== 'true') {
-          const goingDown = y > lastY;
-          if (goingDown && y > 120) nav.dataset.hidden = 'true';
-          else if (!goingDown) nav.dataset.hidden = 'false';
-        }
-        lastY = y;
-        ticking = false;
-      });
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-  }
+  function initNav() {
+    const nav = document.querySelector<HTMLElement>('.site-nav');
+    // Guard on element identity: first load fires BOTH the ready path and
+    // astro:page-load; a second bind on the same nav would double every click
+    // handler. After a swap the fresh nav has no flag, so it binds again.
+    if (!nav || nav.dataset.navBound === 'true') return;
+    nav.dataset.navBound = 'true';
+    cleanupScroll?.(); // drop the stale window listener from the previous page
+    const toggle = document.querySelector<HTMLButtonElement>('.nav-toggle');
+    const panel = document.querySelector<HTMLElement>('#mobile-panel');
+    const overlay = document.querySelector<HTMLElement>('[data-overlay]');
 
-  // --- Mobile panel ---
-  if (toggle && panel && overlay) {
+    // --- Scroll glass + hide-on-scroll-down / show-on-scroll-up (rAF throttled) ---
+    if (nav) {
+      const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      let ticking = false;
+      let lastY = window.scrollY;
+      const onScroll = () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+          const y = window.scrollY;
+          nav.dataset.scrolled = y > 8 ? 'true' : 'false';
+          // Tuck away when scrolling down past the nav; reveal on the way up.
+          // Never hide while the mobile menu is open, near the top, or reduced-motion.
+          if (!reduce && nav.dataset.menuOpen !== 'true') {
+            const goingDown = y > lastY;
+            if (goingDown && y > 120) nav.dataset.hidden = 'true';
+            else if (!goingDown) nav.dataset.hidden = 'false';
+          }
+          lastY = y;
+          ticking = false;
+        });
+      };
+      onScroll();
+      window.addEventListener('scroll', onScroll, { passive: true });
+      cleanupScroll = () => window.removeEventListener('scroll', onScroll);
+    }
+
+    // --- Mobile panel ---
+    if (!(toggle && panel && overlay)) return;
     const focusables = () =>
       Array.from(
         panel.querySelectorAll<HTMLElement>('a[href], button:not([disabled])'),
@@ -394,4 +409,9 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
     overlay.addEventListener('click', close);
     panel.querySelectorAll('a[href]').forEach((a) => a.addEventListener('click', close));
   }
+
+  // First load (no page-load event when transitions are off) + every swap.
+  if (document.readyState !== 'loading') initNav();
+  else document.addEventListener('DOMContentLoaded', initNav, { once: true });
+  document.addEventListener('astro:page-load', initNav);
 </script>
