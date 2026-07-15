@@ -26,7 +26,6 @@
     "csv-parse": "^7.0.1",
     "netlify-cli": "^26.1.0",
     "png-to-ico": "^3.0.1",
-    "puppeteer-core": "^25.3.0",
     "typescript": "^6.0.3",
     "zod": "^4.4.3"
   }
