@@ -5,7 +5,7 @@
       "order": 1,
       "eyebrow": "01",
       "title": "A name",
-      "body": "Louma is Milla's sister. The bakery carries her name and, with it, a promise about who it's for.",
+      "body": "Louma is Milla's sister. The bakery carries her name, and a promise.",
       "image": "chapter-dough.jpg"
     },
     {
@@ -13,7 +13,7 @@
       "order": 2,
       "eyebrow": "02",
       "title": "An idea",
-      "body": "Build a real bakery — high standards, honest bread — and staff it in a way most places say can't be done.",
+      "body": "Build a real bakery with honest bread, and staff it in a way most places say can't be done.",
       "image": "chapter-team.jpg"
     },
     {
@@ -29,7 +29,7 @@
       "order": 4,
       "eyebrow": "04",
       "title": "A corner on Wilshire",
-      "body": "A small room, a big oven, and a door with a face on it. Opening July 2026.",
+      "body": "A small room with a big oven, and a door with a face on it. Opening July 2026.",
       "image": ""
     }
   ]

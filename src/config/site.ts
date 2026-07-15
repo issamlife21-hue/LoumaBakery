@@ -37,8 +37,8 @@ export const siteConfig = {
   /** Form confirmation / error copy, in the brand voice. Single source. */
   forms: {
     newsletterSuccess: "You're on the list. We'll write when the ovens are warm.",
-    cateringSuccess: "Got it — we'll be in touch within two business days.",
-    careersSuccess: "Thanks for reaching out — we'll be in touch soon.",
+    cateringSuccess: "Got it. We'll be in touch within two business days.",
+    careersSuccess: "Thanks for reaching out. We'll be in touch soon.",
     error: "That didn't send. Try again, or email hello@loumabakery.com.",
   },
 } as const;

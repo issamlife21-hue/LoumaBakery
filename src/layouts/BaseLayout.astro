@@ -49,7 +49,7 @@ const {
   footerNewsletter = true,
 } = Astro.props;
 
-const pageTitle = title ? `${title} · ${siteConfig.name}` : `${siteConfig.name} — ${siteConfig.tagline}`;
+const pageTitle = title ? `${title} · ${siteConfig.name}` : `${siteConfig.name} · ${siteConfig.tagline}`;
 const canonical = new URL(Astro.url.pathname, SITE_URL).href;
 const ogImage = new URL(image, SITE_URL).href;
 

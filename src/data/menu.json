@@ -8,7 +8,7 @@
         {
           "name": "Country Sourdough",
           "price": "$9",
-          "description": "Long-fermented, dark crust, open crumb. Out of the oven by eight.",
+          "description": "Two-day ferment, baked dark. The crust crackles as it cools.",
           "tags": [
             "vegan"
           ],
@@ -17,7 +17,7 @@
         {
           "name": "Sesame Semolina",
           "price": "$8",
-          "description": "Golden, tender, crusted in toasted sesame.",
+          "description": "Durum loaf rolled in toasted sesame, sweet and nutty.",
           "tags": [
             "vegan"
           ],
@@ -26,7 +26,7 @@
         {
           "name": "Milk Bread Loaf",
           "price": "$7",
-          "description": "Soft, faintly sweet, made for toast.",
+          "description": "Tender white loaf, faintly sweet. Made for thick toast.",
           "tags": [],
           "image": "milk-bread.jpg"
         }
@@ -40,21 +40,21 @@
         {
           "name": "Butter Croissant",
           "price": "$4.50",
-          "description": "Laminated over three days. Shatters when you bite it.",
+          "description": "Laminated over three days, baked dark, shatters when you bite it.",
           "tags": [],
           "image": "butter-croissant.jpg"
         },
         {
           "name": "Pain au Chocolat",
           "price": "$5",
-          "description": "Two batons of dark chocolate in flaky layers.",
+          "description": "Two batons of dark chocolate folded into flaky layers.",
           "tags": [],
           "image": "pain-au-chocolat.jpg"
         },
         {
           "name": "Morning Bun",
           "price": "$5",
-          "description": "Orange, cinnamon, caramelized sugar.",
+          "description": "Croissant dough rolled in cinnamon sugar, with candied orange.",
           "tags": [],
           "image": "morning-bun.jpg"
         }
@@ -68,7 +68,7 @@
         {
           "name": "Olive Oil Cake",
           "price": "$6",
-          "description": "Citrus, a little salt, a lot of olive oil.",
+          "description": "Rich with olive oil, brightened with lemon and a little salt.",
           "tags": [
             "vegetarian"
           ],
@@ -93,7 +93,7 @@
         {
           "name": "Drip Coffee",
           "price": "$3.50",
-          "description": "Local roaster, rotating.",
+          "description": "From a local roaster, brewed all morning.",
           "tags": [
             "vegan"
           ],
@@ -102,7 +102,7 @@
         {
           "name": "Cardamom Latte",
           "price": "$5.50",
-          "description": "Espresso, steamed milk, fresh-ground cardamom.",
+          "description": "Espresso and steamed milk over fresh-ground cardamom.",
           "tags": [
             "vegetarian"
           ],

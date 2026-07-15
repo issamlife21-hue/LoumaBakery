@@ -9,7 +9,7 @@
  * Per-form copy is read from data-success / data-error (with sensible
  * fallbacks), so messages live with the markup, not here.
  */
-const DEFAULT_SUCCESS = "Thanks — we've got it. We'll be in touch.";
+const DEFAULT_SUCCESS = "Thanks, we've got it. We'll be in touch.";
 const DEFAULT_ERROR = "That didn't go through. Give it another try, or email hello@loumabakery.com.";
 
 function encode(data: FormData): string {
@@ -68,7 +68,7 @@ function initForms() {
       } catch {
         if (btn) { btn.disabled = false; btn.textContent = btn.dataset.label || 'Submit'; }
         showMessage(form, 'error', errMsg);
-        toast?.("Hmm — that didn't send.");
+        toast?.("Hmm, that didn't send.");
       }
     });
   });
