@@ -1,91 +1,54 @@
 /**
- * Feature flags. Every visual effect on the site is gated by a boolean here.
- * Each effect must ADDITIONALLY respect prefers-reduced-motion, coarse-pointer,
- * and mobile at the CSS/JS level — these flags are the master on/off switch,
- * not a substitute for those guards.
- *
- * Flip a flag to false to remove that effect everywhere it is used.
+ * Feature flags. Every visual effect is gated here; each ALSO respects
+ * prefers-reduced-motion and mobile at the CSS/JS level. Flip a flag to false
+ * to remove that effect everywhere.
  */
 export const features = {
-  // --- Ambient / always-on texture ---
-  /** Fixed film-grain texture overlay across the whole viewport. */
-  grainTexture: true,
-
-  // --- Load / page-level ---
-  /** Brief brand preloader on first paint. */
-  preloader: true,
-  /** Cross-fade/slide between page navigations (view transitions). */
-  pageTransition: true,
-
-  // --- Hero ---
-  /** Hero headline rise-in on load. */
-  headlineRise: true,
-  /** Legacy alias kept for Phase 1 styleguide; same intent as headlineRise. */
-  heroRise: true,
-  /** Slow Ken Burns drift on hero/feature imagery. */
+  // --- Motion (the complete whitelist; see src/scripts/motion.ts) ---
+  /** Slow drift on the hero media (desktop only). */
   kenBurns: true,
-  /** Subtle variable-font weight "breathing" on the hero wordmark. */
-  weightBreath: true,
-
-  // --- Scroll-linked ---
-  /** Stroke-draw on the baguette/toast sketches as they enter. */
+  /** Sketches draw themselves once when seen; never left invisible. */
   scrollDraw: true,
-  /** The face mark draws itself on hover (footer / 404 ornaments). */
-  faceDraw: true,
-  /** Depth parallax on layered sections. */
-  parallax: true,
-  /** Generic on-scroll reveal (fade/translate) for sections. */
+  /** Sections fade in and settle downward; children staggered. */
   reveal: true,
-  /** Horizontal pinned story rail. */
-  storyRail: true,
-  /** Count-up animation on stat numbers. */
-  countUp: true,
-  /** Looping marquee strip. */
-  marquee: true,
-  /** Typewriter effect on select eyebrows/lines. */
-  typewriter: true,
-
-  // --- Wow pass: choreography ---
-  /** Section headlines reveal word-by-word from behind a mask on entry. */
-  lineMask: true,
-  /** Feature images unveil with a clip-path wipe + scale settle on entry. */
+  /** Feature images unveil with a soft clip wipe + 1.04->1 settle. */
   imageWipe: true,
-  /** Bolder display headline treatment (heavier Cormorant + scale). Type only. */
-  boldDisplay: true,
-  /** Hero CTA becomes the newsletter ("Get word when we open") while ordering is inert. */
-  heroNewsletterCta: true,
-  /** Hand-drawn sketchy underline that wipes in on link hover. */
-  sketchyLinks: true,
-  /** One warm tone treatment on all photography so mixed stock reads as one brand. */
-  imageTone: true,
-  /** Menu rows reveal the dish photo inline on hover (desktop). */
-  menuHover: true,
+  /** One slow ghost ticker on the burgundy band; pauses on hover. */
+  marquee: true,
 
-  // --- Components ---
-  /** Ingredient slider/compare interaction. */
+  // --- Micro / functional ---
+  /** Hand-drawn wavy underline on body-copy links. */
+  sketchyLinks: true,
+  /** One warm tone treatment on all photography. */
+  imageTone: true,
+  /** Menu rows lean the dish name in on hover. */
+  menuHover: true,
+  /** Hero CTA becomes the newsletter while ordering is inert. */
+  heroNewsletterCta: true,
+  /** Drag-to-scroll on the ingredient row. */
   ingredientSlider: true,
-  /** Transient toast notifications. */
+  /** Transient corner notices (form confirmations). */
   toast: true,
 
-  // --- Pointer / hover (auto-suppressed on coarse pointers) ---
-  /** Hover lift on cards/buttons. */
-  hoverLift: true,
-  /** 3D tilt on cards. */
-  cardTilt: true,
-  /** 3D tilt on images. */
-  imageTilt: true,
-  /** Magnetic pull on buttons toward the cursor. */
-  magneticButtons: true,
-  /** Custom photo cursor over imagery. */
-  photoCursor: true,
+  // --- Classic-layout-only type treatment ---
+  /** Bolder display headline treatment (classic layout only). */
+  boldDisplay: true,
 } as const;
 
 export type FeatureFlag = keyof typeof features;
 
+/** Layout system.
+ *  'slab'    = the editorial-slab system: flat, full-bleed color bands, extreme
+ *              type split, pill shape language, ghost buttons (default).
+ *  'classic' = the previous layout, exactly as it shipped.
+ */
+export type LayoutSystem = 'slab' | 'classic';
+export const layoutSystem: LayoutSystem = 'slab';
+
 /** Hero variant.
- *  'media'    = full-bleed bakery photo/video, scrim, content bottom-left (default).
- *  'editorial'= type-led headline on cream with a self-drawing baguette + framed photo.
- *  'photo'    = the full-bleed photo + glass panel.
- *  Flip this to switch; each restores exactly its own hero. */
+ *  'media'    = full-bleed bakery photo/video, content bottom-left (default).
+ *  'editorial'= type-led headline on cream with a framed photo.
+ *  'photo'    = the full-bleed photo + panel.
+ */
 export type HeroStyle = 'media' | 'editorial' | 'photo';
 export const heroStyle: HeroStyle = 'media';

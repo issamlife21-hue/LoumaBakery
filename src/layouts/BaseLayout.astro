@@ -1,11 +1,9 @@
 ---
 import '../styles/global.css';
 import { siteConfig, SITE_URL } from '../config/site';
-import { features } from '../config/features';
+import { features, layoutSystem } from '../config/features';
 import Nav from '../components/Nav.astro';
 import Footer from '../components/Footer.astro';
-import { ClientRouter } from 'astro:transitions';
-
 // Self-hosted fonts (Fontsource, font-display: swap) — bundled and served from
 // our own origin so first paint isn't blocked on Google Fonts before the LCP.
 import '@fontsource/cormorant-garamond/300.css';
@@ -119,8 +117,8 @@ const jsonLd =
 <html
   lang="en"
   class={[
-    features.grainTexture && 'grain',
-    features.boldDisplay && 'type-bold',
+    layoutSystem === 'slab' ? 'sys-slab' : 'sys-classic',
+    features.boldDisplay && layoutSystem === 'classic' && 'type-bold',
     features.imageTone && 'img-tone',
     features.sketchyLinks && 'links-sketch',
   ].filter(Boolean).join(' ')}
@@ -164,8 +162,6 @@ const jsonLd =
          Escape `<` so a value containing </script> can't break out. -->
     {jsonLd && <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} is:inline />}
 
-    {features.pageTransition && <ClientRouter />}
-
     {/* Pre-paint motion classes: set on <html> before first paint so reveal/
         hero start hidden only when motion will actually run (no FOUC, no
         stuck-hidden content under reduced-motion or when a flag is off). */}
@@ -178,12 +174,7 @@ const jsonLd =
           return;
         }
         h.classList.add('motion');
-        if (!window.matchMedia('(pointer: coarse)').matches) h.classList.add('fine-pointer');
         if (flags.reveal) h.classList.add('fx-reveal');
-        if (flags.lineMask) h.classList.add('fx-lines');
-        if (flags.heroRise) h.classList.add('fx-hero');
-        if (flags.headlineRise) h.classList.add('fx-headline');
-        if (flags.preloader) h.classList.add('fx-preloader');
       })();
     </script>
 
@@ -233,11 +224,6 @@ const jsonLd =
   </head>
 
   <body data-hero={transparentNav ? 'true' : 'false'}>
-    {/* Preloader — shown only when html.fx-preloader; JS fades it out. */}
-    <div id="preloader" aria-hidden="true">
-      <span class="preloader-mark">Louma</span>
-    </div>
-
     <a class="skip-link" href="#main">Skip to content</a>
     <Nav transparent={transparentNav} />
     <main id="main">

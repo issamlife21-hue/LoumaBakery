@@ -45,7 +45,7 @@ const today = new Date().toISOString().slice(0, 10);
         <div class="sec-head"><p class="eyebrow">Options</p><h2>Pick a starting point</h2></div>
         <ul class="tiers-grid" role="list" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
           {tiers.map((t) => (
-            <li class="tier" data-fx-tilt={f.cardTilt ? '' : undefined}>
+            <li class="tier">
               {t.note && <span class="tier-note mono">{t.note}</span>}
               <h3 class="tier-name">{t.name}</h3>
               <p class="tier-price mono">{t.price}</p>

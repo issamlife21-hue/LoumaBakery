@@ -31,7 +31,7 @@ const roles = c.roles ?? [];
         <div class="sec-head"><p class="eyebrow">Open roles</p><h2>Where you'd fit</h2></div>
         <ul class="roles-list" role="list" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
           {roles.map((r, i) => (
-            <li class={`role ${i === 0 ? 'role--feature' : ''}`} data-fx-lift={f.hoverLift ? '' : undefined}>
+            <li class={`role ${i === 0 ? 'role--feature' : ''}`}>
               <div class="role-head">
                 <h3 class="role-title">{r.title}</h3>
                 {r.type && <span class="role-type mono">{r.type}</span>}

@@ -31,7 +31,7 @@ const stats = c.stats ?? [];
       <div class="container">
         <ul class="values-grid" role="list" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
           {values.map((v) => (
-            <li class="value-card" data-fx-lift={f.hoverLift ? '' : undefined}>
+            <li class="value-card">
               {/* Numbered markers removed by request; could return later as
                   small custom drawn-numeral images. */}
               <h2 class="value-title">{v.title}</h2>
@@ -45,11 +45,11 @@ const stats = c.stats ?? [];
 
   {/* Count-up stats */}
   {stats.length > 0 && (
-    <section class="stats" aria-label="By the numbers" data-anim={f.countUp ? 'count-up' : undefined}>
+    <section class="stats" aria-label="By the numbers" data-anim={f.reveal ? 'reveal' : undefined}>
       <div class="container stats-grid">
         {stats.map((s) => (
           <div class="stat">
-            <span class="stat-value mono" data-countup={s.value} data-suffix={s.suffix ?? ''} data-prefix={s.prefix ?? ''}>
+            <span class="stat-value mono">
               {s.prefix ?? ''}{s.value}{s.suffix ?? ''}
             </span>
             <span class="stat-label">{s.label}</span>
@@ -67,7 +67,7 @@ const stats = c.stats ?? [];
         <h2 class="donate-title">{c.donateTitle ?? c.cta?.label}</h2>
         {c.donateBody && <p class="donate-body">{c.donateBody}</p>}
       </div>
-      <a class="btn btn-coral" href={siteConfig.links.paypalDonate} target="_blank" rel="noopener" data-fx-magnetic={f.magneticButtons ? '' : undefined}>
+      <a class="btn btn-coral" href={siteConfig.links.paypalDonate} target="_blank" rel="noopener">
         {c.cta?.label ?? 'Donate'}
       </a>
     </div>

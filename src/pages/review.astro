@@ -7,27 +7,13 @@ import { Baguette } from '../lib/brand';
 // reviewer can isolate effects one at a time.
 
 const effects: { name: string; desc: string; kind: string; scroll?: boolean; pointer?: boolean }[] = [
-  { name: 'preloader', desc: 'Brand splash that fades out on first load.', kind: 'preloader' },
-  { name: 'kenBurns', desc: 'Slow scale + drift on hero / feature imagery.', kind: 'img' },
-  { name: 'heroRise', desc: 'Hero glass panel rises and fades in on load.', kind: 'panel' },
-  { name: 'headlineRise', desc: 'Hero headline rises word by word.', kind: 'headline' },
-  { name: 'weightBreath', desc: 'Headline gently “breathes” in weight/opacity.', kind: 'breath' },
-  { name: 'parallax', desc: 'Background layers drift against scroll for depth.', kind: 'parallax', scroll: true },
-  { name: 'cardTilt', desc: '3D tilt on cards toward the cursor.', kind: 'tilt', pointer: true },
-  { name: 'imageTilt', desc: '3D tilt on images toward the cursor.', kind: 'tilt', pointer: true },
-  { name: 'magneticButtons', desc: 'Buttons pull slightly toward the cursor.', kind: 'magnetic', pointer: true },
-  { name: 'scrollDraw', desc: 'Sketches draw on scroll; the face fades in.', kind: 'draw', scroll: true },
-  { name: 'reveal', desc: 'Sections fade and rise into view on scroll.', kind: 'reveal', scroll: true },
-  { name: 'lineMask', desc: 'Headlines rise word-by-word from behind a mask.', kind: 'lines', scroll: true },
-  { name: 'imageWipe', desc: 'Feature images unveil with a wipe + scale settle.', kind: 'wipe', scroll: true },
-  { name: 'typewriter', desc: 'Eyebrow text types itself out.', kind: 'type' },
-  { name: 'marquee', desc: 'Looping word ticker.', kind: 'marquee' },
-  { name: 'countUp', desc: 'Stat numbers count up when seen.', kind: 'count', scroll: true },
-  { name: 'pageTransition', desc: 'Crossfade between page navigations.', kind: 'page' },
-  { name: 'toast', desc: 'Transient corner notifications.', kind: 'toast' },
-  { name: 'photoCursor', desc: 'Menu rows float a thumbnail by the cursor.', kind: 'photo', pointer: true },
+  { name: 'kenBurns', desc: 'Slow drift on the hero photo (desktop).', kind: 'img' },
+  { name: 'scrollDraw', desc: 'Sketches draw themselves once when seen.', kind: 'draw', scroll: true },
+  { name: 'reveal', desc: 'Sections fade in and settle downward, staggered.', kind: 'reveal', scroll: true },
+  { name: 'imageWipe', desc: 'Feature images unveil with a soft wipe.', kind: 'wipe', scroll: true },
+  { name: 'marquee', desc: 'One slow ghost ticker; pauses on hover.', kind: 'marquee' },
   { name: 'ingredientSlider', desc: 'Drag the ingredient row to scroll it.', kind: 'slider', pointer: true },
-  { name: 'storyRail', desc: 'Story chapters slide along a scroll-linked rail.', kind: 'rail', scroll: true },
+  { name: 'toast', desc: 'Transient corner notices.', kind: 'toast' },
 ];
 const names = effects.map((e) => e.name);
 ---
@@ -74,29 +60,10 @@ const names = effects.map((e) => e.name);
             </div>
 
             <div class="fx-demo">
-              {e.kind === 'preloader' && <p class="demo-hint">Toggle on to replay the splash overlay.</p>}
               {e.kind === 'img' && <div class="ph ph-a demo-img" aria-hidden="true" data-anim="ken-burns"></div>}
-              {e.kind === 'panel' && (
-                <div class="hero-panel demo-panel">
-                  <p class="eyebrow">Wilshire · Opening July 2026</p>
-                  <p class="demo-panel-title">Out of the oven by eight</p>
-                </div>
-              )}
-              {e.kind === 'headline' && <p class="hero-headline demo-headline">Out of the oven by eight</p>}
-              {e.kind === 'breath' && <p class="demo-headline" data-anim="weight-breath">Louma</p>}
-              {e.kind === 'parallax' && (
-                <div class="demo-parallax" data-anim="parallax">
-                  <div class="ph ph-b block-bg" aria-hidden="true"></div>
-                  <span class="demo-parallax-label">scroll the page</span>
-                </div>
-              )}
-              {e.kind === 'tilt' && <div class="ph ph-c demo-tile-card" aria-hidden="true" data-fx-tilt></div>}
-              {e.kind === 'magnetic' && <a class="btn btn-primary" href="#" data-fx-magnetic onclick="return false">Order</a>}
               {e.kind === 'draw' && <Baguette class="demo-sketch" width={200} height={71} aria-hidden="true" data-anim="scroll-draw" />}
               {e.kind === 'reveal' && <div class="demo-reveal" data-anim="reveal">Hello from the bakery.</div>}
-              {e.kind === 'lines' && <p class="demo-headline" data-anim="lines">Out of the oven by eight</p>}
               {e.kind === 'wipe' && <div class="demo-img limg" data-anim="wipe"><div class="ph ph-b demo-img" aria-hidden="true"></div></div>}
-              {e.kind === 'type' && <p class="eyebrow demo-type" data-anim="typewriter">Out of the oven by eight</p>}
               {e.kind === 'marquee' && (
                 <div class="demo-marquee" data-anim="marquee">
                   <div class="marquee-track">
@@ -105,33 +72,13 @@ const names = effects.map((e) => e.name);
                   </div>
                 </div>
               )}
-              {e.kind === 'count' && (
-                <div class="demo-count">
-                  <span class="stat-value mono" data-countup="100" data-suffix="%">100%</span>
-                </div>
-              )}
-              {e.kind === 'page' && <a class="btn btn-ghost" href="/">Go home (watch the crossfade)</a>}
               {e.kind === 'toast' && <button type="button" class="btn btn-ghost" data-demo-toast>Fire a toast</button>}
-              {e.kind === 'photo' && (
-                <div class="demo-photo" data-fx-photocursor>
-                  <span class="row-name">Butter Croissant</span>
-                  <span class="row-price mono">$4.50</span>
-                </div>
-              )}
               {e.kind === 'slider' && (
                 <ul class="ing-track demo-slider" role="list" data-anim="ingredient-slider">
                   {['Flour', 'Butter', 'Salt', 'Levain', 'Time'].map((n) => (
                     <li class="ing-card"><div class="ph ph-c ing-img" aria-hidden="true"></div><h3 class="ing-name">{n}</h3></li>
                   ))}
                 </ul>
-              )}
-              {e.kind === 'rail' && (
-                <div class="demo-rail" data-anim="story-rail">
-                  <div class="chapter">
-                    <div class="chapter-img ph ph-a" aria-hidden="true"></div>
-                    <div class="chapter-text"><span>scroll the page</span></div>
-                  </div>
-                </div>
               )}
             </div>
           </li>
@@ -232,7 +179,7 @@ const names = effects.map((e) => e.name);
     if (!fx) return;
     // Clear pre-paint hidden states so demos are visible by default (off = shown,
     // on = re-animates). Done here so it runs after the head class script.
-    ['fx-reveal', 'fx-hero', 'fx-headline', 'fx-lines', 'fx-preloader'].forEach((c) =>
+    ['fx-reveal'].forEach((c) =>
       document.documentElement.classList.remove(c),
     );
     document.querySelectorAll<HTMLInputElement>('[data-fx-toggle]').forEach((cb) => {
@@ -245,10 +192,6 @@ const names = effects.map((e) => e.name);
         return;
       }
       cb.addEventListener('change', () => {
-        if (name === 'preloader' && cb.checked) {
-          const p = document.getElementById('preloader');
-          if (p) p.style.display = 'flex';
-        }
         fx.setEnabled(name, cb.checked);
         if (labelEl) labelEl.textContent = cb.checked ? 'On' : 'Off';
         fx.toast(`${name} ${cb.checked ? 'on' : 'off'}`, { tone: cb.checked ? 'good' : 'default' });

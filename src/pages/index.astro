@@ -2,7 +2,7 @@
 import { getEntry, getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { siteConfig } from '../config/site';
-import { features as f, heroStyle } from '../config/features';
+import { features as f, heroStyle, layoutSystem } from '../config/features';
 import Img from '../components/Img.astro';
 import Sketch from '../components/Sketch.astro';
 import NewsletterForm from '../components/NewsletterForm.astro';
@@ -47,6 +47,104 @@ const heroCta = orderReady
 ---
 
 <BaseLayout transparentNav={heroStyle === 'photo' || heroStyle === 'media'} schema="bakery" footerNewsletter={false}>
+  {/* ================= SLAB HOME: photo band > cream > burgundy > cream ===== */}
+  {layoutSystem === 'slab' ? (
+  <>
+  <section class="hero-media slab-hero">
+    <Img src={heroPhoto} alt="" class="hero-bg" anim={f.kenBurns ? 'ken-burns' : undefined} priority sizes="100vw" />
+    {/* Video-ready: set siteConfig.links.heroVideo to autoplay over the photo
+        poster. PLACEHOLDER: empty until real footage lands (src/config/site.ts). */}
+    {siteConfig.links.heroVideo && (
+      <video class="hero-video" data-hero-video={siteConfig.links.heroVideo} autoplay muted loop playsinline aria-hidden="true">
+        <source src={siteConfig.links.heroVideo} />
+      </video>
+    )}
+    <div class="hero-media-scrim" aria-hidden="true"></div>
+    <div class="container hero-media-inner">
+      <div class="hero-media-content">
+        <p class="eyebrow hero-media-eyebrow">{home.eyebrow}</p>
+        <h1 class="statement statement--hero">{home.title}</h1>
+        {home.lede && <p class="hero-media-lede">{home.lede}</p>}
+        {heroCta.as === 'button' ? (
+          <button class="btn hero-media-cta" type="button" disabled aria-disabled="true" title="Online ordering opens with the bakery.">{heroCta.label}</button>
+        ) : (
+          <a class="btn btn--cream hero-media-cta" href={heroCta.href} target={heroCta.external ? '_blank' : undefined} rel={heroCta.external ? 'noopener' : undefined}>{heroCta.label}</a>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="container" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
+      <h2 class="statement">{home.craftLine}</h2>
+      <div class="slab-body">{home.body.map((p) => <p>{p}</p>)}</div>
+      <div class="slab-sketch" aria-hidden="true"><Sketch name="baguette" width={150} height={54} color="var(--clay)" draw={f.scrollDraw} /></div>
+    </div>
+    <div class="container collage" aria-hidden="false">
+      <Img src={pick(images.story1) ?? featureImg} alt="Laminating dough" class="collage-a" anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 860px) 42vw, 460px" />
+      <Img src={pick(images.story2) ?? portraitImg} alt="The team at work" class="collage-b" anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 860px) 34vw, 380px" />
+      <Img src={pick(images.ig1) ?? squareImg} alt="Fresh croissants" class="collage-c" anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 860px) 30vw, 320px" />
+    </div>
+  </section>
+
+  <section class="band band--burgundy on-dark">
+    <div class="container" data-anim={f.reveal ? 'reveal' : undefined}>
+      <h2 class="statement">{home.missionLine}</h2>
+    </div>
+    <div class="marquee" aria-label="Louma in a few words">
+      <div class="marquee-vp" data-anim={f.marquee ? 'marquee' : undefined}>
+        <div class="marquee-track">
+          {marquee.map((m) => (
+            <span class="marquee-item"><span>{m.data.text}</span><span class="marquee-dot" aria-hidden="true">·</span></span>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="band">
+    <div class="container">
+      <p class="eyebrow">The menu</p>
+      <ul class="slab-menulist" role="list" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
+        {featured.map((item) => (
+          <li>
+            <span class="sm-name">{item.name}</span>
+            <span class="sm-dots" aria-hidden="true"></span>
+            <span class="sm-price mono">{item.price}</span>
+          </li>
+        ))}
+      </ul>
+      <p class="menu-more"><a class="btn" href="/menu">See the full menu</a></p>
+    </div>
+    <div class="container findus-grid slab-find" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
+      <div class="findus-info">
+        <p class="eyebrow">Find us</p>
+        <address class="findus-address">
+          <p class="mono">{siteConfig.address.street}<br />{siteConfig.address.city}, {siteConfig.address.state} {siteConfig.address.zip}</p>
+          <ul class="findus-hours" role="list">
+            {siteConfig.hours.map((h) => (
+              <li>
+                <span class="mono">{h.days}</span>
+                <span class="mono findus-hours-time">{h.close ? `${h.open}-${h.close}` : h.open}</span>
+              </li>
+            ))}
+          </ul>
+          <p class="findus-contact mono">
+            <a href={`tel:${siteConfig.phone.replace(/[^+\d]/g, '')}`}>{siteConfig.phone}</a><br />
+            <a href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a>
+          </p>
+        </address>
+      </div>
+      <div class="findus-news on-dark" id="newsletter">
+        <h2 class="news-title">{home.newsletterTitle}</h2>
+        {home.newsletterBody && <p class="news-body">{home.newsletterBody}</p>}
+        <NewsletterForm variant="page" />
+      </div>
+    </div>
+  </section>
+  </>
+  ) : (
+  <>
   {/* ============================================ 1 · HERO ========= */}
   {heroStyle === 'media' ? (
     <section class="hero-media">
@@ -62,15 +160,15 @@ const heroCta = orderReady
       <div class="hero-media-scrim" aria-hidden="true"></div>
       <div class="container hero-media-inner">
         <div class="hero-media-content">
-          <p class="eyebrow hero-media-eyebrow" data-anim={f.typewriter ? 'typewriter' : undefined}>{home.eyebrow}</p>
-          <h1 class="hero-headline hero-media-headline" data-anim={f.weightBreath ? 'weight-breath' : undefined}>{home.title}</h1>
+          <p class="eyebrow hero-media-eyebrow">{home.eyebrow}</p>
+          <h1 class="hero-headline hero-media-headline">{home.title}</h1>
           {home.lede && <p class="hero-media-lede">{home.lede}</p>}
           {heroCta.as === 'button' ? (
             <button class="btn btn-primary hero-media-cta" type="button" disabled aria-disabled="true" title="Online ordering opens with the bakery.">
               {heroCta.label}
             </button>
           ) : (
-            <a class="btn btn-primary hero-media-cta" href={heroCta.href} target={heroCta.external ? '_blank' : undefined} rel={heroCta.external ? 'noopener' : undefined} data-fx-magnetic={f.magneticButtons ? '' : undefined}>
+            <a class="btn btn-primary hero-media-cta" href={heroCta.href} target={heroCta.external ? '_blank' : undefined} rel={heroCta.external ? 'noopener' : undefined}>
               {heroCta.label}
             </a>
           )}
@@ -88,15 +186,15 @@ const heroCta = orderReady
       <div class="hero-overlay" aria-hidden="true"></div>
       <div class="container hero-grid">
         <div class="hero-panel">
-          <p class="eyebrow hero-eyebrow" data-anim={f.typewriter ? 'typewriter' : undefined}>{home.eyebrow}</p>
-          <h1 class="hero-headline" data-anim={f.weightBreath ? 'weight-breath' : undefined}>{home.title}</h1>
+          <p class="eyebrow hero-eyebrow">{home.eyebrow}</p>
+          <h1 class="hero-headline">{home.title}</h1>
           {home.lede && <p class="hero-lede">{home.lede}</p>}
           {heroCta.as === 'button' ? (
             <button class="btn btn-primary hero-cta" type="button" disabled aria-disabled="true" title="Online ordering opens with the bakery.">
               {heroCta.label}
             </button>
           ) : (
-            <a class="btn btn-primary hero-cta" href={heroCta.href} target={heroCta.external ? '_blank' : undefined} rel={heroCta.external ? 'noopener' : undefined} data-fx-magnetic={f.magneticButtons ? '' : undefined}>
+            <a class="btn btn-primary hero-cta" href={heroCta.href} target={heroCta.external ? '_blank' : undefined} rel={heroCta.external ? 'noopener' : undefined}>
               {heroCta.label}
             </a>
           )}
@@ -107,15 +205,15 @@ const heroCta = orderReady
     <section class="hero-ed">
       <div class="container hero-ed-grid">
         <div class="hero-ed-text">
-          <p class="eyebrow" data-anim={f.typewriter ? 'typewriter' : undefined}>{home.eyebrow}</p>
-          <h1 class="hero-headline hero-ed-headline" data-anim={f.weightBreath ? 'weight-breath' : undefined}>{home.title}</h1>
+          <p class="eyebrow">{home.eyebrow}</p>
+          <h1 class="hero-headline hero-ed-headline">{home.title}</h1>
           {home.lede && <p class="hero-ed-lede">{home.lede}</p>}
           {heroCta.as === 'button' ? (
             <button class="btn btn-primary hero-ed-cta" type="button" disabled aria-disabled="true" title="Online ordering opens with the bakery.">
               {heroCta.label}
             </button>
           ) : (
-            <a class="btn btn-primary hero-ed-cta" href={heroCta.href} target={heroCta.external ? '_blank' : undefined} rel={heroCta.external ? 'noopener' : undefined} data-fx-magnetic={f.magneticButtons ? '' : undefined}>
+            <a class="btn btn-primary hero-ed-cta" href={heroCta.href} target={heroCta.external ? '_blank' : undefined} rel={heroCta.external ? 'noopener' : undefined}>
               {heroCta.label}
             </a>
           )}
@@ -144,7 +242,7 @@ const heroCta = orderReady
 
   {/* ==================================== 3 · SIGNATURE (full-bleed) */}
   {altBlocks[0] && (
-    <section class="block block--fullbleed" data-anim={f.parallax ? 'parallax' : undefined}>
+    <section class="block block--fullbleed">
       <Img src={pick(images.story1) ?? featureImg} alt="" class="block-bg" anim={f.kenBurns ? 'ken-burns' : undefined} sizes="100vw" />
       <div class="block-overlay" aria-hidden="true"></div>
       <div class="container block-fb-text on-dark">
@@ -165,7 +263,7 @@ const heroCta = orderReady
           <h2>{altBlocks[1].data.title}</h2>
           <p>{altBlocks[1].data.body}</p>
         </div>
-        <Img src={pick(images.story2) ?? portraitImg} alt={altBlocks[1].data.title} class="block-numeral-img" tilt={f.imageTilt} anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 860px) 100vw, 45vw" />
+        <Img src={pick(images.story2) ?? portraitImg} alt={altBlocks[1].data.title} class="block-numeral-img" anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 860px) 100vw, 45vw" />
       </div>
     </section>
   )}
@@ -175,8 +273,8 @@ const heroCta = orderReady
     <section class="block block--duo section">
       <div class="container block-duo-grid" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
         <div class="block-duo-imgs">
-          <Img src={pick(images.story3) ?? portraitImg} alt={altBlocks[2].data.title} class="duo-img duo-img--1" tilt={f.imageTilt} anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 860px) 50vw, 30vw" />
-          <Img src={pick(images.ig1) ?? squareImg} alt="" class="duo-img duo-img--2" tilt={f.imageTilt} anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 860px) 50vw, 30vw" />
+          <Img src={pick(images.story3) ?? portraitImg} alt={altBlocks[2].data.title} class="duo-img duo-img--1" anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 860px) 50vw, 30vw" />
+          <Img src={pick(images.ig1) ?? squareImg} alt="" class="duo-img duo-img--2" anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 860px) 50vw, 30vw" />
         </div>
         <div class="block-duo-text">
           {altBlocks[2].data.eyebrow && <p class="eyebrow">{altBlocks[2].data.eyebrow}</p>}
@@ -211,11 +309,11 @@ const heroCta = orderReady
     <div class="container">
       <header class="sec-head">
         <p class="eyebrow">The menu</p>
-        <h2 data-anim={f.lineMask ? 'lines' : undefined}>{home.menuTitle}</h2>
+        <h2>{home.menuTitle}</h2>
       </header>
       <ul class="product-grid" role="list" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
         {featured.map((item) => (
-          <li class="product-card" data-fx-tilt={f.cardTilt ? '' : undefined} data-fx-lift={f.hoverLift ? '' : undefined}>
+          <li class="product-card">
             <Img src={pick(item.image) ?? landscapeImg} alt={item.name} class="product-img" sizes="(max-width: 520px) 90vw, 300px" />
             <div class="product-meta">
               <div class="product-row">
@@ -235,7 +333,7 @@ const heroCta = orderReady
   {lead && (
     <section class="testimonial section">
       <figure class="container testimonial-inner">
-        <blockquote class="testimonial-quote" data-anim={f.lineMask ? 'lines' : undefined}>“{lead.quote}”</blockquote>
+        <blockquote class="testimonial-quote" data-anim={f.reveal ? 'reveal' : undefined} data-reveal="fade">“{lead.quote}”</blockquote>
         <figcaption class="testimonial-by mono">
           {lead.name}{lead.role && <span class="testimonial-role"> · {lead.role}</span>}
         </figcaption>
@@ -273,6 +371,8 @@ const heroCta = orderReady
       </div>
     </div>
   </section>
+  </>
+  )}
   {/* Footer comes from BaseLayout. */}
 </BaseLayout>
 
@@ -282,6 +382,13 @@ const heroCta = orderReady
      full-bleed signature block, the burgundy marquee ribbon, and the footer.
      Sections separate by rhythm (consistent vertical padding), not color. */
   .section { padding-block: clamp(2.75rem, 5.5vw, 4.75rem); }
+
+  /* --- Slab home --- */
+  .slab-body { margin-top: var(--space-5); }
+  .slab-body p + p { margin-top: var(--space-3); }
+  .slab-sketch { margin-top: var(--space-5); }
+  .slab-find { margin-top: clamp(3rem, 6vw, 5rem); }
+  :global(html.sys-slab) .band .menu-more { text-align: start; margin-top: var(--space-5); }
 
   /* Hand-drawn section-break ornaments (small, charming accents). */
   .home-break { display: flex; justify-content: center; }

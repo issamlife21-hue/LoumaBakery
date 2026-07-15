@@ -209,6 +209,20 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
     border-color: color-mix(in srgb, var(--butter) 45%, transparent);
   }
 
+  /* SLAB nav: a persistent FLAT bar, legible at every scroll position.
+     Over the photo hero it sits on a solid ink strip (no blur); everywhere
+     else solid cream with a hairline. The kill-all rule strips the blur. */
+  :global(html.sys-slab) .site-nav[data-scrolled='true'],
+  :global(html.sys-slab) .site-nav:not([data-transparent='true']) {
+    background: var(--surface-0);
+    border-bottom: 1px solid var(--hairline);
+  }
+  :global(html.sys-slab) .site-nav[data-transparent='true']:not([data-scrolled='true']) {
+    background: color-mix(in srgb, var(--ink) 90%, transparent);
+  }
+  :global(html.sys-slab) .order-cta { border-radius: 9999px; }
+  :global(html.sys-slab) .mobile-panel { background: var(--surface-0); border-inline-start: 1px solid var(--hairline); }
+
   /* Hide-on-scroll-down / show-on-scroll-up (keeps the glass state). */
   .site-nav { transition: transform 0.35s var(--ease-out); will-change: transform; }
   .site-nav[data-hidden='true'] { transform: translateY(-100%); }

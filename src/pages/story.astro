@@ -37,11 +37,11 @@ const founder = c.founder;
   </section>
 
   {/* Chapters rail (alternating) */}
-  <div class="chapters" data-anim={f.storyRail ? 'story-rail' : undefined}>
+  <div class="chapters">
     {chapters.map((ch, i) => (
       <section class={`chapter ${i % 2 ? 'chapter--flip' : ''}`} data-anim={f.reveal ? 'reveal' : undefined}>
         <div class="container chapter-grid">
-          <Img src={pick(ch.data.image) ?? portraitImg} alt={ch.data.title} class="chapter-img" tilt={f.imageTilt} anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 820px) 100vw, 50vw" />
+          <Img src={pick(ch.data.image) ?? portraitImg} alt={ch.data.title} class="chapter-img" anim={f.imageWipe ? 'wipe' : undefined} sizes="(max-width: 820px) 100vw, 50vw" />
           <div class="chapter-text">
             {/* Numbered markers (01/02/03) removed by request; could return
                 later as small custom drawn-numeral images. */}

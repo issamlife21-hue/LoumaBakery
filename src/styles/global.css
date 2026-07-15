@@ -236,26 +236,6 @@ a:hover {
   color: var(--surface-0);
 }
 
-/* ----------------------------------------------- Grain texture overlay
-   Gated: only renders when <html class="grain"> (set from the
-   features.grainTexture flag at the page/layout level). Fixed, behind
-   nothing interactive, never intercepts pointer events.
-   ------------------------------------------------------------------- */
-/* Only on fine-pointer, non-mobile: the blended fixed layer forces compositing
-   on scroll, which is costly on phones. */
-@media (hover: hover) and (pointer: fine) and (min-width: 760px) {
-  .grain::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 9999;
-    pointer-events: none;
-    opacity: 0.04;
-    mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-}
-
 /* ----------------------------------------------------- Reduced motion */
 @media (prefers-reduced-motion: reduce) {
   html {
@@ -336,13 +316,6 @@ a:hover {
   border: 1.5px dashed color-mix(in srgb, var(--clay) 55%, transparent);
 }
 
-/* Hover lift — the attribute is only present when the hoverLift flag is on
-   (set in markup), so this rule already respects the flag. Gated to real hover
-   pointers and non-reduced motion. */
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  [data-fx-lift] { transition: transform var(--dur) var(--ease-out), box-shadow var(--dur) var(--ease-out); }
-  [data-fx-lift]:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
-}
 
 /* --- Placeholder image blocks (swap for real <img> later) --- */
 .ph {
@@ -484,51 +457,9 @@ img.img-cover { display: block; width: 100%; height: 100%; object-fit: cover; }
 
 /* Pre-paint hidden states (revealed by JS) */
 .fx-reveal [data-anim="reveal"] { opacity: 0; }
-.fx-hero .hero-panel { opacity: 0; }
-.fx-headline .hero-headline { opacity: 0; }
-.fx-lines [data-anim="lines"] { opacity: 0; }
 
-/* Headline word-rise scaffolding (spans injected by JS; hero + lineMask) */
-.word-mask { display: inline-block; overflow: hidden; vertical-align: top; }
-.word-mask .word { display: inline-block; will-change: transform; }
 
-/* Preloader */
-#preloader { display: none; }
-.fx-preloader #preloader {
-  display: flex;
-  position: fixed;
-  inset: 0;
-  z-index: 10001;
-  align-items: center;
-  justify-content: center;
-  background: var(--ink);
-}
-.preloader-mark {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: clamp(40px, 8vw, 80px);
-  color: var(--butter);
-  letter-spacing: 0.01em;
-}
 
-/* Menu photo cursor */
-.photo-cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 120px;
-  height: 90px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(135deg, var(--surface-3), var(--amber-warm));
-  background-size: cover;
-  background-position: center;
-  box-shadow: var(--shadow-md);
-  pointer-events: none;
-  opacity: 0;
-  z-index: 9997;
-  transition: opacity 180ms var(--ease-out);
-}
-.photo-cursor.is-on { opacity: 1; }
 
 /* Toast */
 #toast-region {
@@ -558,10 +489,186 @@ img.img-cover { display: block; width: 100%; height: 100%; object-fit: cover; }
 /* Ingredient slider cursor affordance */
 .ing-track.is-dragging { cursor: grabbing; user-select: none; }
 
-/* View-transition crossfade (gated) */
-@media (prefers-reduced-motion: no-preference) {
-  .fx-pagetransition::view-transition-old(root),
-  .fx-pagetransition::view-transition-new(root) {
-    animation-duration: 0.28s;
-  }
+
+/* ===================================================== SLAB SYSTEM =====
+   html.sys-slab: the editorial-slab layout (default). Flat surfaces, full-
+   bleed color bands, extreme type split, one shape language, ghost buttons.
+   html.sys-classic leaves every rule above exactly as it shipped.
+   ===================================================================== */
+
+/* Three radii only: pill (buttons/tags/inputs), 16px (cards/tiles), 0 (bleed). */
+.sys-slab {
+  --radius-sm: 16px;
+  --radius-md: 16px;
+  --radius-lg: 16px;
+  --t-body: 15px;
 }
+
+/* 1.1 Flat everything: depth is surface change + hairlines, nothing else. */
+.sys-slab *,
+.sys-slab *::before,
+.sys-slab *::after {
+  box-shadow: none !important;
+  text-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* 1.3 Extreme type split: one Cormorant statement per band; the rest is small. */
+.sys-slab .statement {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-style: normal;
+  font-size: clamp(2.75rem, 8vw, 7rem);
+  line-height: 0.98;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-wrap: balance;
+  max-width: 14ch;
+}
+.sys-slab .statement--hero {
+  font-size: clamp(2.9rem, 9vw, 7.5rem);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--butter);
+}
+.sys-slab .band--burgundy .statement,
+.sys-slab .band--ink .statement {
+  color: var(--butter);
+  font-style: italic;
+  font-weight: 300;
+}
+.sys-slab h1:not(.statement),
+.sys-slab h2:not(.statement),
+.sys-slab h3 { font-weight: 400; }
+.sys-slab p { max-width: 640px; }
+
+/* 1.8 Label stamp: mono, tracked, no dash. Converts every eyebrow site-wide. */
+.sys-slab .eyebrow,
+.sys-slab .foot-h,
+.sys-slab .info-h {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--burgundy);
+}
+.sys-slab .eyebrow::before,
+.sys-slab .foot-h::before,
+.sys-slab .info-h::before { display: none; }
+.sys-slab .on-dark .eyebrow,
+.sys-slab .site-foot .eyebrow,
+.sys-slab .site-foot .foot-h { color: var(--coral); }
+
+/* 1.2 Bands: cream is the page default; burgundy and ink are the only other
+   section surfaces. Hard cuts, no seams. Surface tints retired from sections. */
+.sys-slab .band { padding-block: clamp(3.25rem, 7vw, 6.5rem); }
+.sys-slab .band--burgundy { background: var(--burgundy); color: var(--butter); }
+.sys-slab .band--ink { background: var(--ink); color: var(--surface-0); }
+.sys-slab .page-head { background: var(--surface-0); border-bottom: 1px solid var(--hairline); }
+.sys-slab .founder { background: var(--surface-0); border-block: 1px solid var(--hairline); }
+.sys-slab .tiers { background: var(--surface-0); }
+.sys-slab .stats { background: var(--burgundy); }
+.sys-slab .stats .stat-value { color: var(--butter); }
+.sys-slab .stats .stat-label { color: color-mix(in srgb, var(--butter) 82%, transparent); }
+.sys-slab .allergen { background: var(--surface-0); border: 1px solid var(--hairline); }
+.sys-slab .pillnav { background: var(--surface-0); }
+/* Component fills stay flat and bordered. */
+.sys-slab :is(.product-card, .value-card, .role, .tier, .ing-card) {
+  background: var(--surface-0);
+  border: 1px solid var(--hairline-strong);
+}
+.sys-slab .role--feature { background: var(--butter); }
+.sys-slab .ph { background: var(--butter); }
+.sys-slab .hero-ed { background: var(--butter); }
+
+/* 1.5 Ghost buttons default; ONE filled CTA per page (.btn-primary/.btn-coral
+   render as the filled burgundy pill; use once per page). */
+.sys-slab .btn {
+  background: transparent;
+  border: 1.5px solid var(--burgundy);
+  color: var(--burgundy);
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 15px;
+  min-height: 0;
+  padding: 14px 28px;
+  border-radius: var(--radius-pill);
+}
+.sys-slab .btn:hover { background: color-mix(in srgb, var(--burgundy) 9%, transparent); color: var(--burgundy); }
+.sys-slab .btn-primary,
+.sys-slab .btn-coral {
+  background: var(--burgundy);
+  border-color: var(--burgundy);
+  color: var(--butter);
+}
+.sys-slab .btn-primary:hover,
+.sys-slab .btn-coral:hover { background: var(--ink); border-color: var(--ink); color: var(--butter); }
+/* Ghost on dark bands/footer + over the hero photo. */
+.sys-slab :is(.on-dark, .site-foot, .band--burgundy, .band--ink) .btn:not(.btn-primary):not(.btn-coral),
+.sys-slab .btn--cream {
+  border-color: var(--butter);
+  color: var(--butter);
+  background: transparent;
+}
+.sys-slab :is(.on-dark, .site-foot, .band--burgundy, .band--ink) .btn:not(.btn-primary):not(.btn-coral):hover,
+.sys-slab .btn--cream:hover { background: color-mix(in srgb, var(--butter) 14%, transparent); color: var(--butter); }
+/* Inert "Ordering soon": intentional dashed ghost. */
+.sys-slab .btn:disabled,
+.sys-slab .btn[aria-disabled="true"] {
+  background: transparent;
+  border: 1.5px dashed color-mix(in srgb, var(--burgundy) 55%, transparent);
+  color: color-mix(in srgb, var(--burgundy) 80%, var(--muted));
+}
+/* Inputs join the pill language. */
+.sys-slab .field input,
+.sys-slab .field select,
+.sys-slab .news-row input,
+.sys-slab .foot-news-row input {
+  border-radius: var(--radius-pill);
+  padding-inline: 1.1rem;
+}
+.sys-slab .field textarea { border-radius: 16px; }
+
+/* Flat hero: no gradient scrim; the text sits on a flat ink panel. */
+.sys-slab .hero-media-scrim { background: color-mix(in srgb, var(--ink) 18%, transparent); }
+.sys-slab .hero-media-content {
+  background: color-mix(in srgb, var(--ink) 88%, transparent);
+  padding: clamp(1.5rem, 3.5vw, 2.75rem);
+  border-radius: 16px;
+  max-width: min(92vw, 720px);
+}
+.sys-slab .hero-media-headline,
+.sys-slab .hero-media-lede { text-shadow: none; }
+
+/* Ghost marquee: outline-only Cormorant on the burgundy band. */
+.sys-slab .marquee { background: transparent; padding-block: var(--space-5) 0; }
+.sys-slab .marquee-item {
+  font-size: clamp(30px, 4.5vw, 58px);
+  -webkit-text-stroke: 1px color-mix(in srgb, var(--butter) 75%, transparent);
+  color: transparent;
+}
+.sys-slab .marquee-dot { color: color-mix(in srgb, var(--butter) 60%, transparent); -webkit-text-stroke: 0; }
+
+/* 1.9 Collage moment: overlapping tiles at slight rotations. */
+.sys-slab .collage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: var(--space-7);
+}
+.sys-slab .collage .limg { border-radius: 16px; border: 1px solid var(--hairline-strong); }
+.sys-slab .collage-a { width: 38%; transform: rotate(-2deg); z-index: 1; }
+.sys-slab .collage-b { width: 30%; transform: rotate(1.5deg) translateY(8%); margin-inline: -4%; z-index: 2; }
+.sys-slab .collage-c { width: 26%; transform: rotate(3deg); z-index: 1; }
+
+/* Slab menu preview list (home). */
+.sys-slab .slab-menulist { max-width: 760px; margin-top: var(--space-5); }
+.sys-slab .slab-menulist li {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--hairline);
+}
+.sys-slab .sm-name { font-family: var(--font-display); font-size: clamp(22px, 2.4vw, 30px); color: var(--ink); }
+.sys-slab .sm-dots { flex: 1; border-bottom: 1px dotted var(--hairline-strong); transform: translateY(-4px); }
+.sys-slab .sm-price { color: var(--burgundy); font-size: 15px; }
