@@ -64,11 +64,11 @@ collections:
                 widget: list
                 summary: "{{fields.name}} — {{fields.price}}"
                 fields:
-                  - { name: name, label: "Name", widget: string, hint: "e.g. Butter Croissant" }
-                  - { name: price, label: "Price", widget: string, hint: "Type it exactly, e.g. $4.50" }
-                  - { name: description, label: "Description", widget: text, required: false, hint: "One short, tasty line." }
-                  - { name: tags, label: "Tags", widget: list, required: false, hint: "Optional labels like vegan or vegetarian. Type one and press Enter." }
-                  - { name: image, label: "Photo", widget: image, required: false, choose_url: false, hint: "Upload a photo of this item (or pick one already uploaded)." }
+                  - { name: name, label: "Name", widget: string, required: true, hint: "e.g. Butter Croissant" }
+                  - { name: price, label: "Price", widget: string, required: true, pattern: ['^\$?\d+(\.\d{2})?$', "Type a price like $4.50 or 4.50"], hint: "e.g. $4.50" }
+                  - { name: description, label: "Description", widget: text, required: false, hint: "One short line about the item." }
+                  - { name: tags, label: "Dietary tags", widget: select, multiple: true, required: false, options: ["vegan", "vegetarian", "gf", "nut-free"], hint: "Pick any that apply." }
+                  - { name: image, label: "Photo", widget: image, required: false, choose_url: false, hint: "Landscape, at least 1200px wide, under 3MB." }
 
   # ========================================================= IMAGES =========
   - name: images
@@ -81,8 +81,8 @@ collections:
         label: "Site photos"
         file: "src/data/images.json"
         fields:
-          - { name: hero, label: "Home — hero photo", widget: image, choose_url: false, hint: "The big photo at the top of the home page. A wide/landscape shot works best." }
-          - { name: founder, label: "Story — founder portrait", widget: image, choose_url: false, hint: "Portrait photo on the Our Story page." }
+          - { name: hero, label: "Home — hero photo", widget: image, choose_url: false, hint: "The big photo at the top of the home page. Landscape, at least 1600px wide, under 3MB." }
+          - { name: founder, label: "Story — founder portrait", widget: image, choose_url: false, hint: "Portrait photo on the Our Story page. At least 1200px tall, under 3MB." }
           - { name: story1, label: "Story — photo 1", widget: image, choose_url: false, hint: "First story photo (also the big “01” block on the home page)." }
           - { name: story2, label: "Story — photo 2", widget: image, choose_url: false }
           - { name: story3, label: "Story — photo 3", widget: image, choose_url: false }
@@ -99,8 +99,8 @@ collections:
         label: "Settings"
         file: "src/data/settings.json"
         fields:
-          - { name: phone, label: "Phone number", widget: string, hint: "Shown in the footer and on Visit. e.g. +1 (310) 555-1234" }
-          - { name: email, label: "Email address", widget: string, hint: "Where customers reach you." }
+          - { name: phone, label: "Phone number", widget: string, required: true, pattern: ['^[+()\d\s.-]{7,20}$', "Type a phone number like +1 (310) 555-1234"], hint: "Shown in the footer and on Visit. e.g. +1 (310) 555-1234" }
+          - { name: email, label: "Email address", widget: string, required: true, pattern: ['^[^@\s]+@[^@\s]+\.[^@\s]+$', "Type a full email address"], hint: "Where customers reach you." }
           - name: address
             label: "Address"
             widget: object

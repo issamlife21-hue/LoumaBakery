@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /review
 Disallow: /admin
+Disallow: /admin-demo
 
 Sitemap: https://loumabakeryy.netlify.app/sitemap-index.xml

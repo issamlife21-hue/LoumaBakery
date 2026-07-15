@@ -1,0 +1,24 @@
+/* Editor preview pane: rough approximation of the site's voice.
+   (Site fonts are bundled with hashed names, so the preview uses close
+   system fallbacks: Georgia for Cormorant, system sans for DM Sans.) */
+:root {
+  --ink: #2a1f18;
+  --body: #4a3d34;
+  --burgundy: #6e1f2a;
+  --surface-0: #faf5ea;
+}
+body {
+  background: var(--surface-0);
+  color: var(--body);
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  padding: 1.5rem;
+}
+h1, h2, h3 {
+  font-family: Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.1;
+}
+a { color: var(--burgundy); }

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Louma Bakery — Editor demo</title>
+    <style>
+      #demo-banner {
+        position: fixed;
+        inset-inline: 0;
+        bottom: 0;
+        z-index: 99999;
+        background: #6e1f2a;
+        color: #fbf5d4;
+        font: 500 14px/1.4 system-ui, sans-serif;
+        text-align: center;
+        padding: 10px 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Same vendored Decap bundle as /admin; backend is test-repo (in-memory). -->
+    <script src="/admin/decap-cms-3.14.0.min.js"></script>
+    <script>
+      CMS.registerPreviewStyle('/admin/preview.css');
+    </script>
+    <div id="demo-banner">Demo mode: changes are not saved. The real editor lives at /admin once your login is set up.</div>
+  </body>
+</html>

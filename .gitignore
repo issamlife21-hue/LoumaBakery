@@ -20,3 +20,6 @@ pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .netlify
+
+# generated at build (from public/admin/config.yml)
+public/admin-demo/config.yml

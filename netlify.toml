@@ -21,11 +21,19 @@
     Strict-Transport-Security = "max-age=31536000; includeSubDomains"
 
 # ----------------------------------------------------------------------------
-# /admin (Decap CMS) needs a looser CSP: the pinned unpkg bundle, DecapBridge
-# auth/gateway, and the image hosts the media library uses. This rule is more
-# specific and comes after /*, so its CSP wins for the editor only.
+# /admin (Decap CMS, self-hosted bundle — no CDN anywhere). unsafe-inline/eval
+# stay scoped to the editor only; DecapBridge auth/gateway + GitHub content are
+# the only remote endpoints. Never indexed.
 # ----------------------------------------------------------------------------
 [[headers]]
   for = "/admin/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://unpkg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://unpkg.com; font-src 'self' https://fonts.gstatic.com data:; frame-src https://*.decapbridge.com; connect-src 'self' https://*.decapbridge.com https://api.github.com https://unpkg.com; worker-src 'self' blob:"
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data: blob: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://*.decapbridge.com; connect-src 'self' https://auth.decapbridge.com https://gateway.decapbridge.com https://gateways.decapbridge.com https://api.github.com https://raw.githubusercontent.com; worker-src 'self' blob:"
+    X-Robots-Tag = "noindex, nofollow"
+
+# /admin-demo: same editor, in-memory test backend (no auth, no remote writes).
+[[headers]]
+  for = "/admin-demo/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; img-src 'self' data: blob: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self'; worker-src 'self' blob:"
+    X-Robots-Tag = "noindex, nofollow"

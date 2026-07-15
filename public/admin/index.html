@@ -8,17 +8,17 @@
   </head>
   <body>
     <!--
-      Decap CMS (open source, git-based). Loads the editor and reads /admin/config.yml.
+      Decap CMS 3.14.0, self-hosted (vendored bundle, no CDN).
       Auth is handled by DecapBridge (email/password, no GitHub account) via the
       backend block in config.yml.
 
       IF the DecapBridge dashboard gives you an extra <script> tag for login,
       paste it on the line BELOW this comment (before the Decap script).
     -->
-    <script
-      src="https://unpkg.com/decap-cms@3.14.0/dist/decap-cms.js"
-      integrity="sha384-xwhgdKXZolX8okdDQCxDlYt05Z2wT8i9VvdZBa4fC/DMwaJJL0Wafb7+oCkftR2p"
-      crossorigin="anonymous"
-    ></script>
+    <script src="/admin/decap-cms-3.14.0.min.js"></script>
+    <script>
+      // Make the editor preview resemble the site (fonts fall back to serif/sans).
+      CMS.registerPreviewStyle('/admin/preview.css');
+    </script>
   </body>
 </html>
