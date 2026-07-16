@@ -14,7 +14,7 @@
  * ~30% in view via IntersectionObserver, suppressed under reduced-motion
  * (final state shown immediately), heavy motion off on mobile.
  */
-import { animate, inView } from 'motion';
+import { animate } from 'motion';
 import { features } from '../config/features';
 
 type Cleanup = () => void;
@@ -93,15 +93,27 @@ const builders: Record<string, () => void> = {
   },
 
   // --- Reveal: fade + settle DOWNWARD (start above, come to rest), or fade
-  //     in place with data-reveal="fade". data-reveal-children staggers. ---
+  //     in place with data-reveal="fade". data-reveal-children staggers.
+  //     ONE shared IntersectionObserver for every reveal element. ---
   reveal() {
-    $('[data-anim="reveal"]').forEach((el) => {
-      const inPlace = el.getAttribute('data-reveal') === 'fade';
+    const els = $('[data-anim="reveal"]');
+    if (!els.length) return;
+    const prep = new Map<Element, HTMLElement[]>();
+    els.forEach((el) => {
       const staggered = el.hasAttribute('data-reveal-children');
+      const inPlace = el.getAttribute('data-reveal') === 'fade';
       const targets = (staggered ? Array.from(el.children) : [el]) as HTMLElement[];
-      if (staggered) el.style.opacity = '1';
+      if (staggered) (el as HTMLElement).style.opacity = '1';
       targets.forEach((t) => { t.style.opacity = '0'; if (!inPlace) t.style.transform = 'translateY(-20px)'; });
-      const fn = inView(el, () => {
+      prep.set(el, targets);
+    });
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        io.unobserve(e.target); // one-shot
+        const el = e.target;
+        const inPlace = el.getAttribute('data-reveal') === 'fade';
+        const targets = prep.get(el) ?? [];
         targets.forEach((t, i) => {
           animate(
             t,
@@ -109,9 +121,12 @@ const builders: Record<string, () => void> = {
             { duration: 0.6, delay: targets.length > 1 ? i * 0.08 : 0, ease: EASE },
           );
         });
-        return () => {};
-      }, { amount: 0.3 });
-      add('reveal', () => { fn(); targets.forEach((t) => { t.style.opacity = ''; t.style.transform = ''; }); });
+      });
+    }, { rootMargin: '0px 0px -10% 0px', threshold: 0.3 });
+    els.forEach((el) => io.observe(el));
+    add('reveal', () => {
+      io.disconnect();
+      prep.forEach((targets) => targets.forEach((t) => { t.style.opacity = ''; t.style.transform = ''; }));
     });
   },
 
@@ -201,6 +216,19 @@ const builders: Record<string, () => void> = {
   },
 };
 
+// Simultaneous-draw cap: at most 2 sketches animate at once.
+let activeDraws = 0;
+const drawQueue: Array<() => void> = [];
+function runDraw(fn: () => void) {
+  if (activeDraws < 2) { activeDraws++; fn(); }
+  else drawQueue.push(fn);
+}
+function drawDone() {
+  activeDraws--;
+  const next = drawQueue.shift();
+  if (next) { activeDraws++; next(); }
+}
+
 // One-shot stroke draw when an element scrolls into view (IO + WAAPI).
 // Never left invisible: reduced-motion shows the final state, and a watchdog
 // rescues a mark that is on screen but whose IO never fired.
@@ -222,18 +250,27 @@ function drawOnScroll(svg: Element, strokes: SVGPathElement[], face?: Element) {
     done = true;
     io.disconnect();
     clearTimeout(safety);
-    if (face) face.classList.add('is-drawing');
-    let maxEnd = 0;
-    strokes.forEach((p, i) => {
-      const delay = i * step;
-      p.animate(
-        [{ strokeDashoffset: lens[i] }, { strokeDashoffset: 0 }],
-        { duration: 1100, delay, easing: 'cubic-bezier(0.22,1,0.36,1)', fill: 'forwards' },
-      );
-      p.style.strokeDashoffset = '0';
-      maxEnd = Math.max(maxEnd, delay + 1100);
+    // Cap simultaneous draws (iPhone GPUs): at most 2 run at once; extra marks
+    // queue and start as slots free up.
+    runDraw(() => {
+      if (face) face.classList.add('is-drawing');
+      strokes.forEach((p) => { p.style.willChange = 'stroke-dashoffset'; });
+      let maxEnd = 0;
+      strokes.forEach((p, i) => {
+        const delay = i * step;
+        p.animate(
+          [{ strokeDashoffset: lens[i] }, { strokeDashoffset: 0 }],
+          { duration: 1100, delay, easing: 'cubic-bezier(0.22,1,0.36,1)', fill: 'forwards' },
+        );
+        p.style.strokeDashoffset = '0';
+        maxEnd = Math.max(maxEnd, delay + 1100);
+      });
+      window.setTimeout(() => {
+        strokes.forEach((p) => { p.style.willChange = ''; });
+        settleFilled();
+        drawDone();
+      }, maxEnd + 150);
     });
-    if (face) window.setTimeout(settleFilled, maxEnd + 150);
   };
 
   const io = new IntersectionObserver((entries) => {

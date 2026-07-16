@@ -1,6 +1,8 @@
 ---
-import baguetteRaw from '../assets/brand/baguette.svg?raw';
-import toastRaw from '../assets/brand/toast.svg?raw';
+// Baked variants: the roughen filter is flattened into the geometry at build
+// time (scripts/bake-sketches.mjs), so no live SVG filter runs anywhere.
+import baguetteRaw from '../assets/brand/baguette-baked.svg?raw';
+import toastRaw from '../assets/brand/toast-baked.svg?raw';
 
 /**
  * Hand-drawn sketch ornament (baguette / toast). Renders the committed brand

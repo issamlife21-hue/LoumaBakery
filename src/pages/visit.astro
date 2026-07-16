@@ -62,15 +62,16 @@ const mapEmbed =
 
       <div class="visit-map">
         {mapEmbed ? (
-          <iframe
-            class="map-frame"
-            src={mapEmbed}
-            title={`Map to ${siteConfig.name}`}
-            loading="lazy"
-            referrerpolicy="no-referrer-when-downgrade"
-            sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
-            allowfullscreen
-          ></iframe>
+          <div class="map-shell" data-map-src={mapEmbed}>
+            {/* Tap-to-load facade: the iframe stays off the critical path on
+                mobile (and can't scroll-trap). Desktop auto-loads it lazily. */}
+            <button type="button" class="map-facade" data-map-load>
+              <span class="map-facade-addr mono">
+                {address.street}<br />{address.city}, {address.state} {address.zip}
+              </span>
+              <span class="btn map-facade-btn" aria-hidden="true">Load map</span>
+            </button>
+          </div>
         ) : (
           <div class="ph ph-a map-frame" aria-hidden="true"></div>
         )}
@@ -133,6 +134,37 @@ const mapEmbed =
   .directions + .directions { margin-top: var(--space-3); }
 
   .visit-map { position: sticky; top: calc(var(--nav-h) + var(--space-4)); }
+  .map-shell {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--hairline-strong);
+    overflow: hidden;
+    background: var(--butter);
+  }
+  .map-shell iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .map-facade {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    background: var(--butter);
+    border: 0;
+    text-align: center;
+  }
+  .map-facade-addr { color: var(--body); font-size: 15px; line-height: 1.7; }
+  .map-facade-btn { pointer-events: none; }
   .map-frame {
     display: block;
     width: 100%;
@@ -156,3 +188,32 @@ const mapEmbed =
     .visit-map { position: static; }
   }
 </style>
+
+<script>
+  // Map facade: inject the iframe on tap (touch) or automatically once the
+  // shell nears the viewport (hover/desktop devices keep the lazy feel).
+  const shell = document.querySelector<HTMLElement>('.map-shell');
+  if (shell) {
+    const src = shell.dataset.mapSrc!;
+    const load = () => {
+      if (shell.dataset.loaded) return;
+      shell.dataset.loaded = 'true';
+      const f = document.createElement('iframe');
+      f.src = src;
+      f.title = 'Map to Louma Bakery';
+      f.loading = 'lazy';
+      f.referrerPolicy = 'no-referrer-when-downgrade';
+      f.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox');
+      f.setAttribute('allowfullscreen', '');
+      shell.appendChild(f);
+      shell.querySelector('.map-facade')?.remove();
+    };
+    shell.querySelector('[data-map-load]')?.addEventListener('click', load);
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+      const io = new IntersectionObserver((es) => {
+        if (es.some((e) => e.isIntersecting)) { io.disconnect(); load(); }
+      }, { rootMargin: '200px' });
+      io.observe(shell);
+    }
+  }
+</script>

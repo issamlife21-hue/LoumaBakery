@@ -15,10 +15,10 @@
  *  - Baguette 280×100  single-stroke   · scroll-draw sketch
  *  - Toast    200×232  single-stroke   · scroll-draw sketch
  */
-export { default as Face } from "../assets/brand/face.svg";
+export { default as Face } from "../assets/brand/face-baked.svg";
 export { default as Wordmark } from "../assets/brand/wordmark.svg";
-export { default as Baguette } from "../assets/brand/baguette.svg";
-export { default as Toast } from "../assets/brand/toast.svg";
+export { default as Baguette } from "../assets/brand/baguette-baked.svg";
+export { default as Toast } from "../assets/brand/toast-baked.svg";
 
 /** Intrinsic aspect ratios, for reserving layout space without shift. */
 export const brandRatios = {

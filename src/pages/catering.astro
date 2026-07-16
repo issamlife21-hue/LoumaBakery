@@ -40,7 +40,7 @@ const today = new Date().toISOString().slice(0, 10);
 
   {/* Tiers */}
   {tiers.length > 0 && (
-    <section class="tiers">
+    <section class="tiers cv-auto">
       <div class="container">
         <div class="sec-head"><p class="eyebrow">Options</p><h2>Pick a starting point</h2></div>
         <ul class="tiers-grid" role="list" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
@@ -60,7 +60,7 @@ const today = new Date().toISOString().slice(0, 10);
   )}
 
   {/* Inquiry form */}
-  <section class="inquiry" data-anim={f.reveal ? 'reveal' : undefined}>
+  <section class="inquiry cv-auto" data-anim={f.reveal ? 'reveal' : undefined}>
     <div class="container narrow">
       <div class="sec-head"><p class="eyebrow">Start here</p><h2>Catering inquiry</h2></div>
       <form

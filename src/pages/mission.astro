@@ -45,7 +45,7 @@ const stats = c.stats ?? [];
 
   {/* Count-up stats */}
   {stats.length > 0 && (
-    <section class="stats" aria-label="By the numbers" data-anim={f.reveal ? 'reveal' : undefined}>
+    <section class="stats cv-auto" aria-label="By the numbers" data-anim={f.reveal ? 'reveal' : undefined}>
       <div class="container stats-grid">
         {stats.map((s) => (
           <div class="stat">
@@ -60,7 +60,7 @@ const stats = c.stats ?? [];
   )}
 
   {/* Donate */}
-  <section class="donate on-dark" data-anim={f.reveal ? 'reveal' : undefined}>
+  <section class="donate on-dark cv-auto" data-anim={f.reveal ? 'reveal' : undefined}>
     <div class="container donate-inner">
       <div>
         <p class="eyebrow">Give</p>

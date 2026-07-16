@@ -26,7 +26,7 @@ const roles = c.roles ?? [];
 
   {/* Roles */}
   {roles.length > 0 && (
-    <section class="roles">
+    <section class="roles cv-auto">
       <div class="container">
         <div class="sec-head"><p class="eyebrow">Open roles</p><h2>Where you'd fit</h2></div>
         <ul class="roles-list" role="list" data-anim={f.reveal ? 'reveal' : undefined} data-reveal-children>
@@ -46,7 +46,7 @@ const roles = c.roles ?? [];
   )}
 
   {/* Application form */}
-  <section class="apply" id="apply" data-anim={f.reveal ? 'reveal' : undefined}>
+  <section class="apply cv-auto" id="apply" data-anim={f.reveal ? 'reveal' : undefined}>
     <div class="container narrow">
       <div class="sec-head"><p class="eyebrow">Apply</p><h2>Tell us about you</h2></div>
       <form
