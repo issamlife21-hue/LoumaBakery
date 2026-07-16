@@ -42,6 +42,21 @@ A neighborhood bakery on Wilshire (Santa Monica), opening July 2026, with an inc
 - The wordmark + three pencil sketches (src/assets/brand/) are THE brand; never regenerate or restyle them.
 - Palette/fonts exactly as tokenized in src/styles/tokens.css.
 
+## MOBILE / iOS RULES (locked)
+- Viewport units: min-height 100vh fallback + 100svh pair. svh, never dvh. Hero-minus-header = calc(100svh - var(--nav-h)).
+- Never width:100vw; html,body { overflow-x: clip } stays.
+- Safe areas: viewport-fit=cover; pad CONTENT with env(safe-area-inset-*) via max(gutter, inset); band backgrounds reach true edges; nav + body offset grow by the top inset.
+- Hover behaviors ONLY behind @media (hover:hover) and (pointer:fine); touch gets tap alternatives (menu rows = button[aria-expanded] tap-to-expand; floating panel display:none + unbound on touch).
+- Inputs >=16px computed (iOS zoom); inputmode/autocomplete set; never suppress user zoom; html.kb-open hides fixed bars while a field is focused.
+- Tap targets >=44px; -webkit-tap-highlight-color transparent + touch-action manipulation on controls.
+- NO live SVG filters anywhere: sketches render the *-baked.svg geometry (scripts/bake-sketches.mjs flattens the roughen); max 2 simultaneous draws, will-change on animating strokes.
+- Nav: always-visible slim bar on <=768px (56px + safe-area); hide-on-scroll desktop-only, 8px delta.
+- Reveals: one shared IO, fail-safe (hidden states only under JS-set classes; JS off = everything visible).
+- Hero image <=150KB on mobile (AVIF, eager, fetchpriority=high). Fonts: latin subsets, used weights only.
+- theme-color AND body background both brand cream (Safari tints from either).
+- Map iframe: tap-to-load facade on touch, lazy auto-load on desktop.
+- mobileCtaBar flag: sticky bottom newsletter pill on phones (parks at footer, hides with keyboard).
+
 ## Definition of done (every phase)
 Responsive to mobile · visible keyboard focus · reduced motion respected · no console errors · astro check clean · zero em dashes in dist · committed with a clear message · deploy verified.
 
