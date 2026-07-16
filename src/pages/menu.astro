@@ -13,12 +13,15 @@ const menu = (await getCollection('menu')).sort((a, b) => a.data.order - b.data.
 // larger panel image (the desktop floating photo panel).
 const thumbs: Record<string, string> = {};
 const panels: Record<string, string> = {};
+const panelDims: Record<string, { w: number; h: number }> = {};
 for (const cat of menu) {
   for (const item of cat.data.items) {
     const meta = resolveImage(item.image);
     if (meta) {
       thumbs[item.name] = (await getImage({ src: meta, width: 320, format: 'webp' })).src;
-      panels[item.name] = (await getImage({ src: meta, width: 720, format: 'webp' })).src;
+      const pimg = await getImage({ src: meta, width: 720, format: 'webp' });
+      panels[item.name] = pimg.src;
+      panelDims[item.name] = { w: Number(pimg.attributes.width), h: Number(pimg.attributes.height) };
     }
   }
 }
@@ -87,11 +90,10 @@ const firstPanel = Object.values(panels)[0];
                         class="row-expand-img"
                         src={panels[item.name]}
                         alt={item.name}
-                        width="720"
-                        height="540"
+                        width={panelDims[item.name].w}
+                        height={panelDims[item.name].h}
                         loading="lazy"
                         decoding="async"
-                        sizes="(max-width: 430px) 86vw, 360px"
                       />
                     </div>
                   </div>
@@ -104,9 +106,11 @@ const firstPanel = Object.values(panels)[0];
     ))}
 
     {layoutSystem === 'slab' && firstPanel && (
-      <aside class="menu-panel" aria-hidden="true">
-        <img class="menu-panel-img is-a" src={firstPanel} alt="" width="720" height="540" loading="lazy" decoding="async" />
-        <img class="menu-panel-img is-b" src={firstPanel} alt="" width="720" height="540" loading="lazy" decoding="async" />
+      <aside class="menu-panel" aria-hidden="true" data-first={firstPanel}>
+        {/* src is seeded by JS on hover devices only: a display:none img with a
+            src still downloads on mobile. */}
+        <img class="menu-panel-img is-a" alt="" width="720" height="540" decoding="async" />
+        <img class="menu-panel-img is-b" alt="" width="720" height="540" decoding="async" />
       </aside>
     )}
 
@@ -219,8 +223,6 @@ const firstPanel = Object.values(panels)[0];
     border-radius: 16px;
     border: 1px solid var(--hairline-strong);
     margin-top: var(--space-3);
-    object-fit: cover;
-    aspect-ratio: 4 / 3;
   }
   .menu-row.is-open .row-expand { grid-template-rows: 1fr; }
   @media (prefers-reduced-motion: reduce) {
@@ -298,6 +300,7 @@ const firstPanel = Object.values(panels)[0];
   const panel = document.querySelector<HTMLElement>('.menu-panel');
   if (panel && hoverFine) {
     const imgs = Array.from(panel.querySelectorAll<HTMLImageElement>('.menu-panel-img'));
+    imgs.forEach((im) => { im.src = panel.dataset.first || ''; });
     let front = 0;
     let current = '';
     imgs[0]?.classList.add('is-front');
