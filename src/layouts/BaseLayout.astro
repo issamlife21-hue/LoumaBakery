@@ -125,13 +125,13 @@ const jsonLd =
 >
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="generator" content={Astro.generator} />
 
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    <meta name="theme-color" content="#2A1F18" />
+    <meta name="theme-color" content="#FAF5EA" />
     {noindex && <meta name="robots" content="noindex, nofollow" />}
 
     <!-- Favicons + app icons (generated from face.svg) -->
@@ -202,9 +202,13 @@ const jsonLd =
         inset-block-start: 0;
         inset-inline: 0;
         z-index: 1000;
-        height: var(--nav-h);
+        height: calc(var(--nav-h) + env(safe-area-inset-top, 0px));
+        padding-top: env(safe-area-inset-top, 0px);
         display: flex;
         align-items: center;
+      }
+      @media (max-width: 768px) {
+        .site-nav { --nav-h: 56px; }
       }
       .site-nav[data-transparent='true']:not([data-scrolled='true']) {
         background: transparent;
@@ -218,7 +222,7 @@ const jsonLd =
       }
       /* Reserve nav height on non-hero pages so content isn't hidden. */
       body:not([data-hero='true']) {
-        padding-top: var(--nav-h);
+        padding-top: calc(var(--nav-h) + env(safe-area-inset-top, 0px));
       }
     </style>
   </head>

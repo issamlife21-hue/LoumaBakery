@@ -22,8 +22,16 @@ html {
   scroll-behavior: smooth;
 }
 
+html,
 body {
-  min-height: 100vh;
+  /* Safety net against any right-edge overflow (clip, not hidden: no new
+     scroll container, pinch-zoom unaffected). */
+  overflow-x: clip;
+}
+
+body {
+  min-height: 100vh; /* fallback */
+  min-height: 100svh;
   font-family: var(--font-body);
   font-weight: 300;
   font-size: var(--t-body);
@@ -58,6 +66,24 @@ select {
 
 button {
   cursor: pointer;
+}
+
+/* Touch feel: no grey tap flash, no double-tap zoom delay, no long-press
+   callout on controls (body text stays selectable). */
+a,
+button,
+.pill,
+input,
+select,
+textarea,
+[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+a,
+button,
+.pill {
+  -webkit-touch-callout: none;
 }
 
 /* Lists marked role="list" opt out of bullets/indent (nav, footer, etc.). */
@@ -220,8 +246,8 @@ a:hover {
 }
 
 :focus-visible {
-  outline: 2.5px solid var(--burgundy);
-  outline-offset: 3px;
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
   border-radius: var(--radius-sm);
 }
 
@@ -268,7 +294,8 @@ a:hover {
   width: 100%;
   max-width: var(--container);
   margin-inline: auto;
-  padding-inline: var(--gutter);
+  /* Landscape iPhones: gutters never sit under the notch/Dynamic Island. */
+  padding-inline: max(var(--gutter), env(safe-area-inset-left)) max(var(--gutter), env(safe-area-inset-right));
 }
 
 /* ============================================ Shared UI primitives ====
@@ -520,14 +547,15 @@ html.sys-slab .statement {
   font-weight: 400;
   font-style: normal;
   font-size: clamp(2.75rem, 8vw, 7rem);
-  line-height: 0.98;
+  line-height: 1.05;
+  text-wrap: balance;
   letter-spacing: -0.01em;
   color: var(--ink);
   text-wrap: balance;
   max-width: 14ch;
 }
 html.sys-slab .statement--hero {
-  font-size: clamp(2.9rem, 9vw, 7.5rem);
+  font-size: clamp(2.6rem, 9vw, 7.5rem);
   font-style: italic;
   font-weight: 300;
   color: var(--butter);
@@ -673,3 +701,23 @@ html.sys-slab .sm-name { font-family: var(--font-display); font-size: clamp(22px
 html.sys-slab .sm-dots { flex: 1; border-bottom: 1px dotted var(--hairline-strong); transform: translateY(-4px); }
 html.sys-slab .sm-price { color: var(--burgundy); font-size: 15px; }
 html.sys-slab .map-frame { background: var(--butter); }
+
+/* ===================================================== MOBILE / iOS =====
+   <=768px: body never below 16px; <=430px: calmer rhythm (bands ~65% of
+   desktop padding), calmer display scale, single-column collage pair.
+   ===================================================================== */
+@media (max-width: 768px) {
+  html.sys-slab { --t-body: 16px; }
+}
+@media (max-width: 430px) {
+  html.sys-slab .band { padding-block: clamp(2.25rem, 9vw, 3rem); }
+  html.sys-slab .statement { font-size: clamp(2.25rem, 10.5vw, 2.75rem); }
+  html.sys-slab .statement--hero { font-size: clamp(2.4rem, 11vw, 2.9rem); }
+}
+@media (max-width: 680px) {
+  /* Collage stacks as a neat offset pair; the third tile rests. */
+  html.sys-slab .collage { flex-direction: column; align-items: center; }
+  html.sys-slab .collage-a { width: 86%; transform: rotate(-1.5deg); }
+  html.sys-slab .collage-b { width: 76%; transform: rotate(1.5deg); margin: -6% 0 0 10%; }
+  html.sys-slab .collage-c { display: none; }
+}

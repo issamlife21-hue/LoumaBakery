@@ -398,6 +398,7 @@ const heroCta = orderReady
   /* ============================ 1 · HERO (media, full-bleed) ===== */
   .hero-media {
     position: relative;
+    min-height: 100vh; /* fallback */
     min-height: 100svh;
     display: flex;
     align-items: flex-end;
@@ -417,7 +418,7 @@ const heroCta = orderReady
     z-index: 2;
     width: 100%;
     padding-top: calc(var(--nav-h) + var(--space-6));
-    padding-bottom: clamp(2.5rem, 7vw, 5.5rem);
+    padding-bottom: max(clamp(2.5rem, 7vw, 5.5rem), calc(env(safe-area-inset-bottom) + 1.5rem));
   }
   .hero-media-content { max-width: clamp(320px, 60vw, 680px); color: var(--surface-0); }
   .hero-media .hero-media-eyebrow { color: color-mix(in srgb, var(--surface-0) 86%, transparent); }
@@ -450,6 +451,7 @@ const heroCta = orderReady
     background: linear-gradient(180deg, var(--butter), var(--surface-0) 72%);
     display: flex;
     align-items: center;
+    min-height: calc(100vh - var(--nav-h)); /* fallback */
     min-height: calc(100svh - var(--nav-h));
     padding-block: clamp(2rem, 6vw, 5rem);
   }
@@ -506,6 +508,7 @@ const heroCta = orderReady
   /* ===================================== 1 · HERO (photo) ===== */
   .hero {
     position: relative;
+    min-height: 100vh; /* fallback */
     min-height: 100svh;
     display: flex;
     align-items: center;

@@ -224,8 +224,14 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
   :global(html.sys-slab) .mobile-panel { background: var(--surface-0); border-inline-start: 1px solid var(--hairline); }
 
   /* Hide-on-scroll-down / show-on-scroll-up (keeps the glass state). */
-  .site-nav { transition: transform 0.35s var(--ease-out); will-change: transform; }
+  .site-nav { transition: transform 0.35s var(--ease-out); will-change: transform; padding-top: env(safe-area-inset-top, 0px); height: calc(var(--nav-h) + env(safe-area-inset-top, 0px)); }
   .site-nav[data-hidden='true'] { transform: translateY(-100%); }
+  /* MOBILE: always-visible slim bar. Hide-on-scroll is desktop-only (Safari's
+     toolbar collapse makes mid-scroll nav movement feel broken on iOS). */
+  @media (max-width: 768px) {
+    .site-nav { --nav-h: 56px; transition: none; will-change: auto; }
+    .site-nav[data-hidden='true'] { transform: none; }
+  }
   @media (prefers-reduced-motion: reduce) {
     .site-nav { transition: none; }
     .site-nav[data-hidden='true'] { transform: none; }
@@ -274,12 +280,16 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
   .mobile-panel {
     position: fixed;
     inset-block: 0;
+    min-height: 100vh; /* fallback */
+    min-height: 100svh;
     inset-inline-end: 0;
     z-index: 1200;
     width: min(82vw, 360px);
     background: var(--surface-1);
     box-shadow: var(--shadow-lg);
-    padding: calc(var(--nav-h) + var(--space-4)) var(--space-6) var(--space-6);
+    padding-top: calc(var(--nav-h) + env(safe-area-inset-top, 0px) + var(--space-4));
+    padding-inline: var(--space-6) max(var(--space-6), env(safe-area-inset-right));
+    padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom, 0px));
     transform: translateX(100%);
     transition: transform var(--dur) var(--ease-out);
   }
@@ -364,6 +374,7 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
     // --- Scroll glass + hide-on-scroll-down / show-on-scroll-up (rAF throttled) ---
     if (nav) {
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const mobileBar = window.matchMedia('(max-width: 768px)');
       let ticking = false;
       let lastY = window.scrollY;
       const onScroll = () => {
@@ -372,12 +383,12 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
         requestAnimationFrame(() => {
           const y = window.scrollY;
           nav.dataset.scrolled = y > 8 ? 'true' : 'false';
-          // Tuck away when scrolling down past the nav; reveal on the way up.
-          // Never hide while the mobile menu is open, near the top, or reduced-motion.
-          if (!reduce && nav.dataset.menuOpen !== 'true') {
-            const goingDown = y > lastY;
-            if (goingDown && y > 120) nav.dataset.hidden = 'true';
-            else if (!goingDown) nav.dataset.hidden = 'false';
+          // Hide-on-scroll is DESKTOP ONLY (on iOS the toolbar collapse makes a
+          // moving bar feel broken); 8px delta so tiny jitters never toggle it.
+          if (!reduce && !mobileBar.matches && nav.dataset.menuOpen !== 'true') {
+            const delta = y - lastY;
+            if (delta > 8 && y > 120) nav.dataset.hidden = 'true';
+            else if (delta < -8) nav.dataset.hidden = 'false';
           }
           lastY = y;
           ticking = false;

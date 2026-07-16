@@ -24,6 +24,7 @@ const c = (await getEntry('copy', 'notFound'))!.data;
 
 <style>
   .nf {
+    min-height: calc(100vh - var(--nav-h)); /* fallback */
     min-height: calc(100svh - var(--nav-h));
     display: flex;
     align-items: center;
