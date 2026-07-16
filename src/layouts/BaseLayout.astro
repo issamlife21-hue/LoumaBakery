@@ -7,12 +7,10 @@ import Footer from '../components/Footer.astro';
 // Self-hosted fonts (Fontsource, font-display: swap) — bundled and served from
 // our own origin so first paint isn't blocked on Google Fonts before the LCP.
 import '@fontsource/cormorant-garamond/300.css';
+import '@fontsource/cormorant-garamond/400.css';
 import '@fontsource/cormorant-garamond/500.css';
-import '@fontsource/cormorant-garamond/600.css';
 import '@fontsource/cormorant-garamond/300-italic.css';
-import '@fontsource/cormorant-garamond/500-italic.css';
 import '@fontsource/cormorant-sc/500.css';
-import '@fontsource/cormorant-sc/600.css';
 import '@fontsource/dm-sans/300.css';
 import '@fontsource/dm-sans/400.css';
 import '@fontsource/dm-sans/500.css';
@@ -227,13 +225,19 @@ const jsonLd =
     </style>
   </head>
 
-  <body data-hero={transparentNav ? 'true' : 'false'}>
+  <body data-hero={transparentNav ? 'true' : 'false'} class={features.mobileCtaBar ? 'has-cta-bar' : undefined}>
     <a class="skip-link" href="#main">Skip to content</a>
     <Nav transparent={transparentNav} />
     <main id="main">
       <slot />
     </main>
     <Footer newsletter={footerNewsletter} />
+
+    {features.mobileCtaBar && (
+      <div class="mobile-cta-bar" data-cta-bar>
+        <a class="btn mobile-cta-link" href="#newsletter">Get word when we open</a>
+      </div>
+    )}
 
     <script>
       import '../scripts/motion.ts';

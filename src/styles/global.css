@@ -764,3 +764,35 @@ html.sys-slab .map-frame { background: var(--butter); }
 @supports (content-visibility: auto) {
   .cv-auto { content-visibility: auto; contain-intrinsic-size: auto 600px; }
 }
+
+/* Sticky bottom CTA bar (mobileCtaBar flag): phones only, flat, hairline top,
+   safe-area padded. Hidden while the keyboard is up (html.kb-open, above) and
+   while the footer (which holds the form) is on screen (.is-parked). */
+.mobile-cta-bar { display: none; }
+@media (max-width: 768px) {
+  .mobile-cta-bar {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 900;
+    background: var(--burgundy);
+    border-top: 1px solid var(--hairline);
+    padding: 10px max(var(--gutter), env(safe-area-inset-left)) calc(10px + env(safe-area-inset-bottom, 0px));
+  }
+  .mobile-cta-bar.is-parked { display: none; }
+  .mobile-cta-link {
+    border: 1.5px solid var(--butter);
+    color: var(--butter);
+    background: transparent;
+    min-height: 44px;
+    padding: 10px 24px;
+    font-size: 15px;
+    width: min(100%, 420px);
+  }
+  /* The bar must never cover the last content (class set only when the
+     flag renders the bar). */
+  body.has-cta-bar { padding-bottom: calc(64px + env(safe-area-inset-bottom, 0px)); }
+  html.kb-open body.has-cta-bar { padding-bottom: 0; }
+}

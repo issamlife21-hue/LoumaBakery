@@ -29,6 +29,8 @@ export const features = {
   ingredientSlider: true,
   /** Transient corner notices (form confirmations). */
   toast: true,
+  /** Slim sticky bottom CTA bar on phones (thumb-reach newsletter jump). */
+  mobileCtaBar: true,
 
   // --- Classic-layout-only type treatment ---
   /** Bolder display headline treatment (classic layout only). */
