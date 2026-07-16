@@ -81,3 +81,16 @@ function initForms() {
 if (document.readyState !== 'loading') initForms();
 else document.addEventListener('DOMContentLoaded', initForms, { once: true });
 document.addEventListener('astro:page-load', initForms);
+
+// iOS keyboard vs fixed bars: while any field is focused, mark <html> so the
+// sticky nav / CTA bar hide (CSS handles it, mobile widths only).
+document.addEventListener('focusin', (e) => {
+  const t = e.target as HTMLElement;
+  if (t && /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)) document.documentElement.classList.add('kb-open');
+});
+document.addEventListener('focusout', () => {
+  requestAnimationFrame(() => {
+    const a = document.activeElement as HTMLElement | null;
+    if (!a || !/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) document.documentElement.classList.remove('kb-open');
+  });
+});

@@ -156,10 +156,14 @@ const builders: Record<string, () => void> = {
       const originals = Array.from(track.children);
       originals.forEach((n) => track.appendChild(n.cloneNode(true)));
       const ctrl = animate(track, { transform: ['translateX(0%)', 'translateX(-50%)'] }, { duration: 30, repeat: Infinity, ease: 'linear' });
+      // Pause-on-hover is a hover-device behavior only (no sticky pause on tap).
+      const hoverFine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
       const pause = () => ctrl.pause();
       const play = () => ctrl.play();
-      wrap.addEventListener('mouseenter', pause);
-      wrap.addEventListener('mouseleave', play);
+      if (hoverFine) {
+        wrap.addEventListener('mouseenter', pause);
+        wrap.addEventListener('mouseleave', play);
+      }
       add('marquee', () => {
         ctrl.stop();
         wrap.removeEventListener('mouseenter', pause);

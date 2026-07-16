@@ -236,8 +236,10 @@ a {
   transition: color var(--dur-fast) var(--ease-out);
 }
 
-a:hover {
-  color: var(--link-hover);
+@media (hover: hover) and (pointer: fine) {
+  a:hover {
+    color: var(--link-hover);
+  }
 }
 
 /* --------------------------------------------------------------- Focus */
@@ -325,11 +327,11 @@ a:hover {
   .btn:not(:disabled):not([aria-disabled="true"]):active { transform: translateY(1px) scale(0.985); }
 }
 .btn-primary { background: var(--burgundy); color: var(--butter); }
-.btn-primary:hover { background: var(--red); color: var(--surface-0); }
+@media (hover: hover) and (pointer: fine) { .btn-primary:hover { background: var(--red); color: var(--surface-0); } }
 .btn-coral { background: var(--coral); color: var(--ink); }
-.btn-coral:hover { background: var(--butter); }
+@media (hover: hover) and (pointer: fine) { .btn-coral:hover { background: var(--butter); } }
 .btn-ghost { background: transparent; border-color: currentColor; color: var(--burgundy); }
-.btn-ghost:hover { background: var(--burgundy); color: var(--butter); border-color: var(--burgundy); }
+@media (hover: hover) and (pointer: fine) { .btn-ghost:hover { background: var(--burgundy); color: var(--butter); border-color: var(--burgundy); } }
 /* Inert state (e.g. "Ordering soon" until a real Order link exists).
    Reads as a soft, deliberate "coming soon" chip — clay-dashed hairline on a
    warm surface — never a greyed-out dead control. */
@@ -621,15 +623,17 @@ html.sys-slab .btn {
   padding: 14px 28px;
   border-radius: var(--radius-pill);
 }
-html.sys-slab .btn:hover { background: color-mix(in srgb, var(--burgundy) 9%, transparent); color: var(--burgundy); }
+@media (hover: hover) and (pointer: fine) { html.sys-slab .btn:hover { background: color-mix(in srgb, var(--burgundy) 9%, transparent); color: var(--burgundy); } }
 html.sys-slab .btn-primary,
 html.sys-slab .btn-coral {
   background: var(--burgundy);
   border-color: var(--burgundy);
   color: var(--butter);
 }
-html.sys-slab .btn-primary:hover,
-html.sys-slab .btn-coral:hover { background: var(--ink); border-color: var(--ink); color: var(--butter); }
+@media (hover: hover) and (pointer: fine) {
+  html.sys-slab .btn-primary:hover,
+  html.sys-slab .btn-coral:hover { background: var(--ink); border-color: var(--ink); color: var(--butter); }
+}
 /* Ghost on dark bands/footer + over the hero photo. */
 html.sys-slab :is(.on-dark, .site-foot, .band--burgundy, .band--ink) .btn:not(.btn-primary):not(.btn-coral),
 html.sys-slab .btn--cream {
@@ -637,8 +641,10 @@ html.sys-slab .btn--cream {
   color: var(--butter);
   background: transparent;
 }
-html.sys-slab :is(.on-dark, .site-foot, .band--burgundy, .band--ink) .btn:not(.btn-primary):not(.btn-coral):hover,
-html.sys-slab .btn--cream:hover { background: color-mix(in srgb, var(--butter) 14%, transparent); color: var(--butter); }
+@media (hover: hover) and (pointer: fine) {
+  html.sys-slab :is(.on-dark, .site-foot, .band--burgundy, .band--ink) .btn:not(.btn-primary):not(.btn-coral):hover,
+  html.sys-slab .btn--cream:hover { background: color-mix(in srgb, var(--butter) 14%, transparent); color: var(--butter); }
+}
 /* Inert "Ordering soon": intentional dashed ghost. */
 html.sys-slab .btn:disabled,
 html.sys-slab .btn[aria-disabled="true"] {
@@ -720,4 +726,35 @@ html.sys-slab .map-frame { background: var(--butter); }
   html.sys-slab .collage-a { width: 86%; transform: rotate(-1.5deg); }
   html.sys-slab .collage-b { width: 76%; transform: rotate(1.5deg); margin: -6% 0 0 10%; }
   html.sys-slab .collage-c { display: none; }
+}
+
+/* Flat select/date on iOS (kill the native chrome; add a drawn chevron). */
+.field select,
+.field input[type="date"] {
+  -webkit-appearance: none;
+  appearance: none;
+}
+.field select {
+  padding-inline-end: 2.4rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236E1F2A' stroke-width='1.6' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+}
+
+/* While the iOS keyboard is up (any field focused), fixed bars step aside. */
+@media (max-width: 768px) {
+  html.kb-open .site-nav,
+  html.kb-open .mobile-cta-bar { display: none; }
+}
+
+/* Footer + inline links: comfortable 44px touch targets on touch devices. */
+@media (pointer: coarse) {
+  .foot-links a,
+  .findus-contact a,
+  .addr-contact a,
+  .foot-contact a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
 }

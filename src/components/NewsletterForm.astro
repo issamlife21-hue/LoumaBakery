@@ -28,7 +28,7 @@ const formClass = variant === 'footer' ? 'foot-news-form' : 'news-form';
   <p class="visually-hidden"><label>Don’t fill this out: <input name="bot-field" /></label></p>
   <label class="visually-hidden" for={id}>Email address</label>
   <div class={rowClass}>
-    <input id={id} type="email" name="email" required placeholder="you@email.com" autocomplete="email" />
+    <input id={id} type="email" name="email" required placeholder="you@email.com" autocomplete="email" inputmode="email" />
     <button type="submit" class="btn btn-coral">Notify me</button>
   </div>
 </form>

@@ -186,11 +186,13 @@ const explore = [
     text-decoration: none;
     transition: color var(--dur-fast) var(--ease-out);
   }
-  .site-foot a:hover {
-    color: var(--coral);
-    text-decoration: underline;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.2em;
+  @media (hover: hover) and (pointer: fine) {
+    .site-foot a:hover {
+      color: var(--coral);
+      text-decoration: underline;
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.2em;
+    }
   }
 
   .foot-base {

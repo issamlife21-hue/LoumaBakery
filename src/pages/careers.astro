@@ -61,8 +61,8 @@ const roles = c.roles ?? [];
         <input type="hidden" name="form-name" value="careers" />
         <p class="visually-hidden"><label>Don’t fill this out: <input name="bot-field" /></label></p>
         <div class="field"><label for="job-name">Name</label><input id="job-name" name="name" type="text" required autocomplete="name" /></div>
-        <div class="field"><label for="job-email">Email</label><input id="job-email" name="email" type="email" required autocomplete="email" /></div>
-        <div class="field"><label for="job-phone">Phone</label><input id="job-phone" name="phone" type="tel" autocomplete="tel" /></div>
+        <div class="field"><label for="job-email">Email</label><input id="job-email" name="email" type="email" required autocomplete="email" inputmode="email" /></div>
+        <div class="field"><label for="job-phone">Phone</label><input id="job-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" /></div>
         <div class="field">
           <label for="job-role">Role</label>
           <select id="job-role" name="role" required>
@@ -100,8 +100,10 @@ const roles = c.roles ?? [];
   .role-title { font-size: clamp(22px, 2.4vw, 30px); }
   .role-type { color: var(--clay); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
   .role-body { margin: var(--space-3) 0 var(--space-4); color: var(--body); max-width: 64ch; }
-  .role-apply { font-family: var(--font-mono); font-size: 14px; color: var(--burgundy); text-decoration: none; }
-  .role-apply:hover { color: var(--red); }
+  .role-apply { display: inline-flex; align-items: center; min-height: 44px; font-family: var(--font-mono); font-size: 14px; color: var(--burgundy); text-decoration: none; }
+  @media (hover: hover) and (pointer: fine) {
+    .role-apply:hover { color: var(--red); }
+  }
 
   .apply { padding-block: var(--space-8) var(--space-9); scroll-margin-top: calc(var(--nav-h) + 24px); }
 </style>

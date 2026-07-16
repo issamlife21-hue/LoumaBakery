@@ -52,26 +52,49 @@ const firstPanel = Object.values(panels)[0];
         <h2 class="menu-cat-title smallcaps" id={`h-${cat.id}`}>{cat.data.title}</h2>
         <ul class="menu-rows" role="list">
           {cat.data.items.map((item) => (
-            <li
-              class="menu-row"
-              data-menu-hover={f.menuHover ? '' : undefined}
-              data-img={panels[item.name] || undefined}
-              tabindex={layoutSystem === 'slab' && panels[item.name] ? 0 : undefined}
-            >
-              {layoutSystem === 'slab' && thumbs[item.name] && (
-                <img class="row-thumb" src={thumbs[item.name]} alt="" width="72" height="54" loading="lazy" decoding="async" />
-              )}
+            <li class="menu-row" data-menu-hover={f.menuHover ? '' : undefined} data-img={panels[item.name] || undefined}>
               <div class="row-main">
-                <div class="row-head">
-                  <h3 class="row-name">{item.name}</h3>
-                  <span class="row-dots" aria-hidden="true"></span>
-                  <span class="row-price mono">{item.price}</span>
-                </div>
+                {panels[item.name] ? (
+                  <button
+                    type="button"
+                    class="row-toggle"
+                    aria-expanded="false"
+                    aria-controls={`x-${cat.id}-${item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}
+                  >
+                    <span class="row-head">
+                      <span class="row-name">{item.name}</span>
+                      <span class="row-dots" aria-hidden="true"></span>
+                      <span class="row-price mono">{item.price}</span>
+                    </span>
+                  </button>
+                ) : (
+                  <div class="row-head">
+                    <h3 class="row-name">{item.name}</h3>
+                    <span class="row-dots" aria-hidden="true"></span>
+                    <span class="row-price mono">{item.price}</span>
+                  </div>
+                )}
                 {item.description && <p class="row-desc">{item.description}</p>}
                 {item.tags.length > 0 && (
                   <ul class="product-tags" role="list">
                     {item.tags.map((t) => <li class="tag mono">{t}</li>)}
                   </ul>
+                )}
+                {panels[item.name] && (
+                  <div class="row-expand" id={`x-${cat.id}-${item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`}>
+                    <div class="row-expand-inner">
+                      <img
+                        class="row-expand-img"
+                        src={panels[item.name]}
+                        alt={item.name}
+                        width="720"
+                        height="540"
+                        loading="lazy"
+                        decoding="async"
+                        sizes="(max-width: 430px) 86vw, 360px"
+                      />
+                    </div>
+                  </div>
                 )}
               </div>
             </li>
@@ -128,7 +151,13 @@ const firstPanel = Object.values(panels)[0];
     white-space: nowrap;
     transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out);
   }
-  .pill:hover { background: var(--surface-3); }
+  @media (hover: hover) and (pointer: fine) {
+    .pill:hover { background: var(--surface-3); }
+  }
+  .pill { min-width: 44px; }
+  /* Native momentum + snap on the pill rail. */
+  .pillnav-track { scroll-snap-type: x proximity; }
+  .pill { scroll-snap-align: start; flex: 0 0 auto; }
   .pill[aria-current='true'] { background: var(--burgundy); color: var(--butter); }
 
   .menu-body { padding-block: var(--space-7) var(--space-9); }
@@ -143,7 +172,7 @@ const firstPanel = Object.values(panels)[0];
   .row-head { display: flex; align-items: baseline; gap: var(--space-3); }
   .row-name { font-family: var(--font-display); font-weight: 500; font-size: 22px; color: var(--ink); display: inline-block; }
   /* Tactile row hover (menuHover flag): the dish name leans in, price warms. */
-  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
     .menu-row[data-menu-hover] .row-name,
     .menu-row[data-menu-hover] .row-price { transition: transform var(--dur) var(--ease-out), color var(--dur) var(--ease-out); }
     .menu-row[data-menu-hover]:hover .row-name { transform: translateX(8px); color: var(--burgundy); }
@@ -164,26 +193,53 @@ const firstPanel = Object.values(panels)[0];
   }
   .allergen p:last-child { margin-top: var(--space-2); color: var(--body); }
 
+  /* --- Row toggle button (photo rows): plain, full-width, 44px target --- */
+  .row-toggle {
+    display: block;
+    width: 100%;
+    min-height: 44px;
+    padding: 2px 0;
+    background: none;
+    border: 0;
+    text-align: start;
+    font: inherit;
+    color: inherit;
+  }
+  .row-toggle .row-head { width: 100%; }
+  /* Tap-to-expand area (touch): grid-rows 0fr->1fr, settles downward. */
+  .row-expand {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 320ms var(--ease-out);
+  }
+  .row-expand-inner { overflow: hidden; min-height: 0; }
+  .row-expand-img {
+    width: min(100%, 360px);
+    height: auto;
+    border-radius: 16px;
+    border: 1px solid var(--hairline-strong);
+    margin-top: var(--space-3);
+    object-fit: cover;
+    aspect-ratio: 4 / 3;
+  }
+  .menu-row.is-open .row-expand { grid-template-rows: 1fr; }
+  @media (prefers-reduced-motion: reduce) {
+    .row-expand { transition: none; }
+  }
+  /* Desktop (hover devices): the floating panel is the photo surface; the
+     inline expand stays shut and the toggle acts as the focus target only. */
+  @media (hover: hover) and (pointer: fine) {
+    .row-expand { display: none; }
+  }
+  /* Touch devices never get the floating panel (no listeners bound either). */
+  @media (hover: none), (pointer: coarse) {
+    .menu-panel { display: none !important; }
+  }
+
   /* --- Slab: typographic list + floating photo panel --- */
   :global(html.sys-slab) .menu-body { max-width: none; }
   :global(html.sys-slab) .menu-cat { max-width: 720px; }
   :global(html.sys-slab) .row-name { font-size: clamp(26px, 2.8vw, 34px); font-weight: 400; }
-  :global(html.sys-slab) .menu-row { display: flex; gap: var(--space-4); align-items: flex-start; }
-  :global(html.sys-slab) .row-main { flex: 1; }
-  :global(html.sys-slab) .menu-row:focus-visible { outline: 2.5px solid var(--burgundy); outline-offset: 4px; border-radius: 16px; }
-  .row-thumb { display: none; }
-  @media (max-width: 1023px) {
-    :global(html.sys-slab) .row-thumb {
-      display: block;
-      width: 72px;
-      height: 54px;
-      object-fit: cover;
-      border-radius: 16px;
-      border: 1px solid var(--hairline-strong);
-      flex: 0 0 auto;
-      margin-top: 4px;
-    }
-  }
   .menu-panel { display: none; }
   @media (min-width: 1024px) {
     :global(html.sys-slab) .menu-panel {
@@ -236,10 +292,11 @@ const firstPanel = Object.values(panels)[0];
 </style>
 
 <script>
-  // Floating photo panel (desktop): crossfades to the hovered/focused row's
-  // image. Mouse + keyboard (rows are focusable); panel is aria-hidden.
+  // Floating photo panel: HOVER DEVICES ONLY (mouse + keyboard focus). On
+  // touch the panel is display:none and no listeners are bound at all.
+  const hoverFine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
   const panel = document.querySelector<HTMLElement>('.menu-panel');
-  if (panel) {
+  if (panel && hoverFine) {
     const imgs = Array.from(panel.querySelectorAll<HTMLImageElement>('.menu-panel-img'));
     let front = 0;
     let current = '';
@@ -262,6 +319,26 @@ const firstPanel = Object.values(panels)[0];
     const list = document.querySelector('.menu-body');
     list?.addEventListener('mouseleave', () => panel.classList.remove('is-on'));
   }
+
+  // Tap-to-expand (touch devices): one open at a time; button carries
+  // aria-expanded; the area settles open downward via grid-rows.
+  if (!hoverFine) {
+    let open: HTMLElement | null = null;
+    document.querySelectorAll<HTMLButtonElement>('.row-toggle').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const row = btn.closest<HTMLElement>('.menu-row');
+        if (!row) return;
+        const wasOpen = row.classList.contains('is-open');
+        if (open && open !== row) {
+          open.classList.remove('is-open');
+          open.querySelector('.row-toggle')?.setAttribute('aria-expanded', 'false');
+        }
+        row.classList.toggle('is-open', !wasOpen);
+        btn.setAttribute('aria-expanded', String(!wasOpen));
+        open = wasOpen ? null : row;
+      });
+    });
+  }
 </script>
 
 <script>
@@ -274,7 +351,10 @@ const firstPanel = Object.values(panels)[0];
   if ('IntersectionObserver' in window && sections.length) {
     const setActive = (id: string) => {
       pills.forEach((p) => p.removeAttribute('aria-current'));
-      byId.get(id)?.setAttribute('aria-current', 'true');
+      const active = byId.get(id);
+      active?.setAttribute('aria-current', 'true');
+      // Keep the active pill visible in the rail.
+      active?.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
     };
     const io = new IntersectionObserver(
       (entries) => {

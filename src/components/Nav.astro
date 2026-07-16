@@ -127,12 +127,14 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
     padding: 0;
   }
   .nav-links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     font-family: var(--font-body);
     font-weight: 400;
     font-size: 15px;
     color: var(--body);
     text-decoration: none;
-    padding: 0.4rem 0;
     position: relative;
   }
   /* Hover: a burgundy underline draws in from the start edge.
@@ -149,8 +151,10 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
     transform-origin: 0 50%;
     transition: transform var(--dur) var(--ease-out);
   }
-  .nav-links a:hover { color: var(--burgundy); }
-  .nav-links a:hover::after,
+  @media (hover: hover) and (pointer: fine) {
+    .nav-links a:hover { color: var(--burgundy); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+  }
   .nav-links a:focus-visible::after { transform: scaleX(1); }
   .nav-links a[aria-current='page']::after {
     background: var(--red);
@@ -191,9 +195,11 @@ const orderReady = !!siteConfig.links.uberEats && siteConfig.links.uberEats !== 
     border-radius: var(--radius-pill);
     transition: background var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
   }
-  .order-cta:hover {
-    background: var(--red);
-    color: var(--surface-0);
+  @media (hover: hover) and (pointer: fine) {
+    .order-cta:hover {
+      background: var(--red);
+      color: var(--surface-0);
+    }
   }
   /* Inert "Ordering soon": same soft coming-soon language as .btn:disabled
      (warm surface + clay-dashed hairline), sized for the bar. */
